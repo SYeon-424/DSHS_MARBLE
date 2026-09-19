@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>대곽마블</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
+
+    .screen {
+        display: none;
+        min-height: 100vh;
+        padding: 30px 20px;
+    }
+
+    .screen.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 42px;
+        margin: 30px 0;
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    input {
+        width: min(400px, 90vw);
+        padding: 14px;
+        border: 2px solid #555;
+        border-radius: 10px;
+        background: #222;
+        color: white;
+        outline: none;
+        margin-bottom: 12px;
+    }
+
+    input:focus {
+        border-color: #aaa;
+    }
+
+    button {
+        border: 0;
+        border-radius: 10px;
+        padding: 13px 20px;
+        margin: 5px;
+        cursor: pointer;
+        background: #444;
+        color: white;
+        transition: 0.15s;
+    }
+
+    button:hover {
+        background: #666;
+    }
+
+    button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    .primary {
+        background: #7b42ff;
+        font-weight: bold;
+    }
+
+    .primary:hover {
+        background: #9465ff;
+    }
+
+    .panel {
+        width: min(600px, 95vw);
+        background: #1d1d1d;
+        border: 1px solid #444;
+        border-radius: 16px;
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .room-code {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 6px;
+        text-align: center;
+        padding: 15px;
+        background: #111;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    #playerList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 40px;
+    }
+
+    .player {
+        background: #333;
+        border-radius: 20px;
+        padding: 8px 14px;
+    }
+
+    .pieces {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .piece-button {
+        position: relative;
+        min-height: 130px;
+        background: #292929;
+        border: 2px solid #444;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .piece-button:hover {
+        border-color: white;
+        background: #333;
+    }
+
+    .piece-button.selected {
+        border-color: #7b42ff;
+        box-shadow: 0 0 0 2px #7b42ff inset;
+    }
+
+    .piece-button.used {
+        opacity: 0.35;
+    }
+
+    .piece-button img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+
+    .piece-name {
+        margin-top: 5px;
+        font-weight: bold;
+    }
+
+    .used-label {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: #e33;
+        color: white;
+        font-size: 11px;
+        padding: 3px 6px;
+        border-radius: 6px;
+    }
+
+    #gameScreen {
+        padding: 10px;
+    }
+
+    #boardWrapper {
+        position: relative;
+        width: min(95vw, 900px);
+        margin: auto;
+    }
+
+    #board {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .message {
+        color: #aaa;
+        text-align: center;
+        margin: 10px;
+    }
+
+    .error {
+        color: #ff6b6b;
+        min-height: 24px;
+    }
+
+    .success {
+        color: #7cff9b;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     첫 화면
+========================= -->
+
+<section id="startScreen" class="screen active">
+
+    <h1>대곽마블</h1>
+
+    <div class="panel">
+
+        <h2>닉네임</h2>
+
+        <input
+            id="nicknameInput"
+            type="text"
+            maxlength="12"
+            placeholder="닉네임을 입력해줘"
+        >
+
+        <button id="createRoomButton" class="primary">
+            방 만들기
+        </button>
+
+        <hr style="border-color:#333; margin:20px 0;">
+
+        <h2>방 들어가기</h2>
+
+        <input
+            id="roomCodeInput"
+            type="text"
+            maxlength="6"
+            placeholder="방 코드"
+        >
+
+        <button id="joinRoomButton">
+            들어가기
+        </button>
+
+        <div id="startMessage" class="error"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     대기실
+========================= -->
+
+<section id="roomScreen" class="screen">
+
+    <h1>대곽마블</h1>
+
+    <div class="panel">
+
+        <h2>방 코드</h2>
+
+        <div id="roomCodeDisplay" class="room-code">
+            ------
+        </div>
+
+        <div class="message">
+            이 코드를 친구들에게 알려줘!
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>참가자</h2>
+
+        <div id="playerList"></div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>말 선택</h2>
+
+        <div class="message">
+            원하는 말을 하나 골라줘.
+            <br>
+            이미 다른 사람이 고른 말은 선택할 수 없어.
+        </div>
+
+        <div id="pieceList" class="pieces">
+            불러오는 중...
+        </div>
+
+        <div id="pieceMessage" class="message"></div>
+
+    </div>
+
+
+    <button id="startGameButton" class="primary" disabled>
+        게임 시작
+    </button>
+
+    <div id="roomMessage" class="error"></div>
+
+</section>
+
+
+<!-- =========================
+     게임 화면
+========================= -->
+
+<section id="gameScreen" class="screen">
+
+    <div id="boardWrapper">
+
+        <img
+            id="board"
+            src="board.png"
+            alt="대곽마블 게임판"
+        >
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   기본 상태
+========================================================= */
+
+const state = {
+
+    nickname: "",
+
+    roomCode: "",
+
+    selectedPiece: null,
+
+    players: [],
+
+    pieces: []
+
+};
+
+
+/* =========================================================
+   화면 전환
+========================================================= */
+
+function showScreen(id) {
+
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+}
+
+
+/* =========================================================
+   랜덤 방 코드
+========================================================= */
+
+function generateRoomCode() {
+
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let code = "";
+
+    for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    return code;
+}
+
+
+/* =========================================================
+   P 폴더의 P1.png, P2.png...
+   자동 탐색
+========================================================= */
+
+async function loadPieces() {
+
+    const foundPieces = [];
+
+    // 최대 100개까지 검사
+    for (let i = 1; i <= 100; i++) {
+
+        const src = `P/P${i}.png`;
+
+        const exists = await imageExists(src);
+
+        if (exists) {
+
+            foundPieces.push({
+                id: `P${i}`,
+                src: src,
+                owner: null
+            });
+
+        }
+    }
+
+    state.pieces = foundPieces;
+
+    renderPieces();
+}
+
+
+/* =========================================================
+   이미지 존재 여부 검사
+========================================================= */
+
+function imageExists(src) {
+
+    return new Promise(resolve => {
+
+        const img = new Image();
+
+        img.onload = () => resolve(true);
+
+        img.onerror = () => resolve(false);
+
+        img.src = src;
+
+    });
+
+}
+
+
+/* =========================================================
+   말 선택 UI
+========================================================= */
+
+function renderPieces() {
+
+    const container = document.getElementById("pieceList");
+
+    container.innerHTML = "";
+
+    if (state.pieces.length === 0) {
+
+        container.innerHTML =
+            `<div class="message">
+                P 폴더에서 말을 찾지 못했어.
+            </div>`;
+
+        return;
+    }
+
+
+    state.pieces.forEach(piece => {
+
+        const button = document.createElement("button");
+
+        button.className = "piece-button";
+
+        if (piece.owner !== null) {
+            button.classList.add("used");
+            button.disabled = true;
+        }
+
+        if (state.selectedPiece === piece.id) {
+            button.classList.add("selected");
+        }
+
+
+        const img = document.createElement("img");
+
+        img.src = piece.src;
+
+        img.alt = piece.id;
+
+
+        const name = document.createElement("div");
+
+        name.className = "piece-name";
+
+        name.textContent = piece.id;
+
+
+        button.appendChild(img);
+
+        button.appendChild(name);
+
+
+        if (piece.owner !== null) {
+
+            const label = document.createElement("div");
+
+            label.className = "used-label";
+
+            label.textContent = "사용 중";
+
+            button.appendChild(label);
+
+        }
+
+
+        button.addEventListener("click", () => {
+
+            selectPiece(piece.id);
+
+        });
+
+
+        container.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   말 선택
+========================================================= */
+
+function selectPiece(pieceId) {
+
+    const piece = state.pieces.find(p => p.id === pieceId);
+
+    if (!piece) {
+        return;
+    }
+
+    // 이미 다른 사람이 사용 중이면 선택 불가
+    if (piece.owner !== null && piece.owner !== state.nickname) {
+
+        document.getElementById("pieceMessage").textContent =
+            "이미 다른 사람이 선택한 말이야.";
+
+        return;
+    }
+
+
+    // 기존 선택 해제
+    if (state.selectedPiece !== null) {
+
+        const previous = state.pieces.find(
+            p => p.id === state.selectedPiece
+        );
+
+        if (previous && previous.owner === state.nickname) {
+            previous.owner = null;
+        }
+
+    }
+
+
+    state.selectedPiece = pieceId;
+
+    piece.owner = state.nickname;
+
+
+    document.getElementById("pieceMessage").textContent =
+        `${pieceId}를 선택했어!`;
+
+    document.getElementById("pieceMessage").className =
+        "message success";
+
+
+    renderPieces();
+
+    renderPlayers();
+
+    updateStartButton();
+
+}
+
+
+/* =========================================================
+   참가자 목록
+========================================================= */
+
+function renderPlayers() {
+
+    const container = document.getElementById("playerList");
+
+    container.innerHTML = "";
+
+
+    state.players.forEach(player => {
+
+        const div = document.createElement("div");
+
+        div.className = "player";
+
+        if (player.piece) {
+
+            div.textContent =
+                `${player.nickname} · ${player.piece}`;
+
+        } else {
+
+            div.textContent =
+                `${player.nickname} · 말 선택 중`;
+
+        }
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================================
+   게임 시작 버튼 상태
+========================================================= */
+
+function updateStartButton() {
+
+    const button =
+        document.getElementById("startGameButton");
+
+    // 현재 단계에서는 방장만 게임 시작 가능
+    const isHost =
+        state.players.length > 0 &&
+        state.players[0].nickname === state.nickname;
+
+    const everyoneSelected =
+        state.players.every(player => player.piece !== null);
+
+
+    button.disabled =
+        !isHost ||
+        !everyoneSelected;
+
+}
+
+
+/* =========================================================
+   방 만들기
+========================================================= */
+
+document
+.getElementById("createRoomButton")
+.addEventListener("click", () => {
+
+    const nickname =
+        document.getElementById("nicknameInput")
+        .value.trim();
+
+
+    if (!nickname) {
+
+        document.getElementById("startMessage")
+        .textContent =
+            "닉네임부터 입력해줘.";
+
+        return;
+    }
+
+
+    state.nickname = nickname;
+
+    state.roomCode = generateRoomCode();
+
+
+    // 현재는 로컬 테스트용
+    state.players = [
+
+        {
+            nickname: nickname,
+            piece: null
+        }
+
+    ];
+
+
+    document
+    .getElementById("roomCodeDisplay")
+    .textContent = state.roomCode;
+
+
+    renderPlayers();
+
+    loadPieces();
+
+    updateStartButton();
+
+    showScreen("roomScreen");
+
+});
+
+
+/* =========================================================
+   방 들어가기
+========================================================= */
+
+document
+.getElementById("joinRoomButton")
+.addEventListener("click", () => {
+
+    const nickname =
+        document.getElementById("nicknameInput")
+        .value.trim();
+
+    const roomCode =
+        document.getElementById("roomCodeInput")
+        .value.trim()
+        .toUpperCase();
+
+
+    if (!nickname) {
+
+        document.getElementById("startMessage")
+        .textContent =
+            "닉네임부터 입력해줘.";
+
+        return;
+    }
+
+
+    if (roomCode.length !== 6) {
+
+        document.getElementById("startMessage")
+        .textContent =
+            "방 코드는 6자리야.";
+
+        return;
+    }
+
+
+    state.nickname = nickname;
+
+    state.roomCode = roomCode;
+
+
+    /*
+        지금은 테스트용으로
+        입장한 사람만 표시함.
+
+        나중에 실제 서버를 연결하면
+        같은 방에 들어온 사람들을
+        여기서 받아오면 됨.
+    */
+
+    state.players = [
+
+        {
+            nickname: nickname,
+            piece: null
+        }
+
+    ];
+
+
+    document
+    .getElementById("roomCodeDisplay")
+    .textContent = roomCode;
+
+
+    renderPlayers();
+
+    loadPieces();
+
+    updateStartButton();
+
+    showScreen("roomScreen");
+
+});
+
+
+/* =========================================================
+   게임 시작
+========================================================= */
+
+document
+.getElementById("startGameButton")
+.addEventListener("click", () => {
+
+    showScreen("gameScreen");
+
+});
+
+
+/* =========================================================
+   초기화
+========================================================= */
+
+loadPieces();
+
+</script>
+
+</body>
+</html>
