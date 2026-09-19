@@ -164,6 +164,7 @@ button{
     flex-direction:column;
     gap:5px;
     border-radius:10px;
+    user-select:none;
 }
 
 .piece.selected{
@@ -172,6 +173,7 @@ button{
 
 .piece.used{
     opacity:.35;
+    cursor:not-allowed;
 }
 
 .piece img{
@@ -555,7 +557,7 @@ button{
 
 
 <!-- =========================
-     로그인 화면
+     로그인
 ========================= -->
 
 <div id="loginScreen" class="screen">
@@ -673,7 +675,7 @@ button{
 
 
 <!-- =========================
-     게임 화면
+     게임
 ========================= -->
 
 <div id="gameScreen">
@@ -714,7 +716,7 @@ button{
 
 
 <!-- =========================
-     게임 시작 후에만 표시
+     게임 시작 후 표시
 ========================= -->
 
 <div
@@ -1017,7 +1019,6 @@ import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-
 import {
     getDatabase,
     ref,
@@ -1026,13 +1027,12 @@ import {
     update,
     onValue,
     onDisconnect,
-    runTransaction,
-    remove
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 
 /* =========================
-   Firebase 설정
+   Firebase
 ========================= */
 
 const firebaseConfig = {
@@ -1673,6 +1673,8 @@ function watchRoom(){
 
             renderPlayers();
 
+            renderPieceSelection();
+
             renderTurnOrder();
 
             renderTurnControls();
@@ -1691,6 +1693,7 @@ function watchRoom(){
 
             const dice1 =
                 data.dice1 || 1;
+
 
             const dice2 =
                 data.dice2 || 1;
@@ -1881,8 +1884,9 @@ function renderPlayers(){
         }else{
 
             right.textContent =
-                player.piece ||
-                "말 미선택";
+                player.piece
+                ? player.piece
+                : "말 미선택";
 
         }
 
@@ -1906,7 +1910,7 @@ function renderPlayers(){
 
 
 /* =========================
-   말 목록
+   말 목록 불러오기
 ========================= */
 
 async function loadPieces(){
@@ -1916,25 +1920,39 @@ async function loadPieces(){
 
     for(let i = 1; i <= 100; i++){
 
-        const img =
-            new Image();
+        const exists =
+            await new Promise(
+                resolve => {
+
+                    const img =
+                        new Image();
 
 
-        img.src =
-            `P/P${i}.png`;
+                    img.onload =
+                        () =>
+                            resolve(true);
 
 
-        try{
+                    img.onerror =
+                        () =>
+                            resolve(false);
 
-            await img.decode();
 
-            state.pieces.push(i);
+                    img.src =
+                        `P/P${i}.png`;
 
-        }catch{
+                }
+            );
+
+
+        if(!exists){
 
             break;
 
         }
+
+
+        state.pieces.push(i);
 
     }
 
@@ -1945,7 +1963,7 @@ async function loadPieces(){
 
 
 /* =========================
-   말 선택 표시
+   말 선택 화면
 ========================= */
 
 function renderPieceSelection(){
@@ -1959,11 +1977,33 @@ function renderPieceSelection(){
 
     const usedPieces =
         state.players
+            .filter(
+                player =>
+                    player.playerId !==
+                    state.playerId
+            )
             .map(
                 player =>
                     player.piece
             )
             .filter(Boolean);
+
+
+    const myPlayer =
+        state.players.find(
+            player =>
+                player.playerId ===
+                state.playerId
+        );
+
+
+    const myPiece =
+        myPlayer?.piece ||
+        null;
+
+
+    state.selectedPiece =
+        myPiece;
 
 
     for(
@@ -1982,8 +2022,7 @@ function renderPieceSelection(){
 
 
         if(
-            state.selectedPiece ===
-            piece
+            piece === myPiece
         ){
 
             div.classList.add(
@@ -1993,10 +2032,13 @@ function renderPieceSelection(){
         }
 
 
-        if(
-            usedPieces.includes(piece) &&
-            state.selectedPiece !== piece
-        ){
+        const isUsed =
+            usedPieces.includes(
+                piece
+            );
+
+
+        if(isUsed){
 
             div.classList.add(
                 "used"
@@ -2025,8 +2067,24 @@ function renderPieceSelection(){
             );
 
 
-        small.textContent =
-            `P${piece}`;
+        if(
+            piece === myPiece
+        ){
+
+            small.textContent =
+                "내 말";
+
+        }else if(isUsed){
+
+            small.textContent =
+                "사용 중";
+
+        }else{
+
+            small.textContent =
+                `P${piece}`;
+
+        }
 
 
         div.append(
@@ -2035,14 +2093,13 @@ function renderPieceSelection(){
         );
 
 
-        if(
-            !usedPieces.includes(piece) ||
-            state.selectedPiece === piece
-        ){
+        if(!isUsed){
 
-            div.onclick =
+            div.addEventListener(
+                "click",
                 () =>
-                    selectPiece(piece);
+                    selectPiece(piece)
+            );
 
         }
 
@@ -2077,30 +2134,103 @@ async function selectPiece(piece){
     }
 
 
-    state.selectedPiece =
-        piece;
-
-
     try{
 
-        await update(
+        const result =
+            await runTransaction(
 
-            ref(
-                db,
-                `rooms/${state.roomCode}/players/${state.playerId}`
-            ),
+                ref(
+                    db,
+                    `rooms/${state.roomCode}/players`
+                ),
 
-            {
-                piece:
-                    piece
-            }
+                players => {
 
-        );
+                    if(!players){
+
+                        return;
+
+                    }
+
+
+                    const me =
+                        players[
+                            state.playerId
+                        ];
+
+
+                    if(!me){
+
+                        return;
+
+                    }
+
+
+                    for(
+                        const [
+                            playerId,
+                            player
+                        ]
+                        of Object.entries(
+                            players
+                        )
+                    ){
+
+                        if(
+                            playerId !==
+                            state.playerId &&
+                            player.piece ===
+                            piece
+                        ){
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /*
+                      기존에 고른 말이 있다면
+                      그 말은 다시 비워준다.
+                    */
+
+                    me.piece =
+                        piece;
+
+
+                    return players;
+
+                }
+
+            );
+
+
+        if(!result.committed){
+
+            return;
+
+        }
+
+
+        state.selectedPiece =
+            piece;
+
+
+        renderPieceSelection();
 
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "말 선택 오류:",
+            error
+        );
+
+
+        $("roomStatus").textContent =
+            "말 선택에 실패했어: " +
+            error.message;
 
     }
 
@@ -2245,7 +2375,7 @@ async function startGame(){
 
 
 /* =========================
-   턴 순서 표시
+   턴 순서
 ========================= */
 
 function renderTurnOrder(){
@@ -2310,7 +2440,7 @@ function renderTurnOrder(){
 
 
 /* =========================
-   주사위 버튼 상태
+   턴 컨트롤
 ========================= */
 
 function renderTurnControls(){
@@ -2450,25 +2580,18 @@ async function(){
         );
 
 
-        /*
-          주사위 결과가 표시된 뒤
-          다음 턴으로 넘어간다.
-        */
-
         setTimeout(
             async () => {
 
                 try{
 
-                    const roomRef =
+                    await runTransaction(
+
                         ref(
                             db,
                             `rooms/${state.roomCode}`
-                        );
+                        ),
 
-
-                    await runTransaction(
-                        roomRef,
                         room => {
 
                             if(!room){
@@ -2477,11 +2600,6 @@ async function(){
 
                             }
 
-
-                            /*
-                              다른 사람이 먼저 처리했다면
-                              다시 처리하지 않는다.
-                            */
 
                             if(
                                 !room.diceRolling
@@ -2527,12 +2645,15 @@ async function(){
                             return room;
 
                         }
+
                     );
 
 
                 }catch(error){
 
-                    console.error(error);
+                    console.error(
+                        error
+                    );
 
                 }
 
@@ -2543,7 +2664,10 @@ async function(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         state.diceRolling =
             false;
@@ -2557,7 +2681,7 @@ async function(){
 
 
 /* =========================
-   주사위 숫자
+   주사위 랜덤
 ========================= */
 
 function randomDiceValue(){
@@ -2878,7 +3002,9 @@ function enablePieceDrag(img){
 
             }catch(error){
 
-                console.error(error);
+                console.error(
+                    error
+                );
 
             }
 
@@ -2889,7 +3015,7 @@ function enablePieceDrag(img){
 
 
 /* =========================
-   내 잔액 표시
+   내 잔액
 ========================= */
 
 function updateMyBalance(){
@@ -2983,35 +3109,22 @@ function(
 
 
 /* =========================
-   선택 금액
+   선택 금액 계산
 ========================= */
 
 function getSelectedMoney(){
 
     return (
 
-        moneyCounts[1] *
-        10000
+        moneyCounts[1] * 10000 +
 
-        +
+        moneyCounts[2] * 20000 +
 
-        moneyCounts[2] *
-        20000
+        moneyCounts[5] * 50000 +
 
-        +
+        moneyCounts[10] * 100000 +
 
-        moneyCounts[5] *
-        50000
-
-        +
-
-        moneyCounts[10] *
-        100000
-
-        +
-
-        moneyCounts[50] *
-        500000
+        moneyCounts[50] * 500000
 
     );
 
@@ -3090,7 +3203,9 @@ async function(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
@@ -3157,6 +3272,7 @@ async function(){
                 "잔액이 부족해"
             );
 
+
             return;
 
         }
@@ -3166,7 +3282,9 @@ async function(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
@@ -3261,7 +3379,9 @@ async function(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
@@ -3346,7 +3466,9 @@ async function(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
     }
 
@@ -3354,7 +3476,7 @@ async function(){
 
 
 /* =========================
-   버튼 이벤트
+   버튼
 ========================= */
 
 $("createBtn")
