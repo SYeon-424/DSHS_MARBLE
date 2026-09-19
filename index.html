@@ -7,213 +7,464 @@
 <title>대곽마블</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        background: #111;
-        color: white;
-        font-family: Arial, sans-serif;
-        min-height: 100vh;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    button,
-    input {
-        font: inherit;
-    }
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
 
-    .screen {
-        display: none;
-        min-height: 100vh;
-        padding: 30px 20px;
-    }
+button,
+input {
+    font: inherit;
+}
 
-    .screen.active {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 30px 20px;
+}
 
-    h1 {
-        font-size: 42px;
-        margin: 30px 0;
-    }
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    h2 {
-        margin-top: 0;
-    }
+h1 {
+    font-size: 42px;
+    margin: 30px 0;
+}
 
-    input {
-        width: min(400px, 90vw);
-        padding: 14px;
-        border: 2px solid #555;
-        border-radius: 10px;
-        background: #222;
-        color: white;
-        outline: none;
-        margin-bottom: 12px;
-    }
+h2 {
+    margin-top: 0;
+}
 
-    input:focus {
-        border-color: #aaa;
-    }
+input {
+    width: min(400px, 90vw);
+    padding: 14px;
+    border: 2px solid #555;
+    border-radius: 10px;
+    background: #222;
+    color: white;
+    outline: none;
+    margin-bottom: 12px;
+}
 
-    button {
-        border: 0;
-        border-radius: 10px;
-        padding: 13px 20px;
-        margin: 5px;
-        cursor: pointer;
-        background: #444;
-        color: white;
-        transition: 0.15s;
-    }
+input:focus {
+    border-color: #aaa;
+}
 
-    button:hover {
-        background: #666;
-    }
+button {
+    border: 0;
+    border-radius: 10px;
+    padding: 13px 20px;
+    margin: 5px;
+    cursor: pointer;
+    background: #444;
+    color: white;
+    transition: 0.15s;
+}
 
-    button:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-    }
+button:hover {
+    background: #666;
+}
 
-    .primary {
-        background: #7b42ff;
-        font-weight: bold;
-    }
+button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
 
-    .primary:hover {
-        background: #9465ff;
-    }
+.primary {
+    background: #7b42ff;
+    font-weight: bold;
+}
 
-    .panel {
-        width: min(600px, 95vw);
-        background: #1d1d1d;
-        border: 1px solid #444;
-        border-radius: 16px;
-        padding: 20px;
-        margin: 10px;
-    }
+.primary:hover {
+    background: #9465ff;
+}
 
-    .room-code {
-        font-size: 32px;
-        font-weight: bold;
-        letter-spacing: 6px;
-        text-align: center;
-        padding: 15px;
-        background: #111;
-        border-radius: 10px;
-        margin: 15px 0;
-    }
+.panel {
+    width: min(600px, 95vw);
+    background: #1d1d1d;
+    border: 1px solid #444;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 10px;
+}
 
-    #playerList {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        min-height: 40px;
-    }
+.room-code {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 6px;
+    text-align: center;
+    padding: 15px;
+    background: #111;
+    border-radius: 10px;
+    margin: 15px 0;
+}
 
-    .player {
-        background: #333;
-        border-radius: 20px;
-        padding: 8px 14px;
-    }
+#playerList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px;
+}
 
-    .pieces {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 12px;
-        margin-top: 15px;
-    }
+.player {
+    background: #333;
+    border-radius: 20px;
+    padding: 8px 14px;
+}
 
-    .piece-button {
-        position: relative;
-        min-height: 130px;
-        background: #292929;
-        border: 2px solid #444;
-        border-radius: 12px;
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
+.pieces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
 
-    .piece-button:hover {
-        border-color: white;
-        background: #333;
-    }
+.piece-button {
+    position: relative;
+    min-height: 130px;
+    background: #292929;
+    border: 2px solid #444;
+    border-radius: 12px;
+    padding: 8px;
 
-    .piece-button.selected {
-        border-color: #7b42ff;
-        box-shadow: 0 0 0 2px #7b42ff inset;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-    .piece-button.used {
-        opacity: 0.35;
-    }
+.piece-button:hover {
+    border-color: white;
+    background: #333;
+}
 
-    .piece-button img {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-    }
+.piece-button.selected {
+    border-color: #7b42ff;
+    box-shadow: 0 0 0 2px #7b42ff inset;
+}
 
-    .piece-name {
-        margin-top: 5px;
-        font-weight: bold;
-    }
+.piece-button.used {
+    opacity: 0.35;
+}
 
-    .used-label {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        background: #e33;
-        color: white;
-        font-size: 11px;
-        padding: 3px 6px;
-        border-radius: 6px;
-    }
+.piece-button img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.piece-name {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.used-label {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #e33;
+    color: white;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+.message {
+    color: #aaa;
+    text-align: center;
+    margin: 10px;
+}
+
+.error {
+    color: #ff6b6b;
+    min-height: 24px;
+}
+
+.success {
+    color: #7cff9b;
+}
+
+
+/* =========================================================
+   게임 화면
+========================================================= */
+
+#gameScreen {
+    display: none;
+
+    min-height: 100vh;
+
+    /*
+     * 위쪽과 오른쪽에 큰 여백을 둔다.
+     * 아래쪽과 왼쪽은 작은 여백을 둔다.
+     */
+    padding:
+        25px
+        120px
+        15px
+        15px;
+
+    align-items: center;
+
+    overflow: auto;
+}
+
+#gameScreen.active {
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   턴 순서
+========================================================= */
+
+#turnOrder {
+    width: min(1100px, 100%);
+
+    min-height: 90px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+    padding: 8px;
+}
+
+.turn-player {
+    min-width: 90px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 10px;
+
+    border: 3px solid transparent;
+    border-radius: 12px;
+
+    background: #1d1d1d;
+
+    transition:
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+.turn-player.current {
+    border-color: white;
+    transform: scale(1.08);
+}
+
+.turn-player img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.turn-player-name {
+    margin-top: 3px;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+    max-width: 100px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   주사위 컨트롤
+========================================================= */
+
+#diceControl {
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+}
+
+#rollDiceButton {
+    font-size: 17px;
+    padding: 12px 28px;
+}
+
+#turnMessage {
+    color: #aaa;
+    text-align: center;
+    min-height: 24px;
+}
+
+
+/* =========================================================
+   게임판
+========================================================= */
+
+#boardWrapper {
+    position: relative;
+
+    width: min(900px, 90vw);
+
+    margin:
+        0
+        auto
+        10px
+        auto;
+}
+
+#board {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+
+/* =========================================================
+   게임판 위의 말
+========================================================= */
+
+.board-piece {
+    position: absolute;
+
+    width: 6%;
+    height: 6%;
+
+    min-width: 28px;
+    min-height: 28px;
+
+    max-width: 65px;
+    max-height: 65px;
+
+    object-fit: contain;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   게임판 중앙 주사위
+========================================================= */
+
+#diceArea {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    z-index: 20;
+
+    pointer-events: none;
+}
+
+.dice {
+    width: 10%;
+    height: 10%;
+
+    min-width: 45px;
+    min-height: 45px;
+
+    max-width: 100px;
+    max-height: 100px;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   모바일
+========================================================= */
+
+@media (max-width: 700px) {
 
     #gameScreen {
-        padding: 10px;
+        padding:
+            15px
+            35px
+            10px
+            8px;
+    }
+
+    #turnOrder {
+        gap: 4px;
+    }
+
+    .turn-player {
+        min-width: 60px;
+        padding: 4px;
+    }
+
+    .turn-player img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .turn-player-name {
+        font-size: 10px;
+        max-width: 65px;
     }
 
     #boardWrapper {
-        position: relative;
-        width: min(95vw, 900px);
-        margin: auto;
+        width: 96vw;
     }
 
-    #board {
-        display: block;
-        width: 100%;
-        height: auto;
+    .dice {
+        min-width: 32px;
+        min-height: 32px;
     }
 
-    .message {
-        color: #aaa;
-        text-align: center;
-        margin: 10px;
+    .board-piece {
+        min-width: 22px;
+        min-height: 22px;
     }
 
-    .error {
-        color: #ff6b6b;
-        min-height: 24px;
-    }
+}
 
-    .success {
-        color: #7cff9b;
-    }
 </style>
 </head>
 
+
 <body>
 
-<!-- 시작 화면 -->
+
+<!-- =========================================================
+     시작 화면
+========================================================= -->
 
 <section id="startScreen" class="screen active">
 
@@ -230,11 +481,19 @@
             placeholder="닉네임"
         >
 
-        <button id="createRoomButton" class="primary">
+        <button
+            id="createRoomButton"
+            class="primary"
+        >
             방 만들기
         </button>
 
-        <hr style="border-color:#333; margin:20px 0;">
+        <hr
+            style="
+                border-color:#333;
+                margin:20px 0;
+            "
+        >
 
         <h2>방 들어가기</h2>
 
@@ -249,14 +508,19 @@
             들어가기
         </button>
 
-        <div id="startMessage" class="error"></div>
+        <div
+            id="startMessage"
+            class="error"
+        ></div>
 
     </div>
 
 </section>
 
 
-<!-- 대기실 -->
+<!-- =========================================================
+     대기실
+========================================================= -->
 
 <section id="roomScreen" class="screen">
 
@@ -266,7 +530,10 @@
 
         <h2>방 코드</h2>
 
-        <div id="roomCodeDisplay" class="room-code">
+        <div
+            id="roomCodeDisplay"
+            class="room-code"
+        >
             ------
         </div>
 
@@ -296,27 +563,67 @@
             다른 참가자가 선택한 말은 사용할 수 없음
         </div>
 
-        <div id="pieceList" class="pieces">
+        <div
+            id="pieceList"
+            class="pieces"
+        >
             불러오는 중...
         </div>
 
-        <div id="pieceMessage" class="message"></div>
+        <div
+            id="pieceMessage"
+            class="message"
+        ></div>
 
     </div>
 
 
-    <button id="startGameButton" class="primary" disabled>
+    <button
+        id="startGameButton"
+        class="primary"
+        disabled
+    >
         게임 시작
     </button>
 
-    <div id="roomMessage" class="error"></div>
+    <div
+        id="roomMessage"
+        class="error"
+    ></div>
 
 </section>
 
 
-<!-- 게임 화면 -->
+<!-- =========================================================
+     게임 화면
+========================================================= -->
 
 <section id="gameScreen" class="screen">
+
+
+    <!-- 턴 순서를 표시한다 -->
+
+    <div id="turnOrder"></div>
+
+
+    <!-- 현재 차례의 주사위 버튼을 표시한다 -->
+
+    <div id="diceControl">
+
+        <button
+            id="rollDiceButton"
+            class="primary"
+            style="display:none;"
+        >
+            주사위 굴리기
+        </button>
+
+        <div id="turnMessage"></div>
+
+    </div>
+
+
+    <!-- 게임판 -->
 
     <div id="boardWrapper">
 
@@ -326,18 +633,48 @@
             alt="대곽마블 게임판"
         >
 
+
+        <!-- 중앙 주사위 -->
+
+        <div id="diceArea">
+
+            <img
+                id="dice1"
+                class="dice"
+                src="dice/dice1.png"
+                alt="주사위"
+            >
+
+            <img
+                id="dice2"
+                class="dice"
+                src="dice/dice1.png"
+                alt="주사위"
+            >
+
+        </div>
+
+
+        <!-- 말이 여기에 표시된다 -->
+
+        <div id="boardPieces"></div>
+
     </div>
 
 </section>
 
 
-<!-- Firebase SDK -->
-
 <script type="module">
+
+
+/* =========================================================
+   Firebase SDK
+========================================================= */
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+} from
+"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 import {
     getDatabase,
@@ -345,10 +682,10 @@ import {
     set,
     get,
     update,
-    remove,
     onValue,
     onDisconnect
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
 /* =========================================================
@@ -357,7 +694,8 @@ import {
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyAgifEo4ulWFIoqYppZjs60xqVAXK-u31U",
+    apiKey:
+        "AIzaSyAgifEo4ulWFIoqYppZjs60xqVAXK-u31U",
 
     authDomain:
         "dshs-marble.firebaseapp.com",
@@ -380,13 +718,11 @@ const firebaseConfig = {
 };
 
 
-/* =========================================================
-   Firebase 초기화
-========================================================= */
+const app =
+    initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig);
-
-const db = getDatabase(app);
+const db =
+    getDatabase(app);
 
 
 /* =========================================================
@@ -407,7 +743,17 @@ const state = {
 
     pieces: [],
 
-    isHost: false
+    isHost: false,
+
+    turnOrder: [],
+
+    currentTurnIndex: 0,
+
+    gameStarted: false,
+
+    diceRolling: false,
+
+    lastDiceRollId: null
 
 };
 
@@ -434,7 +780,7 @@ function showScreen(id) {
 
 
 /* =========================================================
-   참가자 ID 생성
+   플레이어 ID 생성
 ========================================================= */
 
 function generatePlayerId() {
@@ -450,7 +796,7 @@ function generatePlayerId() {
 
 
 /* =========================================================
-   랜덤 방 코드
+   방 코드 생성
 ========================================================= */
 
 function generateRoomCode() {
@@ -477,18 +823,22 @@ function generateRoomCode() {
 
 
 /* =========================================================
-   방 코드 생성
+   중복되지 않는 방 코드를 생성한다
 ========================================================= */
 
 async function createUniqueRoomCode() {
 
     for (let i = 0; i < 20; i++) {
 
-        const code = generateRoomCode();
+        const code =
+            generateRoomCode();
 
         const snapshot =
             await get(
-                ref(db, `rooms/${code}`)
+                ref(
+                    db,
+                    `rooms/${code}`
+                )
             );
 
         if (!snapshot.exists()) {
@@ -500,25 +850,28 @@ async function createUniqueRoomCode() {
     }
 
     throw new Error(
-        "사용 가능한 방 코드를 생성하지 못했어."
+        "방 코드를 생성하지 못함"
     );
 
 }
 
 
 /* =========================================================
-   이미지 존재 여부 검사
+   이미지 존재 여부를 검사한다
 ========================================================= */
 
 function imageExists(src) {
 
     return new Promise(resolve => {
 
-        const img = new Image();
+        const img =
+            new Image();
 
-        img.onload = () => resolve(true);
+        img.onload =
+            () => resolve(true);
 
-        img.onerror = () => resolve(false);
+        img.onerror =
+            () => resolve(false);
 
         img.src = src;
 
@@ -528,8 +881,7 @@ function imageExists(src) {
 
 
 /* =========================================================
-   P 폴더의 P1.png, P2.png...
-   파일을 자동 탐색
+   P1.png, P2.png... 파일을 자동 탐색한다
 ========================================================= */
 
 async function loadPieces() {
@@ -538,7 +890,8 @@ async function loadPieces() {
 
     for (let i = 1; i <= 100; i++) {
 
-        const src = `P/P${i}.png`;
+        const src =
+            `P/P${i}.png`;
 
         const exists =
             await imageExists(src);
@@ -547,9 +900,11 @@ async function loadPieces() {
 
             foundPieces.push({
 
-                id: `P${i}`,
+                id:
+                    `P${i}`,
 
-                src: src
+                src:
+                    src
 
             });
 
@@ -557,7 +912,8 @@ async function loadPieces() {
 
     }
 
-    state.pieces = foundPieces;
+    state.pieces =
+        foundPieces;
 
     renderPieces();
 
@@ -565,17 +921,21 @@ async function loadPieces() {
 
 
 /* =========================================================
-   말 선택 UI
+   말 선택 UI를 표시한다
 ========================================================= */
 
 function renderPieces() {
 
     const container =
-        document.getElementById("pieceList");
+        document.getElementById(
+            "pieceList"
+        );
 
     container.innerHTML = "";
 
-    if (state.pieces.length === 0) {
+    if (
+        state.pieces.length === 0
+    ) {
 
         container.innerHTML =
             `<div class="message">
@@ -587,152 +947,198 @@ function renderPieces() {
     }
 
 
-    state.pieces.forEach(piece => {
+    state.pieces.forEach(
+        piece => {
 
-        const owner =
-            state.players.find(
-                player =>
-                    player.piece === piece.id
+            const owner =
+                state.players.find(
+                    player =>
+                        player.piece ===
+                        piece.id
+                );
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "piece-button";
+
+
+            if (
+                owner &&
+                owner.playerId !==
+                    state.playerId
+            ) {
+
+                button.classList.add(
+                    "used"
+                );
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            if (
+                state.selectedPiece ===
+                    piece.id
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            }
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+            img.src =
+                piece.src;
+
+            img.alt =
+                piece.id;
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+            name.className =
+                "piece-name";
+
+            name.textContent =
+                piece.id;
+
+
+            button.appendChild(
+                img
+            );
+
+            button.appendChild(
+                name
             );
 
 
-        const button =
-            document.createElement("button");
+            if (owner) {
 
-        button.className =
-            "piece-button";
+                const label =
+                    document.createElement(
+                        "div"
+                    );
 
+                label.className =
+                    "used-label";
 
-        if (owner &&
-            owner.playerId !== state.playerId) {
+                label.textContent =
+                    owner.playerId ===
+                        state.playerId
+                        ? "선택됨"
+                        : "사용 중";
 
-            button.classList.add("used");
+                button.appendChild(
+                    label
+                );
 
-            button.disabled = true;
-
-        }
-
-
-        if (
-            state.selectedPiece === piece.id
-        ) {
-
-            button.classList.add("selected");
-
-        }
+            }
 
 
-        const img =
-            document.createElement("img");
-
-        img.src = piece.src;
-
-        img.alt = piece.id;
-
-
-        const name =
-            document.createElement("div");
-
-        name.className =
-            "piece-name";
-
-        name.textContent =
-            piece.id;
+            button.addEventListener(
+                "click",
+                () =>
+                    selectPiece(
+                        piece.id
+                    )
+            );
 
 
-        button.appendChild(img);
-
-        button.appendChild(name);
-
-
-        if (owner) {
-
-            const label =
-                document.createElement("div");
-
-            label.className =
-                "used-label";
-
-            label.textContent =
-                owner.playerId === state.playerId
-                    ? "선택됨"
-                    : "사용 중";
-
-            button.appendChild(label);
+            container.appendChild(
+                button
+            );
 
         }
-
-
-        button.addEventListener(
-            "click",
-            () => selectPiece(piece.id)
-        );
-
-
-        container.appendChild(button);
-
-    });
+    );
 
 }
 
 
 /* =========================================================
-   참가자 목록 UI
+   참가자 목록을 표시한다
 ========================================================= */
 
 function renderPlayers() {
 
     const container =
-        document.getElementById("playerList");
+        document.getElementById(
+            "playerList"
+        );
 
     container.innerHTML = "";
 
 
-    state.players.forEach(player => {
+    state.players.forEach(
+        player => {
 
-        const div =
-            document.createElement("div");
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-        div.className = "player";
+            div.className =
+                "player";
 
 
-        let text =
-            player.nickname;
+            let text =
+                player.nickname;
 
 
-        if (player.piece) {
+            if (player.piece) {
 
-            text +=
-                ` · ${player.piece}`;
+                text +=
+                    ` · ${player.piece}`;
 
-        } else {
+            } else {
 
-            text +=
-                " · 말 선택 중";
+                text +=
+                    " · 말 선택 중";
+
+            }
+
+
+            if (
+                player.playerId ===
+                state.players[0]?.playerId
+            ) {
+
+                text +=
+                    " · 방장";
+
+            }
+
+
+            div.textContent =
+                text;
+
+            container.appendChild(
+                div
+            );
 
         }
-
-
-        if (
-            player.playerId === state.players[0]?.playerId
-        ) {
-
-            text += " · 방장";
-
-        }
-
-
-        div.textContent = text;
-
-        container.appendChild(div);
-
-    });
+    );
 
 }
 
 
 /* =========================================================
-   게임 시작 버튼 상태
+   게임 시작 버튼 상태를 갱신한다
 ========================================================= */
 
 function updateStartButton() {
@@ -746,7 +1152,8 @@ function updateStartButton() {
     const everyoneSelected =
         state.players.length > 0 &&
         state.players.every(
-            player => player.piece !== null
+            player =>
+                player.piece !== null
         );
 
 
@@ -758,84 +1165,734 @@ function updateStartButton() {
 
 
 /* =========================================================
-   Firebase 방 상태 감시
+   배열을 랜덤하게 섞는다
+========================================================= */
+
+function shuffle(array) {
+
+    const result =
+        [...array];
+
+
+    for (
+        let i = result.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+
+        [
+            result[i],
+            result[j]
+        ] =
+        [
+            result[j],
+            result[i]
+        ];
+
+    }
+
+    return result;
+
+}
+
+
+/* =========================================================
+   턴 순서를 표시한다
+========================================================= */
+
+function renderTurnOrder() {
+
+    const container =
+        document.getElementById(
+            "turnOrder"
+        );
+
+    container.innerHTML = "";
+
+
+    state.turnOrder.forEach(
+        (playerId, index) => {
+
+            const player =
+                state.players.find(
+                    p =>
+                        p.playerId ===
+                        playerId
+                );
+
+
+            if (!player) {
+                return;
+            }
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className =
+                "turn-player";
+
+
+            if (
+                index ===
+                state.currentTurnIndex
+            ) {
+
+                div.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            const piece =
+                state.pieces.find(
+                    p =>
+                        p.id ===
+                        player.piece
+                );
+
+
+            if (piece) {
+
+                img.src =
+                    piece.src;
+
+            }
+
+
+            img.alt =
+                player.piece || "";
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+            name.className =
+                "turn-player-name";
+
+            name.textContent =
+                player.nickname;
+
+
+            div.appendChild(
+                img
+            );
+
+            div.appendChild(
+                name
+            );
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   현재 차례에 따라 주사위 버튼을 표시한다
+========================================================= */
+
+function updateTurnControls() {
+
+    const button =
+        document.getElementById(
+            "rollDiceButton"
+        );
+
+    const message =
+        document.getElementById(
+            "turnMessage"
+        );
+
+
+    const currentPlayerId =
+        state.turnOrder[
+            state.currentTurnIndex
+        ];
+
+
+    const myTurn =
+        currentPlayerId ===
+        state.playerId;
+
+
+    if (myTurn) {
+
+        button.style.display =
+            "block";
+
+        message.textContent =
+            "내 차례";
+
+    } else {
+
+        button.style.display =
+            "none";
+
+
+        const player =
+            state.players.find(
+                p =>
+                    p.playerId ===
+                    currentPlayerId
+            );
+
+
+        message.textContent =
+            player
+                ? `${player.nickname} 차례`
+                : "";
+
+    }
+
+
+    button.disabled =
+        state.diceRolling;
+
+}
+
+
+/* =========================================================
+   게임판 위에 말을 표시한다
+========================================================= */
+
+function renderBoardPieces() {
+
+    const container =
+        document.getElementById(
+            "boardPieces"
+        );
+
+    container.innerHTML = "";
+
+
+    const total =
+        state.players.length;
+
+
+    state.players.forEach(
+        (player, index) => {
+
+            if (!player.piece) {
+                return;
+            }
+
+
+            const piece =
+                state.pieces.find(
+                    p =>
+                        p.id ===
+                        player.piece
+                );
+
+
+            if (!piece) {
+                return;
+            }
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+            img.className =
+                "board-piece";
+
+            img.src =
+                piece.src;
+
+            img.alt =
+                player.nickname;
+
+
+            /*
+             * 현재는 게임 시작 시 중앙 주변에 배치한다.
+             * 이동 기능을 추가하면 Firebase에서 좌표를 받아 사용한다.
+             */
+
+            const angle =
+                (
+                    Math.PI * 2 * index
+                ) /
+                Math.max(
+                    total,
+                    1
+                );
+
+
+            const radius =
+                Math.min(
+                    7,
+                    3 + total
+                );
+
+
+            const x =
+                50 +
+                Math.cos(angle) *
+                radius;
+
+
+            const y =
+                50 +
+                Math.sin(angle) *
+                radius;
+
+
+            img.style.left =
+                `${x}%`;
+
+            img.style.top =
+                `${y}%`;
+
+
+            container.appendChild(
+                img
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   주사위 이미지를 변경한다
+========================================================= */
+
+function setDiceImages(
+    value1,
+    value2
+) {
+
+    document.getElementById(
+        "dice1"
+    ).src =
+        `dice/dice${value1}.png`;
+
+
+    document.getElementById(
+        "dice2"
+    ).src =
+        `dice/dice${value2}.png`;
+
+}
+
+
+/* =========================================================
+   주사위 애니메이션을 실행한다
+========================================================= */
+
+function animateDice(
+    final1,
+    final2
+) {
+
+    return new Promise(
+        resolve => {
+
+            let elapsed = 0;
+
+            let delay = 55;
+
+
+            function roll() {
+
+                /*
+                 * 각 브라우저에서 독립적으로 랜덤값을 만든다.
+                 */
+
+                const random1 =
+                    Math.floor(
+                        Math.random() * 6
+                    ) + 1;
+
+
+                const random2 =
+                    Math.floor(
+                        Math.random() * 6
+                    ) + 1;
+
+
+                setDiceImages(
+                    random1,
+                    random2
+                );
+
+
+                elapsed += delay;
+
+
+                if (
+                    elapsed >= 1500
+                ) {
+
+                    setDiceImages(
+                        final1,
+                        final2
+                    );
+
+                    resolve();
+
+                    return;
+
+                }
+
+
+                /*
+                 * 시간이 지날수록 변경 간격을 늘려
+                 * 주사위가 점점 느려지는 효과를 만든다.
+                 */
+
+                delay *= 1.13;
+
+
+                setTimeout(
+                    roll,
+                    delay
+                );
+
+            }
+
+
+            roll();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   주사위 값을 생성한다
+========================================================= */
+
+function randomDiceValue() {
+
+    return (
+        Math.floor(
+            Math.random() * 6
+        ) + 1
+    );
+
+}
+
+
+/* =========================================================
+   주사위 굴림을 시작한다
+========================================================= */
+
+async function rollDice() {
+
+    if (state.diceRolling) {
+        return;
+    }
+
+
+    const currentPlayerId =
+        state.turnOrder[
+            state.currentTurnIndex
+        ];
+
+
+    if (
+        currentPlayerId !==
+        state.playerId
+    ) {
+
+        return;
+
+    }
+
+
+    const final1 =
+        randomDiceValue();
+
+    const final2 =
+        randomDiceValue();
+
+
+    try {
+
+        /*
+         * 최종 숫자와 굴림 시작 신호만 공유한다.
+         * 애니메이션 자체는 각 브라우저에서 독립적으로 실행한다.
+         */
+
+        await update(
+
+            ref(
+                db,
+                `rooms/${state.roomCode}`
+            ),
+
+            {
+
+                dice1:
+                    final1,
+
+                dice2:
+                    final2,
+
+                diceRolling:
+                    true,
+
+                diceRollId:
+                    Date.now()
+
+            }
+
+        );
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   Firebase 방 상태를 실시간 감시한다
 ========================================================= */
 
 function watchRoom() {
 
     const roomRef =
-        ref(db, `rooms/${state.roomCode}`);
-
-
-    onValue(roomRef, snapshot => {
-
-        if (!snapshot.exists()) {
-
-            document.getElementById(
-                "roomMessage"
-            ).textContent =
-                "방이 존재하지 않음";
-
-            return;
-
-        }
-
-
-        const data =
-            snapshot.val();
-
-
-        const playersObject =
-            data.players || {};
-
-
-        state.players =
-            Object.values(playersObject);
-
-
-        state.players.sort(
-            (a, b) =>
-                (a.joinedAt || 0) -
-                (b.joinedAt || 0)
+        ref(
+            db,
+            `rooms/${state.roomCode}`
         );
 
 
-        const me =
-            state.players.find(
-                player =>
-                    player.playerId ===
-                    state.playerId
+    onValue(
+        roomRef,
+        snapshot => {
+
+            if (
+                !snapshot.exists()
+            ) {
+
+                document.getElementById(
+                    "roomMessage"
+                ).textContent =
+                    "방이 존재하지 않음";
+
+                return;
+
+            }
+
+
+            const data =
+                snapshot.val();
+
+
+            const playersObject =
+                data.players || {};
+
+
+            state.players =
+                Object.values(
+                    playersObject
+                );
+
+
+            state.players.sort(
+                (a, b) =>
+                    (a.joinedAt || 0) -
+                    (b.joinedAt || 0)
             );
 
 
-        if (me) {
+            const me =
+                state.players.find(
+                    player =>
+                        player.playerId ===
+                        state.playerId
+                );
 
-            state.selectedPiece =
-                me.piece || null;
+
+            if (me) {
+
+                state.selectedPiece =
+                    me.piece || null;
+
+            }
+
+
+            state.isHost =
+                state.players.length > 0 &&
+                state.players[0].playerId ===
+                    state.playerId;
+
+
+            state.gameStarted =
+                data.gameStarted === true;
+
+
+            state.turnOrder =
+                data.turnOrder || [];
+
+
+            state.currentTurnIndex =
+                data.currentTurnIndex || 0;
+
+
+            renderPlayers();
+
+            renderPieces();
+
+            updateStartButton();
+
+
+            if (
+                state.gameStarted
+            ) {
+
+                showScreen(
+                    "gameScreen"
+                );
+
+
+                renderTurnOrder();
+
+                renderBoardPieces();
+
+                updateTurnControls();
+
+
+                /*
+                 * 새로운 주사위 굴림을 감지한다.
+                 */
+
+                if (
+                    data.diceRollId &&
+                    data.diceRollId !==
+                        state.lastDiceRollId
+                ) {
+
+                    state.lastDiceRollId =
+                        data.diceRollId;
+
+
+                    state.diceRolling =
+                        true;
+
+
+                    updateTurnControls();
+
+
+                    /*
+                     * 각 브라우저에서 독립적인
+                     * 랜덤 애니메이션을 실행한다.
+                     */
+
+                    animateDice(
+                        data.dice1,
+                        data.dice2
+                    ).then(
+                        () => {
+
+                            state.diceRolling =
+                                false;
+
+
+                            updateTurnControls();
+
+
+                            /*
+                             * 방장만 애니메이션이 끝난 뒤
+                             * 다음 턴을 기록한다.
+                             */
+
+                            if (
+                                state.isHost &&
+                                data.diceRolling === true
+                            ) {
+
+                                const nextIndex =
+                                    (
+                                        state.currentTurnIndex +
+                                        1
+                                    ) %
+                                    state.turnOrder.length;
+
+
+                                update(
+
+                                    ref(
+                                        db,
+                                        `rooms/${state.roomCode}`
+                                    ),
+
+                                    {
+
+                                        diceRolling:
+                                            false,
+
+                                        currentTurnIndex:
+                                            nextIndex
+
+                                    }
+
+                                );
+
+                            }
+
+                        }
+                    );
+
+                } else {
+
+                    /*
+                     * 주사위 굴림이 없는 상태에서는
+                     * 현재 Firebase 결과를 표시한다.
+                     */
+
+                    if (
+                        data.dice1 &&
+                        data.dice2
+                    ) {
+
+                        setDiceImages(
+                            data.dice1,
+                            data.dice2
+                        );
+
+                    }
+
+                }
+
+            }
 
         }
-
-
-        state.isHost =
-            state.players.length > 0 &&
-            state.players[0].playerId ===
-                state.playerId;
-
-
-        renderPlayers();
-
-        renderPieces();
-
-        updateStartButton();
-
-
-        if (data.gameStarted === true) {
-
-            showScreen("gameScreen");
-
-        }
-
-    });
+    );
 
 }
 
@@ -848,7 +1905,9 @@ async function createRoom() {
 
     const nickname =
         document
-            .getElementById("nicknameInput")
+            .getElementById(
+                "nicknameInput"
+            )
             .value
             .trim();
 
@@ -899,10 +1958,12 @@ async function createRoom() {
 
 
         await set(
+
             ref(
                 db,
                 `rooms/${roomCode}`
             ),
+
             {
 
                 hostId:
@@ -914,6 +1975,24 @@ async function createRoom() {
                 createdAt:
                     Date.now(),
 
+                dice1:
+                    1,
+
+                dice2:
+                    1,
+
+                diceRolling:
+                    false,
+
+                diceRollId:
+                    null,
+
+                currentTurnIndex:
+                    0,
+
+                turnOrder:
+                    [],
+
                 players: {
 
                     [state.playerId]:
@@ -922,10 +2001,12 @@ async function createRoom() {
                 }
 
             }
+
         );
 
 
         setupDisconnect();
+
 
         document.getElementById(
             "roomCodeDisplay"
@@ -933,7 +2014,10 @@ async function createRoom() {
             roomCode;
 
 
-        showScreen("roomScreen");
+        showScreen(
+            "roomScreen"
+        );
+
 
         loadPieces();
 
@@ -942,7 +2026,10 @@ async function createRoom() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         document.getElementById(
             "startMessage"
@@ -962,14 +2049,18 @@ async function joinRoom() {
 
     const nickname =
         document
-            .getElementById("nicknameInput")
+            .getElementById(
+                "nicknameInput"
+            )
             .value
             .trim();
 
 
     const roomCode =
         document
-            .getElementById("roomCodeInput")
+            .getElementById(
+                "roomCodeInput"
+            )
             .value
             .trim()
             .toUpperCase();
@@ -987,7 +2078,9 @@ async function joinRoom() {
     }
 
 
-    if (roomCode.length !== 6) {
+    if (
+        roomCode.length !== 6
+    ) {
 
         document.getElementById(
             "startMessage"
@@ -1002,14 +2095,21 @@ async function joinRoom() {
     try {
 
         const roomRef =
-            ref(db, `rooms/${roomCode}`);
+            ref(
+                db,
+                `rooms/${roomCode}`
+            );
 
 
         const snapshot =
-            await get(roomRef);
+            await get(
+                roomRef
+            );
 
 
-        if (!snapshot.exists()) {
+        if (
+            !snapshot.exists()
+        ) {
 
             document.getElementById(
                 "startMessage"
@@ -1025,7 +2125,9 @@ async function joinRoom() {
             snapshot.val();
 
 
-        if (room.gameStarted) {
+        if (
+            room.gameStarted
+        ) {
 
             document.getElementById(
                 "startMessage"
@@ -1085,7 +2187,10 @@ async function joinRoom() {
             roomCode;
 
 
-        showScreen("roomScreen");
+        showScreen(
+            "roomScreen"
+        );
+
 
         loadPieces();
 
@@ -1094,7 +2199,10 @@ async function joinRoom() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         document.getElementById(
             "startMessage"
@@ -1107,7 +2215,7 @@ async function joinRoom() {
 
 
 /* =========================================================
-   접속 종료 시 참가자 제거
+   접속 종료 시 참가자를 제거한다
 ========================================================= */
 
 function setupDisconnect() {
@@ -1119,7 +2227,9 @@ function setupDisconnect() {
         );
 
 
-    onDisconnect(playerRef).remove();
+    onDisconnect(
+        playerRef
+    ).remove();
 
 }
 
@@ -1128,7 +2238,9 @@ function setupDisconnect() {
    말 선택
 ========================================================= */
 
-async function selectPiece(pieceId) {
+async function selectPiece(
+    pieceId
+) {
 
     const player =
         state.players.find(
@@ -1146,7 +2258,8 @@ async function selectPiece(pieceId) {
     const alreadyUsed =
         state.players.find(
             player =>
-                player.piece === pieceId &&
+                player.piece ===
+                    pieceId &&
                 player.playerId !==
                     state.playerId
         );
@@ -1159,30 +2272,27 @@ async function selectPiece(pieceId) {
         ).textContent =
             "이미 선택된 말";
 
-        document.getElementById(
-            "pieceMessage"
-        ).className =
-            "message error";
-
         return;
 
     }
 
 
-    const playerRef =
-        ref(
-            db,
-            `rooms/${state.roomCode}/players/${state.playerId}`
-        );
-
-
     try {
 
         await update(
-            playerRef,
+
+            ref(
+                db,
+                `rooms/${state.roomCode}/players/${state.playerId}`
+            ),
+
             {
-                piece: pieceId
+
+                piece:
+                    pieceId
+
             }
+
         );
 
 
@@ -1199,7 +2309,10 @@ async function selectPiece(pieceId) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         document.getElementById(
             "pieceMessage"
@@ -1225,7 +2338,8 @@ async function startGame() {
     const everyoneSelected =
         state.players.length > 0 &&
         state.players.every(
-            player => player.piece !== null
+            player =>
+                player.piece !== null
         );
 
 
@@ -1241,22 +2355,61 @@ async function startGame() {
     }
 
 
+    /*
+     * 게임 시작 시 턴 순서를 랜덤으로 결정한다.
+     */
+
+    const shuffledOrder =
+        shuffle(
+            state.players.map(
+                player =>
+                    player.playerId
+            )
+        );
+
+
     try {
 
         await update(
+
             ref(
                 db,
                 `rooms/${state.roomCode}`
             ),
+
             {
+
                 gameStarted:
-                    true
+                    true,
+
+                turnOrder:
+                    shuffledOrder,
+
+                currentTurnIndex:
+                    0,
+
+                dice1:
+                    1,
+
+                dice2:
+                    1,
+
+                diceRolling:
+                    false,
+
+                diceRollId:
+                    null
+
             }
+
         );
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         document.getElementById(
             "roomMessage"
@@ -1273,7 +2426,9 @@ async function startGame() {
 ========================================================= */
 
 document
-    .getElementById("createRoomButton")
+    .getElementById(
+        "createRoomButton"
+    )
     .addEventListener(
         "click",
         createRoom
@@ -1281,7 +2436,9 @@ document
 
 
 document
-    .getElementById("joinRoomButton")
+    .getElementById(
+        "joinRoomButton"
+    )
     .addEventListener(
         "click",
         joinRoom
@@ -1289,19 +2446,33 @@ document
 
 
 document
-    .getElementById("startGameButton")
+    .getElementById(
+        "startGameButton"
+    )
     .addEventListener(
         "click",
         startGame
     );
 
 
+document
+    .getElementById(
+        "rollDiceButton"
+    )
+    .addEventListener(
+        "click",
+        rollDice
+    );
+
+
 /* =========================================================
-   방 코드 입력 자동 대문자 변환
+   방 코드 입력값을 대문자로 변환한다
 ========================================================= */
 
 document
-    .getElementById("roomCodeInput")
+    .getElementById(
+        "roomCodeInput"
+    )
     .addEventListener(
         "input",
         event => {
@@ -1319,33 +2490,7 @@ document
 
 
 /* =========================================================
-   페이지 종료 처리
-========================================================= */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        if (
-            state.roomCode &&
-            state.playerId
-        ) {
-
-            remove(
-                ref(
-                    db,
-                    `rooms/${state.roomCode}/players/${state.playerId}`
-                )
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   초기 말 목록 로딩
+   초기 말 목록을 로딩한다
 ========================================================= */
 
 loadPieces();
