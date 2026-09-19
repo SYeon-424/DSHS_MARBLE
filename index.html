@@ -244,6 +244,8 @@ button {
     width: min(100%, 1100px);
 
     flex-shrink: 0;
+
+    z-index: 1;
 }
 
 .board-image {
@@ -258,6 +260,7 @@ button {
 
 /* =========================
    턴 순서
+   보드보다 위에 표시한다.
    ========================= */
 
 #turnOrder {
@@ -266,7 +269,7 @@ button {
     top: 15px;
     left: 15px;
 
-    z-index: 200;
+    z-index: 1000;
 
     display: flex;
 
@@ -284,7 +287,7 @@ button {
 
     padding: 6px;
 
-    background: rgba(0, 0, 0, 0.78);
+    background: rgba(0, 0, 0, 0.82);
 
     border: 2px solid transparent;
 
@@ -360,6 +363,11 @@ button {
     opacity: 0.8;
 }
 
+/* =========================
+   차례 / 주사위 버튼
+   보드보다 위에 표시한다.
+   ========================= */
+
 #turnControls {
     position: fixed;
 
@@ -368,7 +376,7 @@ button {
 
     transform: translateX(-50%);
 
-    z-index: 300;
+    z-index: 1000;
 
     display: flex;
 
@@ -390,7 +398,7 @@ button {
 #turnMessage {
     padding: 7px 12px;
 
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.86);
 
     border-radius: 8px;
 
@@ -434,6 +442,36 @@ button {
 }
 
 /* =========================
+   자금 버튼
+   ========================= */
+
+#moneyToggleButton {
+    position: fixed;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 1100;
+
+    padding: 9px 16px;
+
+    border-radius: 9px;
+
+    background: rgba(0, 0, 0, 0.88);
+
+    color: white;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.8);
+}
+
+#moneyToggleButton:hover {
+    background: rgba(255, 255, 255, 0.98);
+    color: #111;
+}
+
+/* =========================
    돈 패널
    ========================= */
 
@@ -446,17 +484,51 @@ button {
     width: 470px;
     max-width: calc(100vw - 30px);
 
-    padding: 12px;
+    padding: 14px;
 
-    background: rgba(0, 0, 0, 0.82);
+    background: rgba(0, 0, 0, 0.88);
 
-    border: 2px solid rgba(255, 255, 255, 0.75);
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.75);
 
     border-radius: 12px;
 
-    z-index: 250;
+    z-index: 1100;
 
     color: white;
+}
+
+#moneyCloseButton {
+    position: absolute;
+
+    top: 5px;
+    right: 6px;
+
+    width: 27px;
+    height: 27px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    color: white;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.7);
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    z-index: 2;
+}
+
+#moneyCloseButton:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* 돈 5종 */
@@ -468,6 +540,8 @@ button {
     justify-content: space-between;
 
     gap: 5px;
+
+    padding-right: 24px;
 }
 
 .money-type {
@@ -502,9 +576,12 @@ button {
 
     border-radius: 5px;
 
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.8);
 
-    background: rgba(255, 255, 255, 0.13);
+    background:
+        rgba(255, 255, 255, 0.13);
 
     color: white;
 
@@ -515,7 +592,8 @@ button {
 
 .amount-up:hover,
 .amount-down:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background:
+        rgba(255, 255, 255, 0.28);
 }
 
 /* 수량 */
@@ -534,7 +612,9 @@ button {
     font-weight: 800;
 }
 
-/* 선택 금액 */
+/* =========================
+   선택 금액
+   ========================= */
 
 #selectedMoneyArea {
     margin-top: 10px;
@@ -571,7 +651,8 @@ button {
 
     border-radius: 7px;
 
-    background: rgba(255, 255, 255, 0.14);
+    background:
+        rgba(255, 255, 255, 0.14);
 
     color: white;
 
@@ -581,7 +662,8 @@ button {
 }
 
 .money-action-button:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background:
+        rgba(255, 255, 255, 0.28);
 }
 
 /* =========================
@@ -618,7 +700,8 @@ button {
 }
 
 .balance-player.me {
-    background: rgba(255, 255, 255, 0.13);
+    background:
+        rgba(255, 255, 255, 0.13);
 
     font-weight: 800;
 }
@@ -676,7 +759,8 @@ button {
 
     border-radius: 7px;
 
-    background: rgba(255, 255, 255, 0.14);
+    background:
+        rgba(255, 255, 255, 0.14);
 
     color: white;
 
@@ -686,7 +770,8 @@ button {
 }
 
 #welfareButtons button:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background:
+        rgba(255, 255, 255, 0.28);
 }
 
 /* =========================
@@ -707,9 +792,15 @@ button {
         top: 10px;
         right: 10px;
 
-        width: calc(100vw - 20px);
+        width:
+            calc(100vw - 20px);
 
-        padding: 8px;
+        padding: 10px;
+    }
+
+    #moneyToggleButton {
+        top: 10px;
+        right: 10px;
     }
 
     .money-image {
@@ -732,9 +823,11 @@ button {
         bottom: 75px;
         left: 50%;
 
-        transform: translateX(-50%);
+        transform:
+            translateX(-50%);
 
-        width: calc(100vw - 20px);
+        width:
+            calc(100vw - 20px);
 
         justify-content: center;
     }
@@ -884,9 +977,32 @@ button {
     <div id="turnOrder"></div>
 
 
+    <!-- 자금 열기 버튼 -->
+
+    <button
+        id="moneyToggleButton"
+        onclick="toggleMoneyPanel()"
+        style="display:none"
+    >
+        자금
+    </button>
+
+
     <!-- 돈 / 잔고 패널 -->
 
     <div id="moneyPanel">
+
+        <!-- 닫기 -->
+
+        <button
+            id="moneyCloseButton"
+            onclick="toggleMoneyPanel()"
+        >
+            ×
+        </button>
+
+
+        <!-- 돈 종류 -->
 
         <div id="moneySelector">
 
@@ -1084,7 +1200,9 @@ button {
     </div>
 
 
-    <!-- 게임판 -->
+    <!-- =========================
+         게임판
+         ========================= -->
 
     <div class="board-wrap">
 
@@ -1118,7 +1236,9 @@ button {
     </div>
 
 
-    <!-- 턴 컨트롤 -->
+    <!-- =========================
+         차례 / 주사위 버튼
+         ========================= -->
 
     <div id="turnControls">
 
@@ -1147,7 +1267,7 @@ button {
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 import {
     getDatabase,
@@ -1158,7 +1278,7 @@ import {
     onValue,
     onDisconnect,
     runTransaction
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
 const firebaseConfig = {
@@ -1187,9 +1307,13 @@ const firebaseConfig = {
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(
+        firebaseConfig
+    );
 
-const db = getDatabase(app);
+const db =
+    getDatabase(app);
 
 
 /* =========================================================
@@ -1228,8 +1352,9 @@ const state = {
    DOM
    ========================================================= */
 
-const $ = id =>
-    document.getElementById(id);
+const $ =
+    id =>
+        document.getElementById(id);
 
 
 const loginScreen =
@@ -1243,7 +1368,9 @@ const gameScreen =
 
 
 const boardWrapper =
-    document.querySelector(".board-wrap");
+    document.querySelector(
+        ".board-wrap"
+    );
 
 
 /* =========================================================
@@ -1253,7 +1380,10 @@ const boardWrapper =
 function getPlayerId() {
 
     let id =
-        localStorage.getItem("dshsMarblePlayerId");
+        localStorage.getItem(
+            "dshsMarblePlayerId"
+        );
+
 
     if (!id) {
 
@@ -1262,7 +1392,9 @@ function getPlayerId() {
             Math.random()
                 .toString(36)
                 .substring(2) +
-            Date.now().toString(36);
+            Date.now()
+                .toString(36);
+
 
         localStorage.setItem(
             "dshsMarblePlayerId",
@@ -1271,7 +1403,9 @@ function getPlayerId() {
 
     }
 
+
     return id;
+
 }
 
 
@@ -1285,8 +1419,11 @@ state.playerId =
 
 function formatMoney(value) {
 
-    return Number(value || 0)
-        .toLocaleString("ko-KR") + "원";
+    return Number(
+        value || 0
+    )
+        .toLocaleString("ko-KR")
+        + "원";
 
 }
 
@@ -1295,7 +1432,10 @@ function cleanRoomCode(value) {
 
     return value
         .toUpperCase()
-        .replace(/[^A-Z0-9]/g, "");
+        .replace(
+            /[^A-Z0-9]/g,
+            ""
+        );
 
 }
 
@@ -1307,7 +1447,12 @@ function makeRoomCode() {
 
     let code = "";
 
-    for (let i = 0; i < 6; i++) {
+
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
 
         code +=
             chars[
@@ -1318,6 +1463,7 @@ function makeRoomCode() {
             ];
 
     }
+
 
     return code;
 
@@ -1349,7 +1495,8 @@ function getNickname() {
 function showLoginError(message) {
 
     $("loginError")
-        .textContent = message;
+        .textContent =
+        message;
 
 }
 
@@ -1362,6 +1509,7 @@ async function createRoom() {
 
     const nickname =
         getNickname();
+
 
     if (!nickname) {
 
@@ -1382,12 +1530,14 @@ async function createRoom() {
 
         for (
             let i = 0;
-            i < 20 && exists;
+            i < 20 &&
+            exists;
             i++
         ) {
 
             code =
                 makeRoomCode();
+
 
             const snapshot =
                 await get(
@@ -1396,6 +1546,7 @@ async function createRoom() {
                         `rooms/${code}`
                     )
                 );
+
 
             exists =
                 snapshot.exists();
@@ -1519,6 +1670,7 @@ async function joinRoom() {
     const nickname =
         getNickname();
 
+
     const code =
         cleanRoomCode(
             $("roomInput").value
@@ -1591,7 +1743,8 @@ async function joinRoom() {
 
 
         if (
-            Object.keys(players).length >= 5
+            Object.keys(players)
+                .length >= 5
         ) {
 
             showLoginError(
@@ -1713,7 +1866,10 @@ let watchingRoom = false;
 
 function watchRoom() {
 
-    if (watchingRoom) return;
+    if (watchingRoom) {
+        return;
+    }
+
 
     watchingRoom = true;
 
@@ -1772,7 +1928,6 @@ function watchRoom() {
 
             renderBalances();
 
-
             renderWelfare();
 
 
@@ -1796,9 +1951,7 @@ function watchRoom() {
 
             renderTurnOrder();
 
-
             renderBoardPieces();
-
 
             updateTurnControls();
 
@@ -1867,8 +2020,10 @@ function watchRoom() {
 
                 }
 
+
                 state.diceRolling =
                     false;
+
 
                 updateTurnControls();
 
@@ -1893,12 +2048,16 @@ function renderRoom() {
     $("players").innerHTML = "";
 
 
-    for (const player of players) {
+    for (
+        const player
+        of players
+    ) {
 
         const div =
             document.createElement(
                 "div"
             );
+
 
         div.className =
             "player";
@@ -1908,6 +2067,7 @@ function renderRoom() {
             document.createElement(
                 "span"
             );
+
 
         left.textContent =
             player.nickname;
@@ -1997,13 +2157,41 @@ function renderRoom() {
 }
 
 
+/*
+ * 방장의 ID를 반환한다.
+ */
+
 function getHostId() {
+
+    const room =
+        state.roomCode;
+
+
+    if (!room) {
+        return null;
+    }
+
+
+    /*
+     * state에는 hostId를 따로 저장하지 않으므로
+     * 현재 방 데이터에서 확인한다.
+     */
+
+    if (
+        state.isHost
+    ) {
+
+        return state.playerId;
+
+    }
+
 
     const host =
         state.players.find(
             player =>
-                player.isHost
+                player.isHost === true
         );
+
 
     return host?.playerId || null;
 
@@ -2016,21 +2204,28 @@ function getHostId() {
 
 async function imageExists(src) {
 
-    return new Promise(resolve => {
+    return new Promise(
+        resolve => {
 
-        const img =
-            new Image();
+            const img =
+                new Image();
 
-        img.onload =
-            () => resolve(true);
 
-        img.onerror =
-            () => resolve(false);
+            img.onload =
+                () =>
+                    resolve(true);
 
-        img.src =
-            src;
 
-    });
+            img.onerror =
+                () =>
+                    resolve(false);
+
+
+            img.src =
+                src;
+
+        }
+    );
 
 }
 
@@ -2079,7 +2274,9 @@ async function loadPieces() {
 
 function renderPieces() {
 
-    if (!state.players.length) {
+    if (
+        !state.players.length
+    ) {
         return;
     }
 
@@ -2114,7 +2311,8 @@ function renderPieces() {
 
 
     for (
-        const piece of state.pieces
+        const piece
+        of state.pieces
     ) {
 
         const button =
@@ -2122,12 +2320,14 @@ function renderPieces() {
                 "button"
             );
 
+
         button.className =
             "piece";
 
 
         if (
-            piece.id === myPiece
+            piece.id ===
+            myPiece
         ) {
 
             button.classList.add(
@@ -2154,8 +2354,10 @@ function renderPieces() {
                 "img"
             );
 
+
         img.src =
             piece.src;
+
 
         img.alt =
             piece.id;
@@ -2177,7 +2379,8 @@ function renderPieces() {
                 "사용 중";
 
         } else if (
-            piece.id === myPiece
+            piece.id ===
+            myPiece
         ) {
 
             label.textContent =
@@ -2207,7 +2410,9 @@ function renderPieces() {
 
 
         $("pieces")
-            .appendChild(button);
+            .appendChild(
+                button
+            );
 
     }
 
@@ -2218,7 +2423,9 @@ function renderPieces() {
    말 선택
    ========================================================= */
 
-async function selectPiece(pieceId) {
+async function selectPiece(
+    pieceId
+) {
 
     const playersRef =
         ref(
@@ -2235,9 +2442,13 @@ async function selectPiece(pieceId) {
 
                 if (
                     !players ||
-                    !players[state.playerId]
+                    !players[
+                        state.playerId
+                    ]
                 ) {
+
                     return;
+
                 }
 
 
@@ -2299,7 +2510,9 @@ async function startGame() {
         !state.isHost ||
         !state.roomCode
     ) {
+
         return;
+
     }
 
 
@@ -2341,7 +2554,9 @@ async function startGame() {
                 if (
                     playerList.length === 0
                 ) {
+
                     return;
+
                 }
 
 
@@ -2447,7 +2662,8 @@ async function startGame() {
 function shuffle(array) {
 
     for (
-        let i = array.length - 1;
+        let i =
+            array.length - 1;
         i > 0;
         i--
     ) {
@@ -2491,7 +2707,10 @@ function renderTurnOrder() {
 
     state.turnOrder
         .forEach(
-            (playerId, index) => {
+            (
+                playerId,
+                index
+            ) => {
 
                 const player =
                     state.players.find(
@@ -2593,7 +2812,9 @@ function updateTurnControls() {
     if (
         !state.gameStarted
     ) {
+
         return;
+
     }
 
 
@@ -2665,7 +2886,9 @@ async function rollDice() {
     if (
         state.diceRolling
     ) {
+
         return;
+
     }
 
 
@@ -2679,12 +2902,15 @@ async function rollDice() {
         currentPlayerId !==
         state.playerId
     ) {
+
         return;
+
     }
 
 
     const final1 =
         randomDiceValue();
+
 
     const final2 =
         randomDiceValue();
@@ -2731,6 +2957,7 @@ function setDiceImages(
     $("dice1").src =
         `dice/dice${value1}.png`;
 
+
     $("dice2").src =
         `dice/dice${value2}.png`;
 
@@ -2759,6 +2986,7 @@ function animateDice(
                 const random1 =
                     randomDiceValue();
 
+
                 const random2 =
                     randomDiceValue();
 
@@ -2782,6 +3010,7 @@ function animateDice(
                         final2
                     );
 
+
                     resolve();
 
                     return;
@@ -2789,7 +3018,8 @@ function animateDice(
                 }
 
 
-                delay *= 1.13;
+                delay *=
+                    1.13;
 
 
                 setTimeout(
@@ -2828,7 +3058,7 @@ function renderBoardPieces() {
 
     /*
      * 현재 플레이어의 말을 먼저 렌더링한다.
-     * 따라서 자신의 말이 항상 가장 위에 표시된다.
+     * 자신의 말이 항상 가장 위에 표시된다.
      */
 
     const sortedPlayers =
@@ -2839,15 +3069,21 @@ function renderBoardPieces() {
                     a.playerId ===
                     state.playerId
                 ) {
+
                     return -1;
+
                 }
+
 
                 if (
                     b.playerId ===
                     state.playerId
                 ) {
+
                     return 1;
+
                 }
+
 
                 return (
                     (a.joinedAt || 0) -
@@ -2859,12 +3095,17 @@ function renderBoardPieces() {
 
 
     sortedPlayers.forEach(
-        (player, index) => {
+        (
+            player,
+            index
+        ) => {
 
             if (
                 !player.piece
             ) {
+
                 return;
+
             }
 
 
@@ -2890,8 +3131,10 @@ function renderBoardPieces() {
             img.src =
                 piece.src;
 
+
             img.alt =
                 player.nickname;
+
 
             img.className =
                 "board-piece";
@@ -2909,13 +3152,9 @@ function renderBoardPieces() {
                 const defaultPositions = [
 
                     [50, 50],
-
                     [47, 50],
-
                     [53, 50],
-
                     [50, 46],
-
                     [50, 54]
 
                 ];
@@ -2931,6 +3170,7 @@ function renderBoardPieces() {
                 img.style.left =
                     `${position[0]}%`;
 
+
                 img.style.top =
                     `${position[1]}%`;
 
@@ -2938,6 +3178,7 @@ function renderBoardPieces() {
 
                 img.style.left =
                     `${player.x}%`;
+
 
                 img.style.top =
                     `${player.y}%`;
@@ -2958,9 +3199,11 @@ function renderBoardPieces() {
                     "draggable"
                 );
 
+
                 setupPieceDrag(
                     img
                 );
+
 
                 img.style.zIndex =
                     "100";
@@ -3000,11 +3243,14 @@ function setupPieceDrag(img) {
 
             event.preventDefault();
 
+
             dragging = true;
+
 
             img.setPointerCapture(
                 event.pointerId
             );
+
 
             img.style.zIndex =
                 "200";
@@ -3070,6 +3316,7 @@ function setupPieceDrag(img) {
 
             img.style.left =
                 `${x}%`;
+
 
             img.style.top =
                 `${y}%`;
@@ -3150,10 +3397,8 @@ function setupPieceDrag(img) {
                 ),
 
                 {
-
                     x,
                     y
-
                 }
 
             );
@@ -3172,6 +3417,47 @@ function setupPieceDrag(img) {
     );
 
 }
+
+
+/* =========================================================
+   돈 패널 열기 / 닫기
+   ========================================================= */
+
+window.toggleMoneyPanel =
+function () {
+
+    const panel =
+        $("moneyPanel");
+
+
+    const toggle =
+        $("moneyToggleButton");
+
+
+    const isClosed =
+        panel.style.display ===
+        "none";
+
+
+    if (isClosed) {
+
+        panel.style.display =
+            "block";
+
+        toggle.style.display =
+            "none";
+
+    } else {
+
+        panel.style.display =
+            "none";
+
+        toggle.style.display =
+            "block";
+
+    }
+
+};
 
 
 /* =========================================================
@@ -3404,7 +3690,9 @@ async function () {
     if (
         total <= 0
     ) {
+
         return;
+
     }
 
 
@@ -3458,7 +3746,9 @@ async function () {
     if (
         total <= 0
     ) {
+
         return;
+
     }
 
 
@@ -3738,6 +4028,7 @@ $("showJoinBtn")
                 .classList.toggle(
                     "hidden"
                 );
+
 
             $("loginError")
                 .textContent = "";
