@@ -56,7 +56,7 @@ button:disabled{
 }
 
 .panel{
-    width:min(520px,100%);
+    width:min(560px,100%);
     background:#242424;
     border-radius:20px;
     padding:28px;
@@ -141,6 +141,29 @@ button{
     align-items:center;
 }
 
+.player-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.player-me{
+    font-weight:900;
+}
+
+.host-badge{
+    font-size:11px;
+    background:#fff;
+    color:#111;
+    padding:3px 6px;
+    border-radius:5px;
+}
+
+.player-piece{
+    color:#aaa;
+    font-size:12px;
+}
+
 
 /* =========================
    말 선택
@@ -148,13 +171,13 @@ button{
 
 .pieces{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+    grid-template-columns:repeat(5,1fr);
     gap:10px;
     margin-top:10px;
 }
 
 .piece{
-    min-height:100px;
+    min-height:105px;
     padding:8px;
     background:#171717;
     border:2px solid transparent;
@@ -165,10 +188,12 @@ button{
     gap:5px;
     border-radius:10px;
     user-select:none;
+    cursor:pointer;
 }
 
 .piece.selected{
     border-color:#fff;
+    background:#303030;
 }
 
 .piece.used{
@@ -177,8 +202,9 @@ button{
 }
 
 .piece img{
-    max-width:70px;
-    max-height:70px;
+    width:65px;
+    height:65px;
+    object-fit:contain;
 }
 
 .piece small{
@@ -205,7 +231,7 @@ button{
     z-index:1;
 }
 
-.board-wrap > img.board-image{
+.board-image{
     display:block;
     width:100%;
     height:auto;
@@ -233,11 +259,19 @@ button{
     aspect-ratio:1;
     object-fit:contain;
     transform:translate(-50%,-50%);
-    cursor:grab;
     user-select:none;
     -webkit-user-drag:none;
     touch-action:none;
     pointer-events:auto;
+    cursor:grab;
+}
+
+.game-piece.other-piece{
+    z-index:1;
+}
+
+.game-piece.my-piece{
+    z-index:999;
 }
 
 .game-piece:active{
@@ -285,7 +319,7 @@ button{
     border:1px solid #555;
     border-radius:12px;
     padding:10px 13px;
-    min-width:150px;
+    min-width:160px;
 
     box-shadow:0 5px 20px #0008;
 }
@@ -373,7 +407,7 @@ button{
     top:15px;
     z-index:1100;
 
-    width:min(360px,calc(100vw - 30px));
+    width:min(390px,calc(100vw - 30px));
     max-height:calc(100vh - 30px);
     overflow-y:auto;
 
@@ -402,23 +436,55 @@ button{
     padding:7px 10px;
 }
 
-.balance-box{
-    background:#111;
-    border-radius:12px;
-    padding:12px;
+
+/* =========================
+   플레이어별 금액
+========================= */
+
+.money-players{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
     margin-bottom:15px;
 }
 
-.balance-label{
-    color:#aaa;
-    font-size:13px;
+.money-player{
+    background:#111;
+    border-radius:9px;
+    padding:9px 11px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.balance-value{
-    font-size:25px;
-    font-weight:900;
-    margin-top:3px;
+.money-player.me{
+    border:1px solid #fff;
 }
+
+.money-player-name{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:14px;
+}
+
+.money-player-balance{
+    font-weight:900;
+}
+
+.me-badge{
+    font-size:10px;
+    background:#fff;
+    color:#111;
+    padding:2px 5px;
+    border-radius:4px;
+}
+
+
+/* =========================
+   지폐 선택
+========================= */
 
 .money-grid{
     display:flex;
@@ -428,8 +494,8 @@ button{
 
 .money-row{
     display:grid;
-    grid-template-columns:65px 1fr 42px 42px;
-    gap:7px;
+    grid-template-columns:55px 1fr 38px 42px 38px;
+    gap:6px;
     align-items:center;
 
     background:#181818;
@@ -438,7 +504,7 @@ button{
 }
 
 .money-image{
-    width:55px;
+    width:50px;
     height:38px;
     object-fit:contain;
 }
@@ -448,11 +514,17 @@ button{
 }
 
 .money-small-button{
-    width:38px;
-    height:38px;
+    width:36px;
+    height:36px;
     padding:0;
     background:#444;
     color:#fff;
+}
+
+.money-count{
+    text-align:center;
+    font-weight:900;
+    min-width:30px;
 }
 
 .selected-money{
@@ -480,6 +552,11 @@ button{
     background:#fff;
     color:#111;
 }
+
+
+/* =========================
+   사회복지기금
+========================= */
 
 .welfare-box{
     margin-top:15px;
@@ -517,11 +594,15 @@ button{
 
 @media(max-width:600px){
 
+    .pieces{
+        grid-template-columns:repeat(3,1fr);
+    }
+
     #turnOrder{
         top:auto;
         bottom:80px;
         left:10px;
-        min-width:125px;
+        min-width:135px;
         padding:8px;
     }
 
@@ -675,7 +756,7 @@ button{
 
 
 <!-- =========================
-     게임
+     게임 화면
 ========================= -->
 
 <div id="gameScreen">
@@ -716,7 +797,7 @@ button{
 
 
 <!-- =========================
-     게임 시작 후 표시
+     턴 순서
 ========================= -->
 
 <div
@@ -732,6 +813,10 @@ button{
 
 </div>
 
+
+<!-- =========================
+     주사위 컨트롤
+========================= -->
 
 <div
     id="turnControls"
@@ -751,6 +836,10 @@ button{
 
 </div>
 
+
+<!-- =========================
+     금액 버튼
+========================= -->
 
 <button
     id="moneyToggleButton"
@@ -784,21 +873,15 @@ button{
     </div>
 
 
-    <div class="balance-box">
+    <!-- 모든 플레이어 금액 -->
 
-        <div class="balance-label">
-            내 보유금
-        </div>
+    <div
+        id="moneyPlayers"
+        class="money-players"
+    ></div>
 
-        <div
-            id="myBalance"
-            class="balance-value"
-        >
-            290만원
-        </div>
 
-    </div>
-
+    <!-- 지폐 선택 -->
 
     <div class="money-grid">
 
@@ -821,6 +904,13 @@ button{
             >
                 −
             </button>
+
+            <div
+                id="moneyCount1"
+                class="money-count"
+            >
+                0
+            </div>
 
             <button
                 class="money-small-button"
@@ -851,6 +941,13 @@ button{
                 −
             </button>
 
+            <div
+                id="moneyCount2"
+                class="money-count"
+            >
+                0
+            </div>
+
             <button
                 class="money-small-button"
                 onclick="changeMoneyCount(2,1)"
@@ -879,6 +976,13 @@ button{
             >
                 −
             </button>
+
+            <div
+                id="moneyCount5"
+                class="money-count"
+            >
+                0
+            </div>
 
             <button
                 class="money-small-button"
@@ -909,6 +1013,13 @@ button{
                 −
             </button>
 
+            <div
+                id="moneyCount10"
+                class="money-count"
+            >
+                0
+            </div>
+
             <button
                 class="money-small-button"
                 onclick="changeMoneyCount(10,1)"
@@ -937,6 +1048,13 @@ button{
             >
                 −
             </button>
+
+            <div
+                id="moneyCount50"
+                class="money-count"
+            >
+                0
+            </div>
 
             <button
                 class="money-small-button"
@@ -978,6 +1096,8 @@ button{
 
     </div>
 
+
+    <!-- 사회복지기금 -->
 
     <div class="welfare-box">
 
@@ -1086,7 +1206,7 @@ const state = {
 
     players: [],
 
-    pieces: [],
+    pieces: [1,2,3,4,5],
 
     isHost: false,
 
@@ -1175,6 +1295,7 @@ function formatMoney(value){
     const manwon =
         Number(value || 0) / 10000;
 
+
     return (
         manwon.toLocaleString("ko-KR") +
         "만원"
@@ -1194,6 +1315,7 @@ function makeRoomCode(){
 
     let code = "";
 
+
     for(let i = 0; i < 6; i++){
 
         code +=
@@ -1205,6 +1327,7 @@ function makeRoomCode(){
             ];
 
     }
+
 
     return code;
 
@@ -1248,6 +1371,7 @@ async function createRoom(){
 
         state.playerId =
             getPlayerId();
+
 
         state.nickname =
             nickname;
@@ -1294,8 +1418,10 @@ async function createRoom(){
         state.roomCode =
             code;
 
+
         state.hostId =
             state.playerId;
+
 
         state.isHost =
             true;
@@ -1354,10 +1480,10 @@ async function createRoom(){
                             null,
 
                         x:
-                            null,
+                            50,
 
                         y:
-                            null,
+                            50,
 
                         balance:
                             2900000,
@@ -1388,6 +1514,7 @@ async function createRoom(){
     }catch(error){
 
         console.error(error);
+
 
         $("loginError").textContent =
             "방을 만들 수 없어\n" +
@@ -1495,11 +1622,14 @@ async function joinRoom(){
         state.roomCode =
             code;
 
+
         state.nickname =
             nickname;
 
+
         state.hostId =
             data.hostId || null;
+
 
         state.isHost =
             state.hostId ===
@@ -1525,10 +1655,10 @@ async function joinRoom(){
                     null,
 
                 x:
-                    null,
+                    50,
 
                 y:
-                    null,
+                    50,
 
                 balance:
                     2900000,
@@ -1555,6 +1685,7 @@ async function joinRoom(){
     }catch(error){
 
         console.error(error);
+
 
         $("loginError").textContent =
             "방에 들어갈 수 없어\n" +
@@ -1592,7 +1723,7 @@ function enterRoom(){
 
 
 /* =========================
-   방 실시간 감시
+   실시간 방 감시
 ========================= */
 
 function watchRoom(){
@@ -1614,7 +1745,9 @@ function watchRoom(){
                     "방이 삭제됐어"
                 );
 
+
                 location.reload();
+
 
                 return;
 
@@ -1675,13 +1808,15 @@ function watchRoom(){
 
             renderPieceSelection();
 
+            renderMoneyPlayers();
+
             renderTurnOrder();
 
             renderTurnControls();
 
-            updateMyBalance();
-
             renderGamePieces();
+
+            updateSelectedMoney();
 
 
             $("welfareFund")
@@ -1733,6 +1868,7 @@ function watchRoom(){
         error => {
 
             console.error(error);
+
 
             $("loginError").textContent =
                 "Firebase 오류: " +
@@ -1829,7 +1965,7 @@ function showGame(){
 
 
 /* =========================
-   플레이어 표시
+   참가자 표시
 ========================= */
 
 function renderPlayers(){
@@ -1841,9 +1977,43 @@ function renderPlayers(){
     container.innerHTML = "";
 
 
+    const sorted =
+        [...state.players]
+            .sort(
+                (a,b) => {
+
+                    if(
+                        a.playerId ===
+                        state.playerId
+                    ){
+
+                        return -1;
+
+                    }
+
+
+                    if(
+                        b.playerId ===
+                        state.playerId
+                    ){
+
+                        return 1;
+
+                    }
+
+
+                    return (
+                        (a.joinedAt || 0) -
+                        (b.joinedAt || 0)
+                    );
+
+                }
+            );
+
+
     for(
         const player
-        of state.players
+        of sorted
     ){
 
         const div =
@@ -1854,6 +2024,16 @@ function renderPlayers(){
 
         div.className =
             "player";
+
+
+        const left =
+            document.createElement(
+                "div"
+            );
+
+
+        left.className =
+            "player-left";
 
 
         const name =
@@ -1867,10 +2047,43 @@ function renderPlayers(){
             "이름 없음";
 
 
-        const right =
-            document.createElement(
-                "span"
+        if(
+            player.playerId ===
+            state.playerId
+        ){
+
+            name.classList.add(
+                "player-me"
             );
+
+        }
+
+
+        left.appendChild(name);
+
+
+        if(
+            player.playerId ===
+            state.playerId
+        ){
+
+            const me =
+                document.createElement(
+                    "span"
+                );
+
+
+            me.className =
+                "host-badge";
+
+
+            me.textContent =
+                "나";
+
+
+            left.appendChild(me);
+
+        }
 
 
         if(
@@ -1878,21 +2091,43 @@ function renderPlayers(){
             state.hostId
         ){
 
-            right.textContent =
+            const host =
+                document.createElement(
+                    "span"
+                );
+
+
+            host.className =
+                "host-badge";
+
+
+            host.textContent =
                 "방장";
 
-        }else{
 
-            right.textContent =
-                player.piece
-                ? player.piece
-                : "말 미선택";
+            left.appendChild(host);
 
         }
 
 
+        const right =
+            document.createElement(
+                "span"
+            );
+
+
+        right.className =
+            "player-piece";
+
+
+        right.textContent =
+            player.piece
+                ? `P${player.piece}`
+                : "말 미선택";
+
+
         div.append(
-            name,
+            left,
             right
         );
 
@@ -1902,68 +2137,23 @@ function renderPlayers(){
     }
 
 
+    const everyoneHasPiece =
+        state.players.length > 0 &&
+        state.players.every(
+            player =>
+                !!player.piece
+        );
+
+
     $("startBtn").disabled =
         !state.isHost ||
-        state.players.length < 1;
+        !everyoneHasPiece;
 
 }
 
 
 /* =========================
-   말 목록 불러오기
-========================= */
-
-async function loadPieces(){
-
-    state.pieces = [];
-
-
-    for(let i = 1; i <= 100; i++){
-
-        const exists =
-            await new Promise(
-                resolve => {
-
-                    const img =
-                        new Image();
-
-
-                    img.onload =
-                        () =>
-                            resolve(true);
-
-
-                    img.onerror =
-                        () =>
-                            resolve(false);
-
-
-                    img.src =
-                        `P/P${i}.png`;
-
-                }
-            );
-
-
-        if(!exists){
-
-            break;
-
-        }
-
-
-        state.pieces.push(i);
-
-    }
-
-
-    renderPieceSelection();
-
-}
-
-
-/* =========================
-   말 선택 화면
+   말 선택
 ========================= */
 
 function renderPieceSelection(){
@@ -1975,7 +2165,7 @@ function renderPieceSelection(){
     container.innerHTML = "";
 
 
-    const usedPieces =
+    const usedByOthers =
         state.players
             .filter(
                 player =>
@@ -1984,12 +2174,14 @@ function renderPieceSelection(){
             )
             .map(
                 player =>
-                    player.piece
+                    Number(player.piece)
             )
-            .filter(Boolean);
+            .filter(
+                Boolean
+            );
 
 
-    const myPlayer =
+    const me =
         state.players.find(
             player =>
                 player.playerId ===
@@ -1998,8 +2190,9 @@ function renderPieceSelection(){
 
 
     const myPiece =
-        myPlayer?.piece ||
-        null;
+        me?.piece
+            ? Number(me.piece)
+            : null;
 
 
     state.selectedPiece =
@@ -2021,21 +2214,24 @@ function renderPieceSelection(){
             "piece";
 
 
-        if(
-            piece === myPiece
-        ){
+        const isMine =
+            piece ===
+            myPiece;
+
+
+        const isUsed =
+            usedByOthers.includes(
+                piece
+            );
+
+
+        if(isMine){
 
             div.classList.add(
                 "selected"
             );
 
         }
-
-
-        const isUsed =
-            usedPieces.includes(
-                piece
-            );
 
 
         if(isUsed){
@@ -2061,27 +2257,39 @@ function renderPieceSelection(){
             `P${piece}`;
 
 
-        const small =
+        /*
+          이미지가 깨졌을 때도
+          어떤 말인지 확인할 수 있게 한다.
+        */
+
+        img.onerror =
+            () => {
+
+                img.style.display =
+                    "none";
+
+            };
+
+
+        const label =
             document.createElement(
                 "small"
             );
 
 
-        if(
-            piece === myPiece
-        ){
+        if(isMine){
 
-            small.textContent =
+            label.textContent =
                 "내 말";
 
         }else if(isUsed){
 
-            small.textContent =
+            label.textContent =
                 "사용 중";
 
         }else{
 
-            small.textContent =
+            label.textContent =
                 `P${piece}`;
 
         }
@@ -2089,7 +2297,7 @@ function renderPieceSelection(){
 
         div.append(
             img,
-            small
+            label
         );
 
 
@@ -2112,27 +2320,10 @@ function renderPieceSelection(){
 
 
 /* =========================
-   말 선택
+   말 선택 저장
 ========================= */
 
 async function selectPiece(piece){
-
-    const usedByOther =
-        state.players.some(
-            player =>
-                player.playerId !==
-                state.playerId &&
-                player.piece ===
-                piece
-        );
-
-
-    if(usedByOther){
-
-        return;
-
-    }
-
 
     try{
 
@@ -2166,6 +2357,11 @@ async function selectPiece(piece){
                     }
 
 
+                    /*
+                      동시에 다른 사람이
+                      같은 말을 골랐는지 확인한다.
+                    */
+
                     for(
                         const [
                             playerId,
@@ -2179,8 +2375,8 @@ async function selectPiece(piece){
                         if(
                             playerId !==
                             state.playerId &&
-                            player.piece ===
-                            piece
+                            Number(player.piece) ===
+                            Number(piece)
                         ){
 
                             return;
@@ -2189,11 +2385,6 @@ async function selectPiece(piece){
 
                     }
 
-
-                    /*
-                      기존에 고른 말이 있다면
-                      그 말은 다시 비워준다.
-                    */
 
                     me.piece =
                         piece;
@@ -2218,6 +2409,8 @@ async function selectPiece(piece){
 
 
         renderPieceSelection();
+
+        renderPlayers();
 
 
     }catch(error){
@@ -2250,17 +2443,15 @@ async function startGame(){
     }
 
 
-    const roomRef =
-        ref(
-            db,
-            `rooms/${state.roomCode}`
-        );
-
-
     try{
 
         await runTransaction(
-            roomRef,
+
+            ref(
+                db,
+                `rooms/${state.roomCode}`
+            ),
+
             room => {
 
                 if(!room){
@@ -2362,303 +2553,7 @@ async function startGame(){
                 return room;
 
             }
-        );
 
-
-    }catch(error){
-
-        console.error(error);
-
-    }
-
-}
-
-
-/* =========================
-   턴 순서
-========================= */
-
-function renderTurnOrder(){
-
-    const container =
-        $("turnList");
-
-
-    container.innerHTML = "";
-
-
-    state.turnOrder.forEach(
-        (playerId,index) => {
-
-            const player =
-                state.players.find(
-                    p =>
-                        p.playerId ===
-                        playerId
-                );
-
-
-            if(!player){
-
-                return;
-
-            }
-
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "turn-player";
-
-
-            if(
-                index ===
-                state.currentTurnIndex
-            ){
-
-                div.classList.add(
-                    "current"
-                );
-
-            }
-
-
-            div.textContent =
-                `${index + 1}. ${player.nickname}`;
-
-
-            container.appendChild(div);
-
-        }
-    );
-
-}
-
-
-/* =========================
-   턴 컨트롤
-========================= */
-
-function renderTurnControls(){
-
-    if(!state.gameStarted){
-
-        $("turnStatus")
-            .textContent =
-            "게임을 시작해";
-
-
-        $("rollDiceButton")
-            .disabled =
-            true;
-
-
-        return;
-
-    }
-
-
-    const currentPlayerId =
-        state.turnOrder[
-            state.currentTurnIndex
-        ];
-
-
-    const currentPlayer =
-        state.players.find(
-            player =>
-                player.playerId ===
-                currentPlayerId
-        );
-
-
-    const isMyTurn =
-        currentPlayerId ===
-        state.playerId;
-
-
-    if(currentPlayer){
-
-        $("turnStatus")
-            .textContent =
-            isMyTurn
-                ? "✨ 네 턴이야"
-                : `${currentPlayer.nickname}의 턴`;
-
-    }
-
-
-    $("rollDiceButton")
-        .disabled =
-        !isMyTurn ||
-        state.diceRolling;
-
-}
-
-
-/* =========================
-   주사위 굴리기
-========================= */
-
-window.rollDice =
-async function(){
-
-    if(state.diceRolling){
-
-        return;
-
-    }
-
-
-    if(!state.gameStarted){
-
-        return;
-
-    }
-
-
-    const currentPlayerId =
-        state.turnOrder[
-            state.currentTurnIndex
-        ];
-
-
-    if(
-        currentPlayerId !==
-        state.playerId
-    ){
-
-        return;
-
-    }
-
-
-    const final1 =
-        randomDiceValue();
-
-
-    const final2 =
-        randomDiceValue();
-
-
-    state.diceRolling =
-        true;
-
-
-    renderTurnControls();
-
-
-    try{
-
-        await update(
-
-            ref(
-                db,
-                `rooms/${state.roomCode}`
-            ),
-
-            {
-
-                dice1:
-                    final1,
-
-                dice2:
-                    final2,
-
-                diceRolling:
-                    true,
-
-                diceRollId:
-                    Date.now()
-
-            }
-
-        );
-
-
-        setTimeout(
-            async () => {
-
-                try{
-
-                    await runTransaction(
-
-                        ref(
-                            db,
-                            `rooms/${state.roomCode}`
-                        ),
-
-                        room => {
-
-                            if(!room){
-
-                                return;
-
-                            }
-
-
-                            if(
-                                !room.diceRolling
-                            ){
-
-                                return;
-
-                            }
-
-
-                            const order =
-                                room.turnOrder ||
-                                [];
-
-
-                            if(
-                                order.length === 0
-                            ){
-
-                                room.diceRolling =
-                                    false;
-
-                                return room;
-
-                            }
-
-
-                            room.diceRolling =
-                                false;
-
-
-                            room.currentTurnIndex =
-                                (
-                                    (
-                                        room.currentTurnIndex ||
-                                        0
-                                    ) + 1
-                                )
-                                %
-                                order.length;
-
-
-                            return room;
-
-                        }
-
-                    );
-
-
-                }catch(error){
-
-                    console.error(
-                        error
-                    );
-
-                }
-
-            },
-            1300
         );
 
 
@@ -2668,83 +2563,13 @@ async function(){
             error
         );
 
-
-        state.diceRolling =
-            false;
-
-
-        renderTurnControls();
-
     }
 
-};
-
-
-/* =========================
-   주사위 랜덤
-========================= */
-
-function randomDiceValue(){
-
-    return (
-        Math.floor(
-            Math.random() * 6
-        ) + 1
-    );
-
 }
 
 
 /* =========================
-   주사위 애니메이션
-========================= */
-
-function animateDice(
-    final1,
-    final2
-){
-
-    let count = 0;
-
-
-    const timer =
-        setInterval(
-            () => {
-
-                $("dice1").src =
-                    `dice/dice${randomDiceValue()}.png`;
-
-
-                $("dice2").src =
-                    `dice/dice${randomDiceValue()}.png`;
-
-
-                count++;
-
-
-                if(count >= 8){
-
-                    clearInterval(timer);
-
-
-                    $("dice1").src =
-                        `dice/dice${final1}.png`;
-
-
-                    $("dice2").src =
-                        `dice/dice${final2}.png`;
-
-                }
-
-            },
-            100
-        );
-
-}
-
-
-/* =========================
-   게임 말 표시
+   게임판 말 표시
 ========================= */
 
 function renderGamePieces(){
@@ -2756,74 +2581,119 @@ function renderGamePieces(){
     container.innerHTML = "";
 
 
+    /*
+      다른 플레이어 말을 먼저 그린다.
+      내 말을 마지막에 그려서 항상 위에 오게 한다.
+    */
+
+    const others =
+        state.players.filter(
+            player =>
+                player.playerId !==
+                state.playerId
+        );
+
+
+    const me =
+        state.players.find(
+            player =>
+                player.playerId ===
+                state.playerId
+        );
+
+
     for(
         const player
-        of state.players
+        of others
     ){
 
-        if(!player.piece){
-
-            continue;
-
-        }
-
-
-        const img =
-            document.createElement(
-                "img"
-            );
-
-
-        img.className =
-            "game-piece";
-
-
-        img.src =
-            `P/${player.piece}.png`;
-
-
-        img.alt =
-            player.nickname;
-
-
-        const x =
-            player.x ??
-            50;
-
-
-        const y =
-            player.y ??
-            50;
-
-
-        img.style.left =
-            `${x}%`;
-
-
-        img.style.top =
-            `${y}%`;
-
-
-        if(
-            player.playerId ===
-            state.playerId
-        ){
-
-            enablePieceDrag(
-                img
-            );
-
-        }else{
-
-            img.style.cursor =
-                "default";
-
-        }
-
-
-        container.appendChild(img);
+        createGamePiece(
+            player,
+            false
+        );
 
     }
+
+
+    if(me){
+
+        createGamePiece(
+            me,
+            true
+        );
+
+    }
+
+}
+
+
+function createGamePiece(
+    player,
+    isMine
+){
+
+    if(!player.piece){
+
+        return;
+
+    }
+
+
+    const img =
+        document.createElement(
+            "img"
+        );
+
+
+    img.className =
+        "game-piece";
+
+
+    img.classList.add(
+        isMine
+            ? "my-piece"
+            : "other-piece"
+    );
+
+
+    img.src =
+        `P/P${player.piece}.png`;
+
+
+    img.alt =
+        player.nickname ||
+        `P${player.piece}`;
+
+
+    img.style.left =
+        `${player.x ?? 50}%`;
+
+
+    img.style.top =
+        `${player.y ?? 50}%`;
+
+
+    /*
+      다른 플레이어 말은 이동 불가.
+      내 말만 드래그 가능.
+    */
+
+    if(isMine){
+
+        enablePieceDrag(
+            img
+        );
+
+    }else{
+
+        img.style.cursor =
+            "default";
+
+    }
+
+
+    $("gamePieces")
+        .appendChild(img);
 
 }
 
@@ -2834,7 +2704,8 @@ function renderGamePieces(){
 
 function enablePieceDrag(img){
 
-    let dragging = false;
+    let dragging =
+        false;
 
 
     function getPosition(event){
@@ -2989,13 +2860,8 @@ function enablePieceDrag(img){
                     ),
 
                     {
-
-                        x:
-                            x,
-
-                        y:
-                            y
-
+                        x,
+                        y
                     }
 
                 );
@@ -3003,6 +2869,7 @@ function enablePieceDrag(img){
             }catch(error){
 
                 console.error(
+                    "말 위치 저장 오류:",
                     error
                 );
 
@@ -3015,30 +2882,371 @@ function enablePieceDrag(img){
 
 
 /* =========================
-   내 잔액
+   턴 순서
 ========================= */
 
-function updateMyBalance(){
+function renderTurnOrder(){
 
-    const me =
+    const container =
+        $("turnList");
+
+
+    container.innerHTML = "";
+
+
+    state.turnOrder.forEach(
+        (playerId,index) => {
+
+            const player =
+                state.players.find(
+                    p =>
+                        p.playerId ===
+                        playerId
+                );
+
+
+            if(!player){
+
+                return;
+
+            }
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "turn-player";
+
+
+            if(
+                index ===
+                state.currentTurnIndex
+            ){
+
+                div.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            div.textContent =
+                `${index + 1}. ${player.nickname}`;
+
+
+            container.appendChild(div);
+
+        }
+    );
+
+}
+
+
+/* =========================
+   턴 컨트롤
+========================= */
+
+function renderTurnControls(){
+
+    if(!state.gameStarted){
+
+        $("turnStatus")
+            .textContent =
+            "게임을 시작해";
+
+
+        $("rollDiceButton")
+            .disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+    const currentPlayerId =
+        state.turnOrder[
+            state.currentTurnIndex
+        ];
+
+
+    const currentPlayer =
         state.players.find(
             player =>
                 player.playerId ===
-                state.playerId
+                currentPlayerId
         );
 
 
-    $("myBalance")
-        .textContent =
-        formatMoney(
-            me?.balance || 0
+    const isMyTurn =
+        currentPlayerId ===
+        state.playerId;
+
+
+    if(currentPlayer){
+
+        $("turnStatus")
+            .textContent =
+            isMyTurn
+                ? "✨ 네 턴이야"
+                : `${currentPlayer.nickname}의 턴`;
+
+    }
+
+
+    $("rollDiceButton")
+        .disabled =
+        !isMyTurn ||
+        state.diceRolling;
+
+}
+
+
+/* =========================
+   주사위
+========================= */
+
+window.rollDice =
+async function(){
+
+    if(state.diceRolling){
+
+        return;
+
+    }
+
+
+    if(!state.gameStarted){
+
+        return;
+
+    }
+
+
+    const currentPlayerId =
+        state.turnOrder[
+            state.currentTurnIndex
+        ];
+
+
+    if(
+        currentPlayerId !==
+        state.playerId
+    ){
+
+        return;
+
+    }
+
+
+    const final1 =
+        randomDiceValue();
+
+
+    const final2 =
+        randomDiceValue();
+
+
+    state.diceRolling =
+        true;
+
+
+    renderTurnControls();
+
+
+    try{
+
+        await update(
+
+            ref(
+                db,
+                `rooms/${state.roomCode}`
+            ),
+
+            {
+
+                dice1:
+                    final1,
+
+                dice2:
+                    final2,
+
+                diceRolling:
+                    true,
+
+                diceRollId:
+                    Date.now()
+
+            }
+
+        );
+
+
+        setTimeout(
+            async () => {
+
+                try{
+
+                    await runTransaction(
+
+                        ref(
+                            db,
+                            `rooms/${state.roomCode}`
+                        ),
+
+                        room => {
+
+                            if(!room){
+
+                                return;
+
+                            }
+
+
+                            if(
+                                !room.diceRolling
+                            ){
+
+                                return;
+
+                            }
+
+
+                            const order =
+                                room.turnOrder ||
+                                [];
+
+
+                            if(
+                                order.length === 0
+                            ){
+
+                                room.diceRolling =
+                                    false;
+
+
+                                return room;
+
+                            }
+
+
+                            room.diceRolling =
+                                false;
+
+
+                            room.currentTurnIndex =
+                                (
+                                    (
+                                        room.currentTurnIndex ||
+                                        0
+                                    ) + 1
+                                )
+                                %
+                                order.length;
+
+
+                            return room;
+
+                        }
+
+                    );
+
+
+                }catch(error){
+
+                    console.error(
+                        error
+                    );
+
+                }
+
+            },
+            1300
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        state.diceRolling =
+            false;
+
+
+        renderTurnControls();
+
+    }
+
+};
+
+
+function randomDiceValue(){
+
+    return (
+        Math.floor(
+            Math.random() * 6
+        ) + 1
+    );
+
+}
+
+
+function animateDice(
+    final1,
+    final2
+){
+
+    let count = 0;
+
+
+    const timer =
+        setInterval(
+            () => {
+
+                $("dice1").src =
+                    `dice/dice${randomDiceValue()}.png`;
+
+
+                $("dice2").src =
+                    `dice/dice${randomDiceValue()}.png`;
+
+
+                count++;
+
+
+                if(count >= 8){
+
+                    clearInterval(
+                        timer
+                    );
+
+
+                    $("dice1").src =
+                        `dice/dice${final1}.png`;
+
+
+                    $("dice2").src =
+                        `dice/dice${final2}.png`;
+
+                }
+
+            },
+            100
         );
 
 }
 
 
 /* =========================
-   금액 패널
+   금액 패널 열기 / 닫기
 ========================= */
 
 window.toggleMoneyPanel =
@@ -3052,13 +3260,13 @@ function(){
         $("moneyToggleButton");
 
 
-    const hidden =
+    const isHidden =
         panel.classList.contains(
             "hidden"
         );
 
 
-    if(hidden){
+    if(isHidden){
 
         panel.classList.remove(
             "hidden"
@@ -3086,7 +3294,157 @@ function(){
 
 
 /* =========================
-   금액 수량 변경
+   모든 플레이어 금액
+========================= */
+
+function renderMoneyPlayers(){
+
+    const container =
+        $("moneyPlayers");
+
+
+    container.innerHTML = "";
+
+
+    /*
+      내 금액을 무조건 가장 위에 둔다.
+    */
+
+    const sorted =
+        [...state.players]
+            .sort(
+                (a,b) => {
+
+                    if(
+                        a.playerId ===
+                        state.playerId
+                    ){
+
+                        return -1;
+
+                    }
+
+
+                    if(
+                        b.playerId ===
+                        state.playerId
+                    ){
+
+                        return 1;
+
+                    }
+
+
+                    return (
+                        (a.joinedAt || 0) -
+                        (b.joinedAt || 0)
+                    );
+
+                }
+            );
+
+
+    for(
+        const player
+        of sorted
+    ){
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "money-player";
+
+
+        if(
+            player.playerId ===
+            state.playerId
+        ){
+
+            row.classList.add(
+                "me"
+            );
+
+        }
+
+
+        const name =
+            document.createElement(
+                "div"
+            );
+
+
+        name.className =
+            "money-player-name";
+
+
+        name.textContent =
+            player.nickname ||
+            "이름 없음";
+
+
+        if(
+            player.playerId ===
+            state.playerId
+        ){
+
+            const badge =
+                document.createElement(
+                    "span"
+                );
+
+
+            badge.className =
+                "me-badge";
+
+
+            badge.textContent =
+                "나";
+
+
+            name.appendChild(
+                badge
+            );
+
+        }
+
+
+        const balance =
+            document.createElement(
+                "div"
+            );
+
+
+        balance.className =
+            "money-player-balance";
+
+
+        balance.textContent =
+            formatMoney(
+                player.balance || 0
+            );
+
+
+        row.append(
+            name,
+            balance
+        );
+
+
+        container.appendChild(
+            row
+        );
+
+    }
+
+}
+
+
+/* =========================
+   지폐 수량
 ========================= */
 
 window.changeMoneyCount =
@@ -3103,9 +3461,34 @@ function(
         );
 
 
+    updateMoneyCountDisplays();
+
     updateSelectedMoney();
 
 };
+
+
+function updateMoneyCountDisplays(){
+
+    for(
+        const value
+        of [1,2,5,10,50]
+    ){
+
+        const element =
+            $(`moneyCount${value}`);
+
+
+        if(element){
+
+            element.textContent =
+                moneyCounts[value];
+
+        }
+
+    }
+
+}
 
 
 /* =========================
@@ -3139,26 +3522,30 @@ function updateSelectedMoney(){
             getSelectedMoney()
         );
 
+
+    updateMoneyCountDisplays();
+
 }
 
 
+/* =========================
+   선택 초기화
+========================= */
+
 function resetMoneyCounts(){
 
-    moneyCounts[1] =
-        0;
+    for(
+        const value
+        of [1,2,5,10,50]
+    ){
 
-    moneyCounts[2] =
-        0;
+        moneyCounts[value] =
+            0;
 
-    moneyCounts[5] =
-        0;
+    }
 
-    moneyCounts[10] =
-        0;
 
-    moneyCounts[50] =
-        0;
-
+    updateMoneyCountDisplays();
 
     updateSelectedMoney();
 
@@ -3185,25 +3572,31 @@ async function(){
 
     try{
 
-        await runTransaction(
+        const result =
+            await runTransaction(
 
-            ref(
-                db,
-                `rooms/${state.roomCode}/players/${state.playerId}/balance`
-            ),
+                ref(
+                    db,
+                    `rooms/${state.roomCode}/players/${state.playerId}/balance`
+                ),
 
-            balance =>
-                (balance || 0) +
-                amount
+                balance =>
+                    (balance || 0) +
+                    amount
 
-        );
+            );
 
 
-        resetMoneyCounts();
+        if(result.committed){
+
+            resetMoneyCounts();
+
+        }
 
     }catch(error){
 
         console.error(
+            "돈 받기 오류:",
             error
         );
 
@@ -3283,6 +3676,7 @@ async function(){
     }catch(error){
 
         console.error(
+            "돈 내기 오류:",
             error
         );
 
@@ -3380,6 +3774,7 @@ async function(){
     }catch(error){
 
         console.error(
+            "기금 내기 오류:",
             error
         );
 
@@ -3467,6 +3862,7 @@ async function(){
     }catch(error){
 
         console.error(
+            "기금 받기 오류:",
             error
         );
 
@@ -3476,7 +3872,7 @@ async function(){
 
 
 /* =========================
-   버튼
+   버튼 이벤트
 ========================= */
 
 $("createBtn")
@@ -3546,10 +3942,85 @@ state.playerId =
     getPlayerId();
 
 
-loadPieces()
+/*
+  네 현재 폴더 구조:
+  P/P1.png
+  P/P2.png
+  P/P3.png
+  P/P4.png
+  P/P5.png
+
+  파일을 명시적으로 확인한다.
+*/
+
+async function checkPieceImages(){
+
+    const loaded = [];
+
+
+    for(
+        const piece
+        of [1,2,3,4,5]
+    ){
+
+        const exists =
+            await new Promise(
+                resolve => {
+
+                    const img =
+                        new Image();
+
+
+                    img.onload =
+                        () =>
+                            resolve(true);
+
+
+                    img.onerror =
+                        () =>
+                            resolve(false);
+
+
+                    img.src =
+                        `P/P${piece}.png`;
+
+                }
+            );
+
+
+        if(exists){
+
+            loaded.push(
+                piece
+            );
+
+        }
+
+    }
+
+
+    state.pieces =
+        loaded;
+
+
+    renderPieceSelection();
+
+}
+
+
+checkPieceImages()
     .catch(
-        console.error
+        error =>
+            console.error(
+                "말 이미지 로딩 오류:",
+                error
+            )
     );
+
+
+updateMoneyCountDisplays();
+
+updateSelectedMoney();
 
 </script>
 
