@@ -1222,7 +1222,21 @@ const state = {
 
     welfareFund: 0,
 
-    dragging: false
+    dragging: false,
+
+    /*
+      주사위 애니메이션 상태
+    */
+
+    diceAnimating: false,
+
+    diceAnimationTimer: null,
+
+    diceStopTimer: null,
+
+    diceResult1: null,
+
+    diceResult2: null
 
 };
 
@@ -1827,24 +1841,48 @@ function watchRoom(){
 
 
             const dice1 =
-                data.dice1 || 1;
+                Number(
+                    data.dice1 || 1
+                );
 
 
             const dice2 =
-                data.dice2 || 1;
+                Number(
+                    data.dice2 || 1
+                );
 
 
-            $("dice1").src =
-                `dice/dice${dice1}.png`;
+            /*
+              평소에는 현재 Firebase 결과를
+              그대로 그린다.
+
+              단, 주사위 애니메이션 중에는
+              애니메이션이 화면을 담당한다.
+            */
+
+            if(
+                !state.diceAnimating
+            ){
+
+                $("dice1").src =
+                    `dice/dice${dice1}.png`;
 
 
-            $("dice2").src =
-                `dice/dice${dice2}.png`;
+                $("dice2").src =
+                    `dice/dice${dice2}.png`;
+
+            }
 
 
             const rollId =
                 data.diceRollId;
 
+
+            /*
+              새로운 주사위 굴림을
+              Firebase에서 처음 발견한 순간
+              랜덤 애니메이션을 시작한다.
+            */
 
             if(
                 rollId &&
@@ -1856,10 +1894,15 @@ function watchRoom(){
                     rollId;
 
 
-                animateDice(
-                    dice1,
-                    dice2
-                );
+                state.diceResult1 =
+                    dice1;
+
+
+                state.diceResult2 =
+                    dice2;
+
+
+                startDiceAnimation();
 
             }
 
@@ -3024,21 +3067,20 @@ async function(){
     }
 
 
+    /*
+      실제 결과는 여기서 생성하지만
+      화면에는 직접 표시하지 않는다.
+
+      최종 결과는 반드시 Firebase에서
+      다시 읽은 값을 사용한다.
+    */
+
     const final1 =
         randomDiceValue();
 
 
     const final2 =
         randomDiceValue();
-
-
-    /*
-      두 주사위가 같은 숫자인지
-      미리 저장한다.
-    */
-
-    const isDouble =
-        final1 === final2;
 
 
     state.diceRolling =
@@ -3076,115 +3118,16 @@ async function(){
         );
 
 
-        setTimeout(
-            async () => {
+        /*
+          결과를 Firebase에 기록한 뒤에는
+          여기서 화면을 확정하지 않는다.
 
-                try{
+          모든 화면이 onValue에서
+          동일하게 Firebase 결과를 받아
+          애니메이션을 시작한다.
+        */
 
-                    await runTransaction(
-
-                        ref(
-                            db,
-                            `rooms/${state.roomCode}`
-                        ),
-
-                        room => {
-
-                            if(!room){
-
-                                return;
-
-                            }
-
-
-                            if(
-                                !room.diceRolling
-                            ){
-
-                                return;
-
-                            }
-
-
-                            const order =
-                                room.turnOrder ||
-                                [];
-
-
-                            if(
-                                order.length === 0
-                            ){
-
-                                room.diceRolling =
-                                    false;
-
-
-                                return room;
-
-                            }
-
-
-                            /*
-                              주사위 굴리기가 끝났다는
-                              표시를 한다.
-                            */
-
-                            room.diceRolling =
-                                false;
-
-
-                            /*
-                              더블이면
-                              currentTurnIndex를
-                              변경하지 않는다.
-
-                              따라서 현재 플레이어가
-                              한 번 더 굴릴 수 있다.
-                            */
-
-                            if(isDouble){
-
-                                return room;
-
-                            }
-
-
-                            /*
-                              더블이 아니면
-                              다음 플레이어에게
-                              턴을 넘긴다.
-                            */
-
-                            room.currentTurnIndex =
-                                (
-                                    (
-                                        room.currentTurnIndex ||
-                                        0
-                                    ) + 1
-                                )
-                                %
-                                order.length;
-
-
-                            return room;
-
-                        }
-
-                    );
-
-
-                }catch(error){
-
-                    console.error(
-                        error
-                    );
-
-                }
-
-            },
-            1300
-        );
-
+        waitForDiceAnimationThenFinish();
 
     }catch(error){
 
@@ -3215,48 +3158,399 @@ function randomDiceValue(){
 }
 
 
-function animateDice(
+/* =========================
+   주사위 애니메이션 시작
+========================= */
+
+function startDiceAnimation(){
+
+    /*
+      혹시 이전 애니메이션이 남아 있다면
+      정리한다.
+    */
+
+    stopDiceAnimation();
+
+
+    state.diceAnimating =
+        true;
+
+
+    /*
+      Firebase에서 읽어온 최종 결과를
+      별도로 저장한다.
+    */
+
+    const final1 =
+        state.diceResult1;
+
+
+    const final2 =
+        state.diceResult2;
+
+
+    let speed =
+        55;
+
+
+    /*
+      처음에는 빠르게 랜덤 숫자를
+      계속 보여준다.
+    */
+
+    function spin(){
+
+        if(
+            !state.diceAnimating
+        ){
+
+            return;
+
+        }
+
+
+        /*
+          결과값을 직접 보여주지 않고
+          계속 랜덤 숫자를 보여준다.
+        */
+
+        $("dice1").src =
+            `dice/dice${randomDiceValue()}.png`;
+
+
+        $("dice2").src =
+            `dice/dice${randomDiceValue()}.png`;
+
+
+        state.diceAnimationTimer =
+            setTimeout(
+                spin,
+                speed
+            );
+
+    }
+
+
+    spin();
+
+
+    /*
+      Firebase 결과를 이미 읽었으므로
+      잠깐 더 굴린 뒤 감속해서 멈춘다.
+
+      이 시간이 지나면 반드시
+      Firebase에서 읽은 값으로 끝난다.
+    */
+
+    state.diceStopTimer =
+        setTimeout(
+            () => {
+
+                finishDiceAnimation(
+                    final1,
+                    final2
+                );
+
+            },
+            450
+        );
+
+}
+
+
+/* =========================
+   주사위 애니메이션 종료
+========================= */
+
+function finishDiceAnimation(
     final1,
     final2
 ){
 
-    let count = 0;
+    if(
+        !state.diceAnimating
+    ){
+
+        return;
+
+    }
 
 
-    const timer =
-        setInterval(
-            () => {
+    if(
+        state.diceAnimationTimer
+    ){
 
-                $("dice1").src =
-                    `dice/dice${randomDiceValue()}.png`;
-
-
-                $("dice2").src =
-                    `dice/dice${randomDiceValue()}.png`;
-
-
-                count++;
-
-
-                if(count >= 8){
-
-                    clearInterval(
-                        timer
-                    );
-
-
-                    $("dice1").src =
-                        `dice/dice${final1}.png`;
-
-
-                    $("dice2").src =
-                        `dice/dice${final2}.png`;
-
-                }
-
-            },
-            100
+        clearTimeout(
+            state.diceAnimationTimer
         );
+
+
+        state.diceAnimationTimer =
+            null;
+
+    }
+
+
+    if(
+        state.diceStopTimer
+    ){
+
+        clearTimeout(
+            state.diceStopTimer
+        );
+
+
+        state.diceStopTimer =
+            null;
+
+    }
+
+
+    /*
+      랜덤 → 느림 → 최종 결과
+    */
+
+    let count =
+        0;
+
+
+    function slowStop(){
+
+        count++;
+
+
+        if(
+            count <= 3
+        ){
+
+            $("dice1").src =
+                `dice/dice${randomDiceValue()}.png`;
+
+
+            $("dice2").src =
+                `dice/dice${randomDiceValue()}.png`;
+
+
+            setTimeout(
+                slowStop,
+                80 + count * 60
+            );
+
+
+            return;
+
+        }
+
+
+        /*
+          마지막 프레임은 무조건
+          Firebase에서 읽은 결과
+        */
+
+        $("dice1").src =
+            `dice/dice${final1}.png`;
+
+
+        $("dice2").src =
+            `dice/dice${final2}.png`;
+
+
+        state.diceAnimating =
+            false;
+
+
+        state.diceResult1 =
+            null;
+
+
+        state.diceResult2 =
+            null;
+
+    }
+
+
+    slowStop();
+
+}
+
+
+/* =========================
+   주사위 애니메이션 정리
+========================= */
+
+function stopDiceAnimation(){
+
+    if(
+        state.diceAnimationTimer
+    ){
+
+        clearTimeout(
+            state.diceAnimationTimer
+        );
+
+
+        state.diceAnimationTimer =
+            null;
+
+    }
+
+
+    if(
+        state.diceStopTimer
+    ){
+
+        clearTimeout(
+            state.diceStopTimer
+        );
+
+
+        state.diceStopTimer =
+            null;
+
+    }
+
+
+    state.diceAnimating =
+        false;
+
+}
+
+
+/* =========================
+   주사위 턴 처리
+========================= */
+
+function waitForDiceAnimationThenFinish(){
+
+    /*
+      Firebase에 diceRolling=true가
+      들어간 뒤 약간 기다렸다가
+      결과 처리를 한다.
+
+      실제 화면의 최종 숫자는
+      이미 Firebase에서 읽어온 값만
+      사용한다.
+    */
+
+    setTimeout(
+        async () => {
+
+            try{
+
+                await runTransaction(
+
+                    ref(
+                        db,
+                        `rooms/${state.roomCode}`
+                    ),
+
+                    room => {
+
+                        if(!room){
+
+                            return;
+
+                        }
+
+
+                        if(
+                            !room.diceRolling
+                        ){
+
+                            return;
+
+                        }
+
+
+                        const order =
+                            room.turnOrder ||
+                            [];
+
+
+                        if(
+                            order.length === 0
+                        ){
+
+                            room.diceRolling =
+                                false;
+
+
+                            return room;
+
+                        }
+
+
+                        room.diceRolling =
+                            false;
+
+
+                        /*
+                          Firebase에 저장된
+                          실제 주사위 결과로
+                          더블 여부를 판단한다.
+                        */
+
+                        const dice1 =
+                            Number(
+                                room.dice1 || 1
+                            );
+
+
+                        const dice2 =
+                            Number(
+                                room.dice2 || 1
+                            );
+
+
+                        const isDouble =
+                            dice1 === dice2;
+
+
+                        /*
+                          더블이면 현재 턴 유지
+                        */
+
+                        if(isDouble){
+
+                            return room;
+
+                        }
+
+
+                        /*
+                          더블이 아니면 다음 턴
+                        */
+
+                        room.currentTurnIndex =
+                            (
+                                (
+                                    room.currentTurnIndex ||
+                                    0
+                                ) + 1
+                            )
+                            %
+                            order.length;
+
+
+                        return room;
+
+                    }
+
+                );
+
+
+            }catch(error){
+
+                console.error(
+                    "주사위 턴 처리 오류:",
+                    error
+                );
+
+            }
+
+        },
+        600
+    );
 
 }
 
@@ -4026,4 +4320,4 @@ updateSelectedMoney();
 </script>
 
 </body>
-</html>#2424ㅂ
+</html>
