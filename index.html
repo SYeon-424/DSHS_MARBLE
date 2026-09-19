@@ -3,850 +3,540 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>대곽마블</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#151515;
+    color:#fff;
 }
 
-body {
-    font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    background: #151515;
-    color: white;
+body{
+    overflow-x:hidden;
 }
 
 button,
-input {
-    font: inherit;
+input{
+    font:inherit;
 }
 
-button {
-    cursor: pointer;
+button{
+    cursor:pointer;
 }
 
-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
+button:disabled{
+    cursor:not-allowed;
+    opacity:.4;
 }
 
 /* =========================
    공통
-   ========================= */
+========================= */
 
-.screen {
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
+.hidden{
+    display:none!important;
 }
 
-.hidden {
-    display: none !important;
+.screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
 }
 
-.panel {
-    width: min(520px, 100%);
-
-    padding: 28px;
-
-    background: #242424;
-
-    border-radius: 20px;
-
-    box-shadow: 0 12px 40px #0008;
+.panel{
+    width:min(520px,100%);
+    background:#242424;
+    border-radius:20px;
+    padding:28px;
+    box-shadow:0 12px 40px #0006;
 }
 
 h1,
-h2 {
-    margin-top: 0;
+h2{
+    margin-top:0;
 }
 
-input {
-    width: 100%;
-
-    padding: 13px 15px;
-
-    margin-bottom: 10px;
-
-    border: 1px solid #555;
-    border-radius: 10px;
-
-    background: #171717;
-    color: white;
-
-    outline: none;
+input{
+    width:100%;
+    padding:13px 15px;
+    border:1px solid #555;
+    border-radius:10px;
+    background:#171717;
+    color:#fff;
+    outline:none;
+    margin-bottom:10px;
 }
 
-button {
-    border: 0;
-    border-radius: 10px;
-
-    padding: 12px 16px;
-
-    background: white;
-    color: #111;
-
-    font-weight: 700;
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 16px;
+    background:#fff;
+    color:#111;
+    font-weight:700;
 }
 
-.row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+.row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-.row > * {
-    flex: 1;
+.row>*{
+    flex:1;
 }
 
-.status {
-    color: #bbb;
-    font-size: 14px;
-    margin: 8px 0;
+.status{
+    color:#bbb;
+    font-size:14px;
+    margin:8px 0;
 }
 
-.error {
-    color: #ff7d7d;
-    white-space: pre-wrap;
+.error{
+    color:#ff7d7d;
+    white-space:pre-wrap;
 }
 
 /* =========================
-   대기실
-   ========================= */
+   방 코드
+========================= */
 
-.room-code {
-    font-size: 32px;
-    font-weight: 900;
-
-    letter-spacing: 5px;
-    text-align: center;
-
-    padding: 12px;
-
-    background: #111;
-
-    border-radius: 12px;
-
-    margin: 12px 0 20px;
+.room-code{
+    font-size:32px;
+    font-weight:900;
+    letter-spacing:5px;
+    text-align:center;
+    padding:12px;
+    background:#111;
+    border-radius:12px;
+    margin:12px 0 20px;
 }
 
-#players {
-    display: flex;
-    flex-direction: column;
+/* =========================
+   플레이어
+========================= */
 
-    gap: 8px;
-
-    margin: 10px 0 20px;
+#players{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin:10px 0 20px;
 }
 
-.player {
-    background: #181818;
-
-    padding: 10px 12px;
-
-    border-radius: 9px;
-
-    display: flex;
-    justify-content: space-between;
+.player{
+    background:#181818;
+    padding:10px 12px;
+    border-radius:9px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.pieces {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill, minmax(100px, 1fr));
-
-    gap: 10px;
-
-    margin-top: 10px;
+.player-name{
+    display:flex;
+    align-items:center;
+    gap:7px;
 }
 
-.piece {
-    min-height: 100px;
-
-    padding: 8px;
-
-    background: #171717;
-
-    border: 2px solid transparent;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-direction: column;
-
-    gap: 5px;
+.host-mark{
+    color:#ffd84d;
+    font-size:12px;
 }
 
-.piece.selected {
-    border-color: white;
+/* =========================
+   말 선택
+========================= */
+
+.pieces{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+    gap:10px;
+    margin-top:10px;
 }
 
-.piece img {
-    max-width: 70px;
-    max-height: 70px;
+.piece{
+    min-height:100px;
+    padding:8px;
+    background:#171717;
+    border:2px solid transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:5px;
+    border-radius:10px;
 }
 
-.piece small {
-    font-size: 12px;
-    color: #aaa;
+.piece.selected{
+    border-color:#fff;
+}
+
+.piece.used{
+    opacity:.35;
+}
+
+.piece img{
+    max-width:70px;
+    max-height:70px;
+}
+
+.piece small{
+    font-size:12px;
+    color:#aaa;
 }
 
 /* =========================
    게임 화면
-   ========================= */
+========================= */
 
-#gameScreen {
-    display: none;
-
-    min-height: 100vh;
-
-    padding:
-        25px
-        120px
-        15px
-        15px;
-
-    align-items: center;
-
-    overflow: auto;
+#gameScreen{
+    display:none;
+    min-height:100vh;
+    padding:15px;
+    justify-content:center;
+    align-items:flex-start;
 }
 
-#gameScreen.active {
-    display: flex;
-
-    flex-direction: column;
+.board-wrap{
+    position:relative;
+    width:min(100%,1000px);
+    z-index:1;
 }
 
-.board-wrap {
-    position: relative;
-
-    width: min(100%, 1100px);
-
-    flex-shrink: 0;
-
-    z-index: 1;
-}
-
-.board-image {
-    display: block;
-
-    width: 100%;
-    height: auto;
-
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-/* =========================
-   턴 순서
-   보드보다 위에 표시한다.
-   ========================= */
-
-#turnOrder {
-    position: fixed;
-
-    top: 15px;
-    left: 15px;
-
-    z-index: 1000;
-
-    display: flex;
-
-    gap: 8px;
-
-    max-width: calc(100vw - 30px);
-
-    overflow-x: auto;
-
-    padding: 5px;
-}
-
-.turn-player {
-    min-width: 72px;
-
-    padding: 6px;
-
-    background: rgba(0, 0, 0, 0.82);
-
-    border: 2px solid transparent;
-
-    border-radius: 9px;
-
-    text-align: center;
-
-    transition: 0.15s;
-}
-
-.turn-player.current {
-    border-color: white;
-    transform: scale(1.08);
-}
-
-.turn-piece {
-    width: 42px;
-    height: 42px;
-
-    object-fit: contain;
-}
-
-.turn-name {
-    display: block;
-
-    max-width: 68px;
-
-    margin-top: 3px;
-
-    font-size: 11px;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* =========================
-   주사위
-   ========================= */
-
-#diceArea {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 12px;
-
-    z-index: 20;
-
-    pointer-events: none;
-}
-
-.dice {
-    width: 30%;
-    height: 30%;
-
-    min-width: 120px;
-    min-height: 120px;
-
-    max-width: 260px;
-    max-height: 260px;
-
-    object-fit: contain;
-
-    opacity: 0.8;
-}
-
-/* =========================
-   차례 / 주사위 버튼
-   보드보다 위에 표시한다.
-   ========================= */
-
-#turnControls {
-    position: fixed;
-
-    left: 50%;
-    bottom: 18px;
-
-    transform: translateX(-50%);
-
-    z-index: 1000;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 7px;
-}
-
-#rollDiceButton {
-    min-width: 170px;
-
-    padding: 13px 22px;
-
-    border-radius: 12px;
-}
-
-#turnMessage {
-    padding: 7px 12px;
-
-    background: rgba(0, 0, 0, 0.86);
-
-    border-radius: 8px;
-
-    font-size: 13px;
+.board-wrap>img:first-child{
+    display:block;
+    width:100%;
+    height:auto;
+    user-select:none;
+    -webkit-user-drag:none;
 }
 
 /* =========================
    말
-   ========================= */
+========================= */
 
-.board-piece {
-    position: absolute;
-
-    width: 6%;
-    height: 6%;
-
-    min-width: 28px;
-    min-height: 28px;
-
-    max-width: 65px;
-    max-height: 65px;
-
-    object-fit: contain;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 10;
-
-    user-select: none;
-    -webkit-user-drag: none;
-
-    touch-action: none;
+.game-piece{
+    position:absolute;
+    width:6%;
+    max-width:65px;
+    min-width:30px;
+    aspect-ratio:1;
+    object-fit:contain;
+    transform:translate(-50%,-50%);
+    z-index:100;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-drag:none;
+    touch-action:none;
 }
 
-.board-piece.draggable {
-    cursor: grab;
-}
-
-.board-piece.draggable:active {
-    cursor: grabbing;
+.game-piece:active{
+    cursor:grabbing;
 }
 
 /* =========================
-   자금 버튼
-   ========================= */
+   주사위
+========================= */
 
-#moneyToggleButton {
-    position: fixed;
-
-    top: 15px;
-    right: 15px;
-
-    z-index: 1100;
-
-    padding: 9px 16px;
-
-    border-radius: 9px;
-
-    background: rgba(0, 0, 0, 0.88);
-
-    color: white;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.8);
+#diceArea{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    display:flex;
+    gap:15px;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    pointer-events:none;
 }
 
-#moneyToggleButton:hover {
-    background: rgba(255, 255, 255, 0.98);
-    color: #111;
+.dice{
+    width:110px;
+    height:110px;
+    object-fit:contain;
+    opacity:.8;
+    filter:drop-shadow(0 4px 8px #0008);
 }
 
 /* =========================
-   돈 패널
-   ========================= */
+   턴 순서
+========================= */
 
-#moneyPanel {
-    position: fixed;
-
-    top: 15px;
-    right: 15px;
-
-    width: 470px;
-    max-width: calc(100vw - 30px);
-
-    padding: 14px;
-
-    background: rgba(0, 0, 0, 0.88);
-
-    border:
-        2px solid
-        rgba(255, 255, 255, 0.75);
-
-    border-radius: 12px;
-
-    z-index: 1100;
-
-    color: white;
+#turnOrder{
+    position:fixed;
+    top:15px;
+    left:15px;
+    z-index:1000;
+    background:#151515ee;
+    border:1px solid #555;
+    border-radius:12px;
+    padding:10px 13px;
+    min-width:150px;
+    box-shadow:0 5px 20px #0008;
 }
 
-#moneyCloseButton {
-    position: absolute;
-
-    top: 5px;
-    right: 6px;
-
-    width: 27px;
-    height: 27px;
-
-    padding: 0;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.15);
-
-    color: white;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.7);
-
-    font-size: 20px;
-
-    line-height: 1;
-
-    z-index: 2;
+.turn-title{
+    font-weight:800;
+    margin-bottom:7px;
 }
 
-#moneyCloseButton:hover {
-    background: rgba(255, 255, 255, 0.3);
+.turn-player{
+    padding:4px 7px;
+    border-radius:6px;
+    color:#bbb;
+    font-size:14px;
 }
 
-/* 돈 5종 */
-
-#moneySelector {
-    display: flex;
-
-    align-items: flex-start;
-    justify-content: space-between;
-
-    gap: 5px;
-
-    padding-right: 24px;
-}
-
-.money-type {
-    width: 19%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-}
-
-.money-image {
-    width: 65px;
-    height: 65px;
-
-    max-width: 100%;
-
-    object-fit: contain;
-
-    margin-bottom: 4px;
-}
-
-/* ▲ ▼ 버튼 */
-
-.amount-up,
-.amount-down {
-    width: 32px;
-    height: 23px;
-
-    padding: 0;
-
-    border-radius: 5px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.8);
-
-    background:
-        rgba(255, 255, 255, 0.13);
-
-    color: white;
-
-    font-size: 13px;
-
-    line-height: 1;
-}
-
-.amount-up:hover,
-.amount-down:hover {
-    background:
-        rgba(255, 255, 255, 0.28);
-}
-
-/* 수량 */
-
-.money-count {
-    width: 40px;
-    height: 28px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 16px;
-
-    font-weight: 800;
+.turn-player.current{
+    background:#fff;
+    color:#111;
+    font-weight:900;
 }
 
 /* =========================
-   선택 금액
-   ========================= */
+   주사위 컨트롤
+========================= */
 
-#selectedMoneyArea {
-    margin-top: 10px;
+#turnControls{
+    position:fixed;
+    left:50%;
+    bottom:20px;
+    transform:translateX(-50%);
+    z-index:1000;
 
-    padding-top: 9px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
 
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.3);
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    flex-wrap: wrap;
+    background:#151515ee;
+    border:1px solid #555;
+    border-radius:14px;
+    padding:10px 14px;
+    box-shadow:0 5px 20px #0008;
 }
 
-.selected-money-label {
-    font-size: 13px;
+#turnStatus{
+    font-size:14px;
+    color:#ddd;
 }
 
-#selectedMoney {
-    min-width: 100px;
-
-    font-size: 18px;
-
-    font-weight: 900;
-}
-
-.money-action-button {
-    padding: 7px 13px;
-
-    border-radius: 7px;
-
-    background:
-        rgba(255, 255, 255, 0.14);
-
-    color: white;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.8);
-}
-
-.money-action-button:hover {
-    background:
-        rgba(255, 255, 255, 0.28);
+#rollDiceButton{
+    min-width:160px;
+    font-size:16px;
 }
 
 /* =========================
-   잔고
-   ========================= */
+   금액 패널
+========================= */
 
-#balanceList {
-    margin-top: 10px;
+#moneyToggleButton{
+    position:fixed;
+    right:15px;
+    top:15px;
+    z-index:1100;
 
-    padding-top: 9px;
-
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.3);
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
+    background:#fff;
+    color:#111;
+    padding:10px 15px;
+    border-radius:10px;
+    box-shadow:0 5px 20px #0008;
 }
 
-.balance-player {
-    display: flex;
+#moneyPanel{
+    position:fixed;
+    right:15px;
+    top:15px;
+    z-index:1100;
 
-    justify-content: space-between;
-    align-items: center;
+    width:min(360px,calc(100vw - 30px));
+    max-height:calc(100vh - 30px);
+    overflow-y:auto;
 
-    padding: 4px 7px;
-
-    font-size: 13px;
-
-    border-radius: 5px;
+    background:#222;
+    border:1px solid #555;
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 8px 35px #000b;
 }
 
-.balance-player.me {
-    background:
-        rgba(255, 255, 255, 0.13);
-
-    font-weight: 800;
+.money-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
 }
 
-.balance-name {
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
+.money-header h3{
+    margin:0;
 }
 
-.balance-money {
-    margin-left: 10px;
-
-    white-space: nowrap;
-
-    font-weight: 800;
+#moneyCloseButton{
+    background:#444;
+    color:#fff;
+    padding:7px 10px;
 }
 
-/* =========================
-   사회복지기금
-   ========================= */
-
-#welfareArea {
-    margin-top: 9px;
-
-    padding-top: 9px;
-
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.3);
+.balance-box{
+    background:#111;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:15px;
 }
 
-#welfareText {
-    font-size: 14px;
-
-    margin-bottom: 7px;
+.balance-label{
+    color:#aaa;
+    font-size:13px;
 }
 
-#welfareFund {
-    font-size: 17px;
-
-    font-weight: 900;
+.balance-value{
+    font-size:25px;
+    font-weight:900;
+    margin-top:3px;
 }
 
-#welfareButtons {
-    display: flex;
-
-    gap: 7px;
+.money-grid{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
-#welfareButtons button {
-    padding: 6px 11px;
-
-    border-radius: 7px;
-
-    background:
-        rgba(255, 255, 255, 0.14);
-
-    color: white;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.8);
+.money-row{
+    display:grid;
+    grid-template-columns:65px 1fr 42px 42px;
+    gap:7px;
+    align-items:center;
+    background:#181818;
+    border-radius:9px;
+    padding:7px;
 }
 
-#welfareButtons button:hover {
-    background:
-        rgba(255, 255, 255, 0.28);
+.money-image{
+    width:55px;
+    height:38px;
+    object-fit:contain;
+}
+
+.money-label{
+    font-weight:800;
+}
+
+.money-count{
+    text-align:center;
+    font-weight:900;
+}
+
+.money-small-button{
+    width:38px;
+    height:38px;
+    padding:0;
+    background:#444;
+    color:#fff;
+}
+
+.selected-money{
+    background:#111;
+    border-radius:10px;
+    padding:11px;
+    margin:14px 0 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.selected-money-value{
+    font-weight:900;
+    color:#fff;
+}
+
+.money-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.money-buttons button{
+    background:#fff;
+    color:#111;
+}
+
+.welfare-box{
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #444;
+}
+
+.welfare-title{
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.welfare-fund{
+    background:#111;
+    border-radius:9px;
+    padding:10px;
+    margin-bottom:8px;
+}
+
+.welfare-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.welfare-buttons button{
+    background:#444;
+    color:#fff;
 }
 
 /* =========================
    모바일
-   ========================= */
+========================= */
 
-@media (max-width: 700px) {
+@media(max-width:600px){
 
-    #gameScreen {
-        padding:
-            100px
-            10px
-            90px
-            10px;
+    #turnOrder{
+        top:auto;
+        bottom:80px;
+        left:10px;
+        min-width:125px;
+        padding:8px;
     }
 
-    #moneyPanel {
-        top: 10px;
-        right: 10px;
-
-        width:
-            calc(100vw - 20px);
-
-        padding: 10px;
+    #turnControls{
+        bottom:10px;
     }
 
-    #moneyToggleButton {
-        top: 10px;
-        right: 10px;
+    #moneyToggleButton{
+        top:10px;
+        right:10px;
     }
 
-    .money-image {
-        width: 48px;
-        height: 48px;
+    #moneyPanel{
+        top:10px;
+        right:10px;
+        max-height:calc(100vh - 20px);
     }
 
-    .amount-up,
-    .amount-down {
-        width: 28px;
-        height: 21px;
+    .dice{
+        width:75px;
+        height:75px;
     }
 
-    .money-count {
-        height: 25px;
-    }
-
-    #turnOrder {
-        top: auto;
-        bottom: 75px;
-        left: 50%;
-
-        transform:
-            translateX(-50%);
-
-        width:
-            calc(100vw - 20px);
-
-        justify-content: center;
-    }
-
-    .turn-player {
-        min-width: 58px;
-    }
-
-    .turn-piece {
-        width: 32px;
-        height: 32px;
-    }
-
-    .dice {
-        min-width: 90px;
-        min-height: 90px;
-
-        max-width: 180px;
-        max-height: 180px;
+    #diceArea{
+        gap:8px;
     }
 }
 </style>
@@ -855,8 +545,8 @@ button {
 <body>
 
 <!-- =========================
-     닉네임 화면
-     ========================= -->
+     로그인
+========================= -->
 
 <div id="loginScreen" class="screen">
 
@@ -864,7 +554,7 @@ button {
 
         <h1>대곽마블</h1>
 
-        <p>닉네임을 입력한다.</p>
+        <p>닉네임을 입력해</p>
 
         <input
             id="nickname"
@@ -917,7 +607,7 @@ button {
 
 <!-- =========================
      대기실
-     ========================= -->
+========================= -->
 
 <div
     id="roomScreen"
@@ -967,253 +657,17 @@ button {
 
 
 <!-- =========================
-     게임 화면
-     ========================= -->
+     게임
+========================= -->
 
 <div id="gameScreen">
-
-    <!-- 턴 순서 -->
-
-    <div id="turnOrder"></div>
-
-
-    <!-- 자금 열기 버튼 -->
-
-    <button
-        id="moneyToggleButton"
-        onclick="toggleMoneyPanel()"
-        style="display:none"
-    >
-        자금
-    </button>
-
-
-    <!-- 돈 / 잔고 패널 -->
-
-    <div id="moneyPanel">
-
-        <!-- 닫기 -->
-
-        <button
-            id="moneyCloseButton"
-            onclick="toggleMoneyPanel()"
-        >
-            ×
-        </button>
-
-
-        <!-- 돈 종류 -->
-
-        <div id="moneySelector">
-
-            <div class="money-type">
-
-                <img
-                    src="money/1.png"
-                    class="money-image"
-                    alt="1만원"
-                >
-
-                <button
-                    class="amount-up"
-                    onclick="changeMoneyCount(1, 1)"
-                >▲</button>
-
-                <div
-                    class="money-count"
-                    id="moneyCount1"
-                >0</div>
-
-                <button
-                    class="amount-down"
-                    onclick="changeMoneyCount(1, -1)"
-                >▼</button>
-
-            </div>
-
-
-            <div class="money-type">
-
-                <img
-                    src="money/2.png"
-                    class="money-image"
-                    alt="2만원"
-                >
-
-                <button
-                    class="amount-up"
-                    onclick="changeMoneyCount(2, 1)"
-                >▲</button>
-
-                <div
-                    class="money-count"
-                    id="moneyCount2"
-                >0</div>
-
-                <button
-                    class="amount-down"
-                    onclick="changeMoneyCount(2, -1)"
-                >▼</button>
-
-            </div>
-
-
-            <div class="money-type">
-
-                <img
-                    src="money/5.png"
-                    class="money-image"
-                    alt="5만원"
-                >
-
-                <button
-                    class="amount-up"
-                    onclick="changeMoneyCount(5, 1)"
-                >▲</button>
-
-                <div
-                    class="money-count"
-                    id="moneyCount5"
-                >0</div>
-
-                <button
-                    class="amount-down"
-                    onclick="changeMoneyCount(5, -1)"
-                >▼</button>
-
-            </div>
-
-
-            <div class="money-type">
-
-                <img
-                    src="money/10.png"
-                    class="money-image"
-                    alt="10만원"
-                >
-
-                <button
-                    class="amount-up"
-                    onclick="changeMoneyCount(10, 1)"
-                >▲</button>
-
-                <div
-                    class="money-count"
-                    id="moneyCount10"
-                >0</div>
-
-                <button
-                    class="amount-down"
-                    onclick="changeMoneyCount(10, -1)"
-                >▼</button>
-
-            </div>
-
-
-            <div class="money-type">
-
-                <img
-                    src="money/50.png"
-                    class="money-image"
-                    alt="50만원"
-                >
-
-                <button
-                    class="amount-up"
-                    onclick="changeMoneyCount(50, 1)"
-                >▲</button>
-
-                <div
-                    class="money-count"
-                    id="moneyCount50"
-                >0</div>
-
-                <button
-                    class="amount-down"
-                    onclick="changeMoneyCount(50, -1)"
-                >▼</button>
-
-            </div>
-
-        </div>
-
-
-        <!-- 선택 금액 -->
-
-        <div id="selectedMoneyArea">
-
-            <span class="selected-money-label">
-                선택 금액:
-            </span>
-
-            <strong id="selectedMoney">
-                0원
-            </strong>
-
-            <button
-                class="money-action-button"
-                onclick="receiveMoney()"
-            >
-                받기
-            </button>
-
-            <button
-                class="money-action-button"
-                onclick="payMoney()"
-            >
-                내기
-            </button>
-
-        </div>
-
-
-        <!-- 플레이어 잔고 -->
-
-        <div id="balanceList"></div>
-
-
-        <!-- 사회복지기금 -->
-
-        <div id="welfareArea">
-
-            <div id="welfareText">
-                사회복지기금 =
-                <strong id="welfareFund">
-                    0원
-                </strong>
-            </div>
-
-            <div id="welfareButtons">
-
-                <button onclick="payWelfareFund()">
-                    기금 내기
-                </button>
-
-                <button onclick="receiveWelfareFund()">
-                    기금 받기
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         게임판
-         ========================= -->
 
     <div class="board-wrap">
 
         <img
             src="board.png"
-            class="board-image"
             alt="대곽마블 게임판"
         >
-
-
-        <!-- 주사위 -->
 
         <div id="diceArea">
 
@@ -1233,26 +687,304 @@ button {
 
         </div>
 
+        <div id="gamePieces"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     턴 순서
+========================= -->
+
+<div id="turnOrder">
+
+    <div class="turn-title">
+        턴 순서
+    </div>
+
+    <div id="turnList"></div>
+
+</div>
+
+
+<!-- =========================
+     주사위 버튼
+========================= -->
+
+<div id="turnControls">
+
+    <div id="turnStatus">
+        게임을 시작해
+    </div>
+
+    <button
+        id="rollDiceButton"
+        onclick="rollDice()"
+    >
+        주사위 굴리기
+    </button>
+
+</div>
+
+
+<!-- =========================
+     금액 버튼
+========================= -->
+
+<button
+    id="moneyToggleButton"
+    onclick="toggleMoneyPanel()"
+>
+    💰 금액
+</button>
+
+
+<!-- =========================
+     금액 패널
+========================= -->
+
+<div
+    id="moneyPanel"
+    class="hidden"
+>
+
+    <div class="money-header">
+
+        <h3>💰 금액 관리</h3>
+
+        <button
+            id="moneyCloseButton"
+            onclick="toggleMoneyPanel()"
+        >
+            닫기
+        </button>
+
     </div>
 
 
-    <!-- =========================
-         차례 / 주사위 버튼
-         ========================= -->
+    <div class="balance-box">
 
-    <div id="turnControls">
-
-        <div id="turnMessage">
-            게임 준비 중
+        <div class="balance-label">
+            내 보유금
         </div>
 
-        <button
-            id="rollDiceButton"
-            onclick="rollDice()"
-            style="display:none"
+        <div
+            id="myBalance"
+            class="balance-value"
         >
-            주사위 굴리기
+            0만원
+        </div>
+
+    </div>
+
+
+    <div class="money-grid">
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/1.png"
+                alt="1만원"
+            >
+
+            <div class="money-label">
+                1만원
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(1,-1)"
+            >
+                −
+            </button>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(1,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/2.png"
+                alt="2만원"
+            >
+
+            <div class="money-label">
+                2만원
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(2,-1)"
+            >
+                −
+            </button>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(2,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/5.png"
+                alt="5만원"
+            >
+
+            <div class="money-label">
+                5만원
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(5,-1)"
+            >
+                −
+            </button>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(5,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/10.png"
+                alt="10만원"
+            >
+
+            <div class="money-label">
+                10만원
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(10,-1)"
+            >
+                −
+            </button>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(10,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/50.png"
+                alt="50만원"
+            >
+
+            <div class="money-label">
+                50만원
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(50,-1)"
+            >
+                −
+            </button>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(50,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="selected-money">
+
+        <span>
+            선택 금액
+        </span>
+
+        <span
+            id="selectedMoney"
+            class="selected-money-value"
+        >
+            0만원
+        </span>
+
+    </div>
+
+
+    <div class="money-buttons">
+
+        <button onclick="receiveMoney()">
+            받기
         </button>
+
+        <button onclick="payMoney()">
+            내기
+        </button>
+
+    </div>
+
+
+    <div class="welfare-box">
+
+        <div class="welfare-title">
+            사회복지기금
+        </div>
+
+        <div class="welfare-fund">
+
+            현재 기금:
+            <strong id="welfareFund">
+                0만원
+            </strong>
+
+        </div>
+
+        <div class="welfare-buttons">
+
+            <button onclick="payWelfareFund()">
+                기금 내기<br>
+                <small>15만원</small>
+            </button>
+
+            <button onclick="receiveWelfareFund()">
+                기금 받기
+            </button>
+
+        </div>
 
     </div>
 
@@ -1261,13 +993,15 @@ button {
 
 <script type="module">
 
-/* =========================================================
-   Firebase
-   ========================================================= */
-
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
     getDatabase,
@@ -1276,10 +1010,13 @@ import {
     set,
     update,
     onValue,
-    onDisconnect,
     runTransaction
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
+
+/* =========================
+   Firebase
+========================= */
 
 const firebaseConfig = {
 
@@ -1307,38 +1044,43 @@ const firebaseConfig = {
 };
 
 
-const app =
-    initializeApp(
-        firebaseConfig
-    );
+const app = initializeApp(firebaseConfig);
 
-const db =
-    getDatabase(app);
+const auth = getAuth(app);
+
+const db = getDatabase(app);
 
 
-/* =========================================================
-   기본 상태
-   ========================================================= */
+/* =========================
+   상태
+========================= */
 
 const state = {
 
     nickname: "",
+
     roomCode: "",
+
     playerId: "",
+
+    hostId: null,
 
     selectedPiece: null,
 
     players: [],
+
     pieces: [],
 
     isHost: false,
 
     turnOrder: [],
+
     currentTurnIndex: 0,
 
     gameStarted: false,
 
     diceRolling: false,
+
     lastDiceRollId: null,
 
     welfareFund: 0,
@@ -1348,142 +1090,83 @@ const state = {
 };
 
 
-/* =========================================================
+/* =========================
+   금액 선택 상태
+========================= */
+
+const moneyCounts = {
+
+    1: 0,
+    2: 0,
+    5: 0,
+    10: 0,
+    50: 0
+
+};
+
+
+/* =========================
    DOM
-   ========================================================= */
+========================= */
 
-const $ =
-    id =>
-        document.getElementById(id);
-
-
-const loginScreen =
-    $("loginScreen");
-
-const roomScreen =
-    $("roomScreen");
-
-const gameScreen =
-    $("gameScreen");
+const $ = id =>
+    document.getElementById(id);
 
 
-const boardWrapper =
-    document.querySelector(
-        ".board-wrap"
-    );
+/* =========================
+   인증
+========================= */
 
+async function ensureAuth(){
 
-/* =========================================================
-   플레이어 ID
-   ========================================================= */
+    if(auth.currentUser){
 
-function getPlayerId() {
+        state.playerId =
+            auth.currentUser.uid;
 
-    let id =
-        localStorage.getItem(
-            "dshsMarblePlayerId"
-        );
-
-
-    if (!id) {
-
-        id =
-            "player_" +
-            Math.random()
-                .toString(36)
-                .substring(2) +
-            Date.now()
-                .toString(36);
-
-
-        localStorage.setItem(
-            "dshsMarblePlayerId",
-            id
-        );
+        return;
 
     }
 
+    const credential =
+        await signInAnonymously(auth);
 
-    return id;
-
+    state.playerId =
+        credential.user.uid;
 }
 
 
-state.playerId =
-    getPlayerId();
+/* =========================
+   방 코드
+========================= */
 
-
-/* =========================================================
-   유틸리티
-   ========================================================= */
-
-function formatMoney(value) {
-
-    return Number(
-        value || 0
-    )
-        .toLocaleString("ko-KR")
-        + "원";
-
-}
-
-
-function cleanRoomCode(value) {
-
-    return value
-        .toUpperCase()
-        .replace(
-            /[^A-Z0-9]/g,
-            ""
-        );
-
-}
-
-
-function makeRoomCode() {
+function makeRoomCode(){
 
     const chars =
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
     let code = "";
 
-
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
+    for(let i=0;i<6;i++){
 
         code +=
             chars[
                 Math.floor(
-                    Math.random() *
-                    chars.length
+                    Math.random()*chars.length
                 )
             ];
 
     }
 
-
     return code;
-
 }
 
 
-function randomDiceValue() {
-
-    return Math.floor(
-        Math.random() * 6
-    ) + 1;
-
-}
-
-
-/* =========================================================
+/* =========================
    닉네임
-   ========================================================= */
+========================= */
 
-function getNickname() {
+function getNickname(){
 
     return $("nickname")
         .value
@@ -1492,92 +1175,84 @@ function getNickname() {
 }
 
 
-function showLoginError(message) {
+/* =========================
+   금액 표시
+========================= */
 
-    $("loginError")
-        .textContent =
-        message;
+function formatMoney(value){
+
+    const manwon =
+        Number(value || 0) / 10000;
+
+    return manwon.toLocaleString("ko-KR")
+        + "만원";
 
 }
 
 
-/* =========================================================
+/* =========================
    방 만들기
-   ========================================================= */
+========================= */
 
-async function createRoom() {
+async function createRoom(){
 
     const nickname =
         getNickname();
 
+    if(!nickname){
 
-    if (!nickname) {
-
-        showLoginError(
-            "닉네임을 입력해야 한다."
-        );
+        $("loginError").textContent =
+            "닉네임을 입력해";
 
         return;
 
     }
 
+    try{
 
-    try {
+        await ensureAuth();
 
         let code;
         let exists = true;
 
-
-        for (
-            let i = 0;
-            i < 20 &&
-            exists;
-            i++
-        ) {
+        for(let i=0;i<20 && exists;i++){
 
             code =
                 makeRoomCode();
 
-
             const snapshot =
                 await get(
-                    ref(
-                        db,
-                        `rooms/${code}`
-                    )
+                    ref(db,`rooms/${code}`)
                 );
-
 
             exists =
                 snapshot.exists();
 
         }
 
-
-        if (exists) {
+        if(exists){
 
             throw new Error(
-                "방 코드 생성에 실패했다."
+                "방 코드 생성에 실패했어"
             );
 
         }
 
+        state.roomCode =
+            code;
 
         state.nickname =
             nickname;
 
-        state.roomCode =
-            code;
+        state.hostId =
+            state.playerId;
 
         state.isHost =
             true;
 
 
         await set(
-            ref(
-                db,
-                `rooms/${code}`
-            ),
+            ref(db,`rooms/${code}`),
             {
 
                 hostId:
@@ -1610,15 +1285,15 @@ async function createRoom() {
                 welfareFund:
                     0,
 
-                players: {
+                players:{
 
-                    [state.playerId]: {
+                    [state.playerId]:{
 
                         playerId:
                             state.playerId,
 
                         nickname:
-                            state.nickname,
+                            nickname,
 
                         piece:
                             null,
@@ -1643,82 +1318,71 @@ async function createRoom() {
         );
 
 
-        setupDisconnect();
+        showRoom();
 
-        enterRoom();
-
-    } catch (error) {
+    }catch(error){
 
         console.error(error);
 
-        showLoginError(
-            "방을 만들 수 없다.\n" +
-            error.message
-        );
+        $("loginError").textContent =
+            "방을 만들 수 없어\n"
+            + error.message;
 
     }
 
 }
 
 
-/* =========================================================
-   방 참가
-   ========================================================= */
+/* =========================
+   방 입장
+========================= */
 
-async function joinRoom() {
+async function joinRoom(){
 
     const nickname =
         getNickname();
 
-
     const code =
-        cleanRoomCode(
-            $("roomInput").value
-        );
+        $("roomInput")
+            .value
+            .trim()
+            .toUpperCase();
 
 
-    if (!nickname) {
+    if(!nickname){
 
-        showLoginError(
-            "닉네임을 입력해야 한다."
-        );
+        $("loginError").textContent =
+            "닉네임을 입력해";
+
+        return;
+
+    }
+
+    if(code.length !== 6){
+
+        $("loginError").textContent =
+            "방 코드는 6자리야";
 
         return;
 
     }
 
 
-    if (code.length !== 6) {
+    try{
 
-        showLoginError(
-            "방 코드는 6자리다."
-        );
-
-        return;
-
-    }
-
-
-    try {
+        await ensureAuth();
 
         const roomRef =
-            ref(
-                db,
-                `rooms/${code}`
-            );
-
+            ref(db,`rooms/${code}`);
 
         const snapshot =
             await get(roomRef);
 
+        if(!snapshot.exists()){
 
-        if (!snapshot.exists()) {
-
-            showLoginError(
-                "존재하지 않는 방이다."
+            throw new Error(
+                "존재하지 않는 방이야"
             );
-
-            return;
 
         }
 
@@ -1727,13 +1391,11 @@ async function joinRoom() {
             snapshot.val();
 
 
-        if (data.gameStarted) {
+        if(data.gameStarted){
 
-            showLoginError(
-                "이미 시작된 게임이다."
+            throw new Error(
+                "이미 게임이 시작됐어"
             );
-
-            return;
 
         }
 
@@ -1741,32 +1403,30 @@ async function joinRoom() {
         const players =
             data.players || {};
 
+        if(Object.keys(players).length >= 5){
 
-        if (
-            Object.keys(players)
-                .length >= 5
-        ) {
-
-            showLoginError(
-                "플레이어는 최대 5명까지 참가할 수 있다."
+            throw new Error(
+                "방이 가득 찼어"
             );
-
-            return;
 
         }
 
 
-        state.nickname =
-            nickname;
-
         state.roomCode =
             code;
 
+        state.nickname =
+            nickname;
+
+        state.hostId =
+            data.hostId || null;
+
         state.isHost =
-            false;
+            state.hostId ===
+            state.playerId;
 
 
-        await set(
+        await update(
             ref(
                 db,
                 `rooms/${code}/players/${state.playerId}`
@@ -1777,7 +1437,7 @@ async function joinRoom() {
                     state.playerId,
 
                 nickname:
-                    state.nickname,
+                    nickname,
 
                 piece:
                     null,
@@ -1798,81 +1458,79 @@ async function joinRoom() {
         );
 
 
-        setupDisconnect();
+        showRoom();
 
-        enterRoom();
 
-    } catch (error) {
+    }catch(error){
 
         console.error(error);
 
-        showLoginError(
-            "방에 들어갈 수 없다.\n" +
-            error.message
-        );
+        $("loginError").textContent =
+            error.message;
 
     }
 
 }
 
 
-/* =========================================================
-   접속 종료 처리
-   ========================================================= */
+/* =========================
+   대기실 표시
+========================= */
 
-function setupDisconnect() {
+function showRoom(){
 
-    onDisconnect(
-        ref(
-            db,
-            `rooms/${state.roomCode}/players/${state.playerId}`
-        )
-    ).remove();
+    $("loginScreen")
+        .classList
+        .add("hidden");
 
-}
-
-
-/* =========================================================
-   방 입장
-   ========================================================= */
-
-function enterRoom() {
-
-    loginScreen.classList.add(
-        "hidden"
-    );
-
-    roomScreen.classList.remove(
-        "hidden"
-    );
-
+    $("roomScreen")
+        .classList
+        .remove("hidden");
 
     $("roomCode")
         .textContent =
         state.roomCode;
 
-
     watchRoom();
+
+    loadPieces();
 
 }
 
 
-/* =========================================================
-   Firebase 방 감시
-   ========================================================= */
+/* =========================
+   게임 화면
+========================= */
 
-let watchingRoom = false;
+function showGame(){
+
+    $("roomScreen")
+        .classList
+        .add("hidden");
+
+    $("loginScreen")
+        .classList
+        .add("hidden");
+
+    $("gameScreen")
+        .style
+        .display =
+        "flex";
+
+    $("moneyToggleButton")
+        .classList
+        .remove("hidden");
+
+    renderGamePieces();
+
+}
 
 
-function watchRoom() {
+/* =========================
+   방 감시
+========================= */
 
-    if (watchingRoom) {
-        return;
-    }
-
-
-    watchingRoom = true;
-
+function watchRoom(){
 
     const roomRef =
         ref(
@@ -1883,13 +1541,13 @@ function watchRoom() {
 
     onValue(
         roomRef,
-        async snapshot => {
+        snapshot => {
 
-            if (!snapshot.exists()) {
+            if(!snapshot.exists()){
 
-                $("roomStatus")
-                    .textContent =
-                    "방이 종료되었다.";
+                alert("방이 삭제됐어");
+
+                location.reload();
 
                 return;
 
@@ -1900,14 +1558,18 @@ function watchRoom() {
                 snapshot.val();
 
 
+            state.hostId =
+                data.hostId || null;
+
+            state.isHost =
+                state.hostId ===
+                state.playerId;
+
+
             state.players =
                 Object.values(
                     data.players || {}
                 );
-
-
-            state.welfareFund =
-                data.welfareFund || 0;
 
 
             state.turnOrder =
@@ -1926,106 +1588,65 @@ function watchRoom() {
                 !!data.diceRolling;
 
 
-            renderBalances();
+            state.welfareFund =
+                data.welfareFund || 0;
 
-            renderWelfare();
+
+            $("welfareFund")
+                .textContent =
+                formatMoney(
+                    state.welfareFund
+                );
 
 
-            if (!state.gameStarted) {
+            renderPlayers();
 
-                renderRoom();
+            renderTurnOrder();
 
-                return;
+            renderTurnControls();
+
+            updateMyBalance();
+
+            renderGamePieces();
+
+
+            if(state.gameStarted){
+
+                showGame();
 
             }
 
 
-            roomScreen.classList.add(
-                "hidden"
-            );
+            const dice1 =
+                data.dice1 || 1;
 
-            gameScreen.classList.add(
-                "active"
-            );
+            const dice2 =
+                data.dice2 || 1;
 
 
-            renderTurnOrder();
+            $("dice1").src =
+                `dice/dice${dice1}.png`;
 
-            renderBoardPieces();
-
-            updateTurnControls();
-
-
-            setDiceImages(
-                data.dice1 || 1,
-                data.dice2 || 1
-            );
+            $("dice2").src =
+                `dice/dice${dice2}.png`;
 
 
-            /*
-             * 새로운 주사위 굴림을 감지한다.
-             */
+            const rollId =
+                data.diceRollId;
 
-            if (
-                data.diceRollId &&
-                data.diceRollId !==
-                    state.lastDiceRollId
-            ) {
+
+            if(
+                rollId &&
+                rollId !== state.lastDiceRollId
+            ){
 
                 state.lastDiceRollId =
-                    data.diceRollId;
+                    rollId;
 
-
-                state.diceRolling =
-                    true;
-
-
-                await animateDice(
-                    data.dice1,
-                    data.dice2
+                animateDice(
+                    dice1,
+                    dice2
                 );
-
-
-                /*
-                 * 주사위 애니메이션이 끝난 뒤
-                 * 방장이 다음 턴으로 넘긴다.
-                 */
-
-                if (
-                    state.isHost &&
-                    data.diceRolling
-                ) {
-
-                    await update(
-                        roomRef,
-                        {
-
-                            diceRolling:
-                                false,
-
-                            currentTurnIndex:
-                                (
-                                    (
-                                        data.currentTurnIndex ||
-                                        0
-                                    ) + 1
-                                ) %
-                                (
-                                    data.turnOrder?.length ||
-                                    1
-                                )
-
-                        }
-                    );
-
-                }
-
-
-                state.diceRolling =
-                    false;
-
-
-                updateTurnControls();
 
             }
 
@@ -2035,194 +1656,393 @@ function watchRoom() {
 }
 
 
-/* =========================================================
-   대기실
-   ========================================================= */
+/* =========================
+   플레이어 표시
+========================= */
 
-function renderRoom() {
+function renderPlayers(){
 
-    const players =
-        state.players;
+    const container =
+        $("players");
+
+    container.innerHTML = "";
 
 
-    $("players").innerHTML = "";
-
-
-    for (
-        const player
-        of players
-    ) {
+    for(const player of state.players){
 
         const div =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         div.className =
             "player";
 
 
         const left =
-            document.createElement(
-                "span"
-            );
+            document.createElement("div");
+
+        left.className =
+            "player-name";
 
 
-        left.textContent =
-            player.nickname;
+        const name =
+            document.createElement("span");
+
+        name.textContent =
+            player.nickname || "이름 없음";
 
 
-        const right =
-            document.createElement(
-                "span"
-            );
+        left.appendChild(name);
 
 
-        if (
+        if(
             player.playerId ===
-            state.playerId
-        ) {
+            state.hostId
+        ){
 
-            right.textContent =
-                "나";
+            const host =
+                document.createElement("span");
 
-        } else if (
-            player.playerId ===
-            getHostId()
-        ) {
+            host.className =
+                "host-mark";
 
-            right.textContent =
+            host.textContent =
                 "방장";
 
-        } else {
-
-            right.textContent =
-                player.piece ||
-                "말 미선택";
+            left.appendChild(host);
 
         }
 
 
-        div.append(
-            left,
-            right
-        );
+        const balance =
+            document.createElement("span");
+
+        balance.style.color =
+            "#aaa";
+
+        balance.textContent =
+            formatMoney(
+                player.balance || 0
+            );
 
 
-        $("players")
-            .appendChild(div);
+        div.appendChild(left);
+
+        div.appendChild(balance);
+
+        container.appendChild(div);
 
     }
-
-
-    renderPieces();
-
-
-    const everyoneSelected =
-        players.length > 0 &&
-        players.every(
-            player =>
-                !!player.piece
-        );
 
 
     $("startBtn").disabled =
-        !(
-            state.isHost &&
-            everyoneSelected
-        );
+        !state.isHost ||
+        state.players.length < 1;
+
+}
 
 
-    if (!state.isHost) {
+/* =========================
+   말 목록
+========================= */
 
-        $("roomStatus")
-            .textContent =
-            "방장이 게임을 시작할 때까지 기다린다.";
+async function loadPieces(){
 
-    } else if (!everyoneSelected) {
+    const container =
+        $("pieces");
 
-        $("roomStatus")
-            .textContent =
-            "모든 참가자가 말을 선택해야 한다.";
+    container.innerHTML = "";
 
-    } else {
+    state.pieces = [];
 
-        $("roomStatus")
-            .textContent =
-            "게임을 시작할 수 있다.";
+
+    for(let i=1;i<=100;i++){
+
+        const img =
+            new Image();
+
+        img.src =
+            `P/P${i}.png`;
+
+
+        try{
+
+            await img.decode();
+
+            state.pieces.push(i);
+
+        }catch{
+
+            break;
+
+        }
+
+    }
+
+
+    renderPieceSelection();
+
+}
+
+
+/* =========================
+   말 선택 표시
+========================= */
+
+function renderPieceSelection(){
+
+    const container =
+        $("pieces");
+
+    container.innerHTML = "";
+
+
+    const usedPieces =
+        state.players
+            .map(p => p.piece)
+            .filter(Boolean);
+
+
+    for(const piece of state.pieces){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "piece";
+
+
+        if(
+            state.selectedPiece ===
+            piece
+        ){
+
+            div.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        if(
+            usedPieces.includes(piece) &&
+            state.selectedPiece !== piece
+        ){
+
+            div.classList.add(
+                "used"
+            );
+
+        }
+
+
+        const img =
+            document.createElement("img");
+
+        img.src =
+            `P/P${piece}.png`;
+
+
+        const small =
+            document.createElement("small");
+
+        small.textContent =
+            `P${piece}`;
+
+
+        div.appendChild(img);
+
+        div.appendChild(small);
+
+
+        if(
+            !usedPieces.includes(piece) ||
+            state.selectedPiece === piece
+        ){
+
+            div.onclick =
+                () => selectPiece(piece);
+
+        }
+
+
+        container.appendChild(div);
 
     }
 
 }
 
 
-/*
- * 방장의 ID를 반환한다.
- */
+/* =========================
+   말 선택
+========================= */
 
-function getHostId() {
+async function selectPiece(piece){
 
-    const room =
-        state.roomCode;
-
-
-    if (!room) {
-        return null;
-    }
-
-
-    /*
-     * state에는 hostId를 따로 저장하지 않으므로
-     * 현재 방 데이터에서 확인한다.
-     */
-
-    if (
-        state.isHost
-    ) {
-
-        return state.playerId;
-
-    }
-
-
-    const host =
-        state.players.find(
-            player =>
-                player.isHost === true
+    const usedByOther =
+        state.players.some(
+            p =>
+                p.playerId !==
+                state.playerId &&
+                p.piece === piece
         );
 
 
-    return host?.playerId || null;
+    if(usedByOther){
+
+        return;
+
+    }
+
+
+    state.selectedPiece =
+        piece;
+
+
+    await update(
+
+        ref(
+            db,
+            `rooms/${state.roomCode}/players/${state.playerId}`
+        ),
+
+        {
+            piece:
+                piece
+        }
+
+    );
+
+
+    renderPieceSelection();
 
 }
 
 
-/* =========================================================
-   말 자동 검색
-   ========================================================= */
+/* =========================
+   게임 시작
+========================= */
 
-async function imageExists(src) {
+async function startGame(){
 
-    return new Promise(
-        resolve => {
+    if(!state.isHost){
 
-            const img =
-                new Image();
+        return;
+
+    }
 
 
-            img.onload =
+    if(
+        state.players.length < 1
+    ){
+
+        return;
+
+    }
+
+
+    const order =
+        state.players
+            .map(p => p.playerId)
+            .sort(
                 () =>
-                    resolve(true);
+                    Math.random() - 0.5
+            );
 
 
-            img.onerror =
-                () =>
-                    resolve(false);
+    await update(
+
+        ref(
+            db,
+            `rooms/${state.roomCode}`
+        ),
+
+        {
+
+            gameStarted:
+                true,
+
+            turnOrder:
+                order,
+
+            currentTurnIndex:
+                0,
+
+            dice1:
+                1,
+
+            dice2:
+                1,
+
+            diceRolling:
+                false,
+
+            diceRollId:
+                null,
+
+            welfareFund:
+                0
+
+        }
+
+    );
+
+}
 
 
-            img.src =
-                src;
+/* =========================
+   턴 순서
+========================= */
+
+function renderTurnOrder(){
+
+    const container =
+        $("turnList");
+
+    container.innerHTML = "";
+
+
+    state.turnOrder.forEach(
+        (playerId,index) => {
+
+            const player =
+                state.players.find(
+                    p =>
+                        p.playerId ===
+                        playerId
+                );
+
+
+            if(!player){
+
+                return;
+
+            }
+
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "turn-player";
+
+
+            if(
+                index ===
+                state.currentTurnIndex
+            ){
+
+                div.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            div.textContent =
+                `${index + 1}. ${player.nickname}`;
+
+
+            container.appendChild(div);
 
         }
     );
@@ -2230,588 +2050,21 @@ async function imageExists(src) {
 }
 
 
-async function loadPieces() {
-
-    state.pieces = [];
-
-
-    for (
-        let i = 1;
-        i <= 100;
-        i++
-    ) {
-
-        const src =
-            `P/P${i}.png`;
-
-
-        if (
-            await imageExists(src)
-        ) {
-
-            state.pieces.push({
-
-                id:
-                    `P${i}`,
-
-                src
-
-            });
-
-        }
-
-    }
-
-
-    renderPieces();
-
-}
-
-
-/* =========================================================
-   말 선택 UI
-   ========================================================= */
-
-function renderPieces() {
-
-    if (
-        !state.players.length
-    ) {
-        return;
-    }
-
-
-    const usedPieces =
-        new Set(
-
-            state.players
-                .filter(
-                    player =>
-                        player.playerId !==
-                        state.playerId
-                )
-                .map(
-                    player =>
-                        player.piece
-                )
-                .filter(Boolean)
-
-        );
-
-
-    const myPiece =
-        state.players.find(
-            player =>
-                player.playerId ===
-                state.playerId
-        )?.piece || null;
-
-
-    $("pieces").innerHTML = "";
-
-
-    for (
-        const piece
-        of state.pieces
-    ) {
-
-        const button =
-            document.createElement(
-                "button"
-            );
-
-
-        button.className =
-            "piece";
-
-
-        if (
-            piece.id ===
-            myPiece
-        ) {
-
-            button.classList.add(
-                "selected"
-            );
-
-        }
-
-
-        if (
-            usedPieces.has(
-                piece.id
-            )
-        ) {
-
-            button.disabled =
-                true;
-
-        }
-
-
-        const img =
-            document.createElement(
-                "img"
-            );
-
-
-        img.src =
-            piece.src;
-
-
-        img.alt =
-            piece.id;
-
-
-        const label =
-            document.createElement(
-                "small"
-            );
-
-
-        if (
-            usedPieces.has(
-                piece.id
-            )
-        ) {
-
-            label.textContent =
-                "사용 중";
-
-        } else if (
-            piece.id ===
-            myPiece
-        ) {
-
-            label.textContent =
-                "내 말";
-
-        } else {
-
-            label.textContent =
-                piece.id;
-
-        }
-
-
-        button.append(
-            img,
-            label
-        );
-
-
-        button.addEventListener(
-            "click",
-            () =>
-                selectPiece(
-                    piece.id
-                )
-        );
-
-
-        $("pieces")
-            .appendChild(
-                button
-            );
-
-    }
-
-}
-
-
-/* =========================================================
-   말 선택
-   ========================================================= */
-
-async function selectPiece(
-    pieceId
-) {
-
-    const playersRef =
-        ref(
-            db,
-            `rooms/${state.roomCode}/players`
-        );
-
-
-    try {
-
-        await runTransaction(
-            playersRef,
-            players => {
-
-                if (
-                    !players ||
-                    !players[
-                        state.playerId
-                    ]
-                ) {
-
-                    return;
-
-                }
-
-
-                for (
-                    const [
-                        playerId,
-                        player
-                    ]
-                    of Object.entries(
-                        players
-                    )
-                ) {
-
-                    if (
-                        playerId !==
-                            state.playerId &&
-                        player.piece ===
-                            pieceId
-                    ) {
-
-                        return;
-
-                    }
-
-                }
-
-
-                players[
-                    state.playerId
-                ].piece =
-                    pieceId;
-
-
-                return players;
-
-            }
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        $("roomStatus")
-            .textContent =
-            "말 선택에 실패했다.";
-
-    }
-
-}
-
-
-/* =========================================================
-   게임 시작
-   ========================================================= */
-
-async function startGame() {
-
-    if (
-        !state.isHost ||
-        !state.roomCode
-    ) {
-
-        return;
-
-    }
-
-
-    const roomRef =
-        ref(
-            db,
-            `rooms/${state.roomCode}`
-        );
-
-
-    try {
-
-        await runTransaction(
-            roomRef,
-            room => {
-
-                if (
-                    !room ||
-                    room.hostId !==
-                        state.playerId ||
-                    room.gameStarted
-                ) {
-
-                    return;
-
-                }
-
-
-                const players =
-                    room.players || {};
-
-
-                const playerList =
-                    Object.values(
-                        players
-                    );
-
-
-                if (
-                    playerList.length === 0
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    !playerList.every(
-                        player =>
-                            !!player.piece
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                /*
-                 * 시작 잔고가 없는 기존 방에도
-                 * 290만원을 넣어준다.
-                 */
-
-                for (
-                    const player
-                    of Object.values(
-                        players
-                    )
-                ) {
-
-                    if (
-                        typeof player.balance !==
-                        "number"
-                    ) {
-
-                        player.balance =
-                            2900000;
-
-                    }
-
-                }
-
-
-                /*
-                 * 턴 순서를 무작위로 섞는다.
-                 */
-
-                const order =
-                    playerList.map(
-                        player =>
-                            player.playerId
-                    );
-
-
-                shuffle(order);
-
-
-                room.turnOrder =
-                    order;
-
-                room.currentTurnIndex =
-                    0;
-
-                room.gameStarted =
-                    true;
-
-                room.dice1 =
-                    1;
-
-                room.dice2 =
-                    1;
-
-                room.diceRolling =
-                    false;
-
-                room.diceRollId =
-                    null;
-
-                room.welfareFund =
-                    room.welfareFund ||
-                    0;
-
-
-                return room;
-
-            }
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        $("roomStatus")
-            .textContent =
-            "게임 시작에 실패했다.";
-
-    }
-
-}
-
-
-/* =========================================================
-   배열 섞기
-   ========================================================= */
-
-function shuffle(array) {
-
-    for (
-        let i =
-            array.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-
-        [
-            array[i],
-            array[j]
-        ] =
-        [
-            array[j],
-            array[i]
-        ];
-
-    }
-
-
-    return array;
-
-}
-
-
-/* =========================================================
-   턴 순서 표시
-   ========================================================= */
-
-function renderTurnOrder() {
-
-    const container =
-        $("turnOrder");
-
-
-    container.innerHTML = "";
-
-
-    state.turnOrder
-        .forEach(
-            (
-                playerId,
-                index
-            ) => {
-
-                const player =
-                    state.players.find(
-                        p =>
-                            p.playerId ===
-                            playerId
-                    );
-
-
-                if (!player) {
-                    return;
-                }
-
-
-                const div =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                div.className =
-                    "turn-player";
-
-
-                if (
-                    index ===
-                    state.currentTurnIndex
-                ) {
-
-                    div.classList.add(
-                        "current"
-                    );
-
-                }
-
-
-                const img =
-                    document.createElement(
-                        "img"
-                    );
-
-
-                img.className =
-                    "turn-piece";
-
-
-                const piece =
-                    state.pieces.find(
-                        p =>
-                            p.id ===
-                            player.piece
-                    );
-
-
-                if (piece) {
-
-                    img.src =
-                        piece.src;
-
-                }
-
-
-                const name =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                name.className =
-                    "turn-name";
-
-
-                name.textContent =
-                    player.nickname;
-
-
-                div.append(
-                    img,
-                    name
-                );
-
-
-                container.appendChild(
-                    div
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
+/* =========================
    턴 컨트롤
-   ========================================================= */
+========================= */
 
-function updateTurnControls() {
+function renderTurnControls(){
 
-    if (
-        !state.gameStarted
-    ) {
+    if(!state.gameStarted){
+
+        $("turnStatus")
+            .textContent =
+            "게임을 시작해";
+
+        $("rollDiceButton")
+            .disabled =
+            true;
 
         return;
 
@@ -2826,23 +2079,10 @@ function updateTurnControls() {
 
     const currentPlayer =
         state.players.find(
-            player =>
-                player.playerId ===
+            p =>
+                p.playerId ===
                 currentPlayerId
         );
-
-
-    if (!currentPlayer) {
-        return;
-    }
-
-
-    const rollButton =
-        $("rollDiceButton");
-
-
-    const message =
-        $("turnMessage");
 
 
     const isMyTurn =
@@ -2850,42 +2090,34 @@ function updateTurnControls() {
         state.playerId;
 
 
-    if (
-        isMyTurn &&
-        !state.diceRolling
-    ) {
+    if(currentPlayer){
 
-        rollButton.style.display =
-            "block";
-
-        rollButton.disabled =
-            false;
-
-        message.textContent =
-            "내 차례";
-
-    } else {
-
-        rollButton.style.display =
-            "none";
-
-        message.textContent =
-            `${currentPlayer.nickname} 차례`;
+        $("turnStatus")
+            .textContent =
+            isMyTurn
+                ? "✨ 네 턴이야"
+                : `${currentPlayer.nickname}의 턴`;
 
     }
+
+
+    $("rollDiceButton")
+        .disabled =
+        !isMyTurn ||
+        state.diceRolling;
 
 }
 
 
-/* =========================================================
-   주사위 굴리기
-   ========================================================= */
+/* =========================
+   주사위
+   중요: window에 등록
+========================= */
 
-async function rollDice() {
+window.rollDice =
+async function(){
 
-    if (
-        state.diceRolling
-    ) {
+    if(state.diceRolling){
 
         return;
 
@@ -2898,10 +2130,10 @@ async function rollDice() {
         ];
 
 
-    if (
+    if(
         currentPlayerId !==
         state.playerId
-    ) {
+    ){
 
         return;
 
@@ -2911,7 +2143,6 @@ async function rollDice() {
     const final1 =
         randomDiceValue();
 
-
     const final2 =
         randomDiceValue();
 
@@ -2920,340 +2151,356 @@ async function rollDice() {
         true;
 
 
-    await update(
-        ref(
-            db,
-            `rooms/${state.roomCode}`
-        ),
-        {
+    renderTurnControls();
 
-            dice1:
-                final1,
 
-            dice2:
-                final2,
+    try{
 
-            diceRolling:
-                true,
+        await update(
 
-            diceRollId:
-                Date.now()
+            ref(
+                db,
+                `rooms/${state.roomCode}`
+            ),
 
-        }
-    );
+            {
+
+                dice1:
+                    final1,
+
+                dice2:
+                    final2,
+
+                diceRolling:
+                    true,
+
+                diceRollId:
+                    Date.now()
+
+            }
+
+        );
+
+
+        /*
+          잠깐 주사위가 굴러가는 것처럼
+          보인 뒤 다음 턴으로 넘긴다.
+        */
+
+        setTimeout(
+            async () => {
+
+                try{
+
+                    const snapshot =
+                        await get(
+                            ref(
+                                db,
+                                `rooms/${state.roomCode}`
+                            )
+                        );
+
+
+                    if(
+                        !snapshot.exists()
+                    ){
+
+                        return;
+
+                    }
+
+
+                    const room =
+                        snapshot.val();
+
+
+                    const nextIndex =
+                        (
+                            (room.currentTurnIndex || 0)
+                            + 1
+                        )
+                        %
+                        room.turnOrder.length;
+
+
+                    await update(
+
+                        ref(
+                            db,
+                            `rooms/${state.roomCode}`
+                        ),
+
+                        {
+
+                            diceRolling:
+                                false,
+
+                            currentTurnIndex:
+                                nextIndex
+
+                        }
+
+                    );
+
+
+                }catch(error){
+
+                    console.error(error);
+
+                    await update(
+
+                        ref(
+                            db,
+                            `rooms/${state.roomCode}`
+                        ),
+
+                        {
+                            diceRolling:
+                                false
+                        }
+
+                    );
+
+                }
+
+            },
+            1200
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        state.diceRolling =
+            false;
+
+        renderTurnControls();
+
+    }
+
+};
+
+
+/* =========================
+   주사위 랜덤
+========================= */
+
+function randomDiceValue(){
+
+    return Math.floor(
+        Math.random() * 6
+    ) + 1;
 
 }
 
 
-/* =========================================================
-   주사위 이미지
-   ========================================================= */
-
-function setDiceImages(
-    value1,
-    value2
-) {
-
-    $("dice1").src =
-        `dice/dice${value1}.png`;
-
-
-    $("dice2").src =
-        `dice/dice${value2}.png`;
-
-}
-
-
-/* =========================================================
+/* =========================
    주사위 애니메이션
-   ========================================================= */
+========================= */
 
 function animateDice(
     final1,
     final2
-) {
+){
 
-    return new Promise(
-        resolve => {
+    const dice1 =
+        $("dice1");
 
-            let elapsed = 0;
-
-            let delay = 55;
-
-
-            function roll() {
-
-                const random1 =
-                    randomDiceValue();
+    const dice2 =
+        $("dice2");
 
 
-                const random2 =
-                    randomDiceValue();
+    let count = 0;
+
+    const timer =
+        setInterval(
+            () => {
+
+                dice1.src =
+                    `dice/dice${randomDiceValue()}.png`;
+
+                dice2.src =
+                    `dice/dice${randomDiceValue()}.png`;
 
 
-                setDiceImages(
-                    random1,
-                    random2
-                );
+                count++;
 
 
-                elapsed +=
-                    delay;
+                if(count >= 8){
 
+                    clearInterval(timer);
 
-                if (
-                    elapsed >= 1500
-                ) {
+                    dice1.src =
+                        `dice/dice${final1}.png`;
 
-                    setDiceImages(
-                        final1,
-                        final2
-                    );
-
-
-                    resolve();
-
-                    return;
+                    dice2.src =
+                        `dice/dice${final2}.png`;
 
                 }
 
-
-                delay *=
-                    1.13;
-
-
-                setTimeout(
-                    roll,
-                    delay
-                );
-
-            }
-
-
-            roll();
-
-        }
-    );
+            },
+            100
+        );
 
 }
 
 
-/* =========================================================
-   보드 말 렌더링
-   ========================================================= */
+/* =========================
+   게임 말 표시
+========================= */
 
-function renderBoardPieces() {
+function renderGamePieces(){
 
-    const oldPieces =
-        boardWrapper.querySelectorAll(
-            ".board-piece"
-        );
+    const container =
+        $("gamePieces");
 
+    container.innerHTML = "";
 
-    oldPieces.forEach(
-        piece =>
-            piece.remove()
-    );
 
+    for(const player of state.players){
 
-    /*
-     * 현재 플레이어의 말을 먼저 렌더링한다.
-     * 자신의 말이 항상 가장 위에 표시된다.
-     */
+        if(!player.piece){
 
-    const sortedPlayers =
-        [...state.players].sort(
-            (a, b) => {
+            continue;
 
-                if (
-                    a.playerId ===
-                    state.playerId
-                ) {
+        }
 
-                    return -1;
 
-                }
+        const img =
+            document.createElement("img");
 
+        img.className =
+            "game-piece";
 
-                if (
-                    b.playerId ===
-                    state.playerId
-                ) {
+        img.src =
+            `P/P${player.piece}.png`;
 
-                    return 1;
+        img.alt =
+            player.nickname;
 
-                }
 
+        /*
+          위치가 없으면 중앙 근처에 둔다.
+        */
 
-                return (
-                    (a.joinedAt || 0) -
-                    (b.joinedAt || 0)
-                );
+        const x =
+            player.x ?? 50;
 
-            }
-        );
+        const y =
+            player.y ?? 50;
 
 
-    sortedPlayers.forEach(
-        (
-            player,
-            index
-        ) => {
+        img.style.left =
+            `${x}%`;
 
-            if (
-                !player.piece
-            ) {
+        img.style.top =
+            `${y}%`;
 
-                return;
 
-            }
+        if(
+            player.playerId ===
+            state.playerId
+        ){
 
-
-            const piece =
-                state.pieces.find(
-                    p =>
-                        p.id ===
-                        player.piece
-                );
-
-
-            if (!piece) {
-                return;
-            }
-
-
-            const img =
-                document.createElement(
-                    "img"
-                );
-
-
-            img.src =
-                piece.src;
-
-
-            img.alt =
-                player.nickname;
-
-
-            img.className =
-                "board-piece";
-
-
-            /*
-             * 좌표가 없으면 보드 중앙 근처에 배치한다.
-             */
-
-            if (
-                player.x == null ||
-                player.y == null
-            ) {
-
-                const defaultPositions = [
-
-                    [50, 50],
-                    [47, 50],
-                    [53, 50],
-                    [50, 46],
-                    [50, 54]
-
-                ];
-
-
-                const position =
-                    defaultPositions[
-                        index %
-                        defaultPositions.length
-                    ];
-
-
-                img.style.left =
-                    `${position[0]}%`;
-
-
-                img.style.top =
-                    `${position[1]}%`;
-
-            } else {
-
-                img.style.left =
-                    `${player.x}%`;
-
-
-                img.style.top =
-                    `${player.y}%`;
-
-            }
-
-
-            /*
-             * 자신의 말만 움직일 수 있게 한다.
-             */
-
-            if (
-                player.playerId ===
-                state.playerId
-            ) {
-
-                img.classList.add(
-                    "draggable"
-                );
-
-
-                setupPieceDrag(
-                    img
-                );
-
-
-                img.style.zIndex =
-                    "100";
-
-            } else {
-
-                img.style.zIndex =
-                    String(
-                        10 + index
-                    );
-
-            }
-
-
-            boardWrapper.appendChild(
-                img
+            enablePieceDrag(
+                img,
+                player
             );
 
+        }else{
+
+            img.style.cursor =
+                "default";
+
         }
-    );
+
+
+        container.appendChild(img);
+
+    }
 
 }
 
 
-/* =========================================================
+/* =========================
    말 드래그
-   ========================================================= */
+========================= */
 
-function setupPieceDrag(img) {
+function enablePieceDrag(
+    img,
+    player
+){
 
     let dragging = false;
+
+
+    const getPosition =
+        event => {
+
+            const board =
+                document.querySelector(
+                    ".board-wrap"
+                );
+
+
+            const rect =
+                board.getBoundingClientRect();
+
+
+            const clientX =
+                event.clientX;
+
+            const clientY =
+                event.clientY;
+
+
+            let x =
+                (
+                    (clientX - rect.left)
+                    / rect.width
+                ) * 100;
+
+
+            let y =
+                (
+                    (clientY - rect.top)
+                    / rect.height
+                ) * 100;
+
+
+            x =
+                Math.max(
+                    0,
+                    Math.min(100,x)
+                );
+
+            y =
+                Math.max(
+                    0,
+                    Math.min(100,y)
+                );
+
+
+            return {x,y};
+
+        };
 
 
     img.addEventListener(
         "pointerdown",
         event => {
 
-            event.preventDefault();
-
-
             dragging = true;
-
 
             img.setPointerCapture(
                 event.pointerId
             );
 
+            state.dragging =
+                true;
 
-            img.style.zIndex =
-                "200";
+            event.preventDefault();
 
         }
     );
@@ -3263,60 +2510,19 @@ function setupPieceDrag(img) {
         "pointermove",
         event => {
 
-            if (!dragging) {
+            if(!dragging){
+
                 return;
+
             }
 
 
-            event.preventDefault();
-
-
-            const rect =
-                boardWrapper
-                    .getBoundingClientRect();
-
-
-            let x =
-                (
-                    event.clientX -
-                    rect.left
-                ) /
-                rect.width *
-                100;
-
-
-            let y =
-                (
-                    event.clientY -
-                    rect.top
-                ) /
-                rect.height *
-                100;
-
-
-            x =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        x
-                    )
-                );
-
-
-            y =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        y
-                    )
-                );
+            const {x,y} =
+                getPosition(event);
 
 
             img.style.left =
                 `${x}%`;
-
 
             img.style.top =
                 `${y}%`;
@@ -3329,89 +2535,56 @@ function setupPieceDrag(img) {
         "pointerup",
         async event => {
 
-            if (!dragging) {
+            if(!dragging){
+
                 return;
+
             }
 
 
             dragging = false;
 
+            state.dragging =
+                false;
 
-            try {
 
-                img.releasePointerCapture(
-                    event.pointerId
+            const {x,y} =
+                getPosition(event);
+
+
+            img.style.left =
+                `${x}%`;
+
+            img.style.top =
+                `${y}%`;
+
+
+            try{
+
+                await update(
+
+                    ref(
+                        db,
+                        `rooms/${state.roomCode}/players/${state.playerId}`
+                    ),
+
+                    {
+
+                        x:
+                            x,
+
+                        y:
+                            y
+
+                    }
+
                 );
 
-            } catch {}
+            }catch(error){
 
+                console.error(error);
 
-            const rect =
-                boardWrapper
-                    .getBoundingClientRect();
-
-
-            let x =
-                (
-                    event.clientX -
-                    rect.left
-                ) /
-                rect.width *
-                100;
-
-
-            let y =
-                (
-                    event.clientY -
-                    rect.top
-                ) /
-                rect.height *
-                100;
-
-
-            x =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        x
-                    )
-                );
-
-
-            y =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        y
-                    )
-                );
-
-
-            await update(
-
-                ref(
-                    db,
-                    `rooms/${state.roomCode}/players/${state.playerId}`
-                ),
-
-                {
-                    x,
-                    y
-                }
-
-            );
-
-        }
-    );
-
-
-    img.addEventListener(
-        "pointercancel",
-        () => {
-
-            dragging = false;
+            }
 
         }
     );
@@ -3419,93 +2592,86 @@ function setupPieceDrag(img) {
 }
 
 
-/* =========================================================
-   돈 패널 열기 / 닫기
-   ========================================================= */
+/* =========================
+   내 잔액
+========================= */
+
+function updateMyBalance(){
+
+    const me =
+        state.players.find(
+            p =>
+                p.playerId ===
+                state.playerId
+        );
+
+
+    $("myBalance")
+        .textContent =
+        formatMoney(
+            me?.balance || 0
+        );
+
+}
+
+
+/* =========================
+   금액 패널
+========================= */
 
 window.toggleMoneyPanel =
-function () {
+function(){
 
     const panel =
         $("moneyPanel");
 
-
-    const toggle =
+    const button =
         $("moneyToggleButton");
 
 
-    const isClosed =
-        panel.style.display ===
-        "none";
+    const isHidden =
+        panel.classList.contains(
+            "hidden"
+        );
 
 
-    if (isClosed) {
+    if(isHidden){
 
-        panel.style.display =
-            "block";
+        panel.classList.remove(
+            "hidden"
+        );
 
-        toggle.style.display =
-            "none";
+        button.classList.add(
+            "hidden"
+        );
 
-    } else {
+    }else{
 
-        panel.style.display =
-            "none";
+        panel.classList.add(
+            "hidden"
+        );
 
-        toggle.style.display =
-            "block";
+        button.classList.remove(
+            "hidden"
+        );
 
     }
 
 };
 
 
-/* =========================================================
-   돈 선택
-   ========================================================= */
-
-const moneyValues = [
-    1,
-    2,
-    5,
-    10,
-    50
-];
-
-
-const moneyCounts = {
-
-    1: 0,
-    2: 0,
-    5: 0,
-    10: 0,
-    50: 0
-
-};
-
-
-/*
- * 돈 수량을 변경한다.
- */
+/* =========================
+   금액 개수 변경
+========================= */
 
 window.changeMoneyCount =
-function (
-    value,
-    amount
-) {
+function(value,change){
 
     moneyCounts[value] =
         Math.max(
             0,
-            moneyCounts[value] +
-            amount
+            moneyCounts[value] + change
         );
-
-
-    $(
-        `moneyCount${value}`
-    ).textContent =
-        moneyCounts[value];
 
 
     updateSelectedMoney();
@@ -3513,38 +2679,30 @@ function (
 };
 
 
-/*
- * 선택한 돈의 총액을 계산한다.
- */
+/* =========================
+   선택 금액 계산
+========================= */
 
-function getSelectedMoney() {
+function getSelectedMoney(){
 
-    let total = 0;
+    return (
 
+        moneyCounts[1] * 10000 +
+        moneyCounts[2] * 20000 +
+        moneyCounts[5] * 50000 +
+        moneyCounts[10] * 100000 +
+        moneyCounts[50] * 500000
 
-    for (
-        const value
-        of moneyValues
-    ) {
-
-        total +=
-            value *
-            10000 *
-            moneyCounts[value];
-
-    }
-
-
-    return total;
+    );
 
 }
 
 
-/*
- * 선택 금액을 표시한다.
- */
+/* =========================
+   선택 금액 표시
+========================= */
 
-function updateSelectedMoney() {
+function updateSelectedMoney(){
 
     $("selectedMoney")
         .textContent =
@@ -3555,27 +2713,26 @@ function updateSelectedMoney() {
 }
 
 
-/*
- * 돈 선택을 초기화한다.
- */
+/* =========================
+   금액 선택 초기화
+========================= */
 
-function resetMoneySelection() {
+function resetMoneyCounts(){
 
-    for (
-        const value
-        of moneyValues
-    ) {
+    moneyCounts[1] =
+        0;
 
-        moneyCounts[value] =
-            0;
+    moneyCounts[2] =
+        0;
 
+    moneyCounts[5] =
+        0;
 
-        $(
-            `moneyCount${value}`
-        ).textContent =
-            "0";
+    moneyCounts[10] =
+        0;
 
-    }
+    moneyCounts[50] =
+        0;
 
 
     updateSelectedMoney();
@@ -3583,113 +2740,18 @@ function resetMoneySelection() {
 }
 
 
-/* =========================================================
-   잔고 표시
-   ========================================================= */
-
-function renderBalances() {
-
-    const list =
-        $("balanceList");
-
-
-    list.innerHTML = "";
-
-
-    const players =
-        [...state.players].sort(
-            (a, b) =>
-                (a.joinedAt || 0) -
-                (b.joinedAt || 0)
-        );
-
-
-    players.forEach(
-        player => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "balance-player";
-
-
-            if (
-                player.playerId ===
-                state.playerId
-            ) {
-
-                div.classList.add(
-                    "me"
-                );
-
-            }
-
-
-            const name =
-                document.createElement(
-                    "span"
-                );
-
-
-            name.className =
-                "balance-name";
-
-
-            name.textContent =
-                player.nickname;
-
-
-            const balance =
-                document.createElement(
-                    "span"
-                );
-
-
-            balance.className =
-                "balance-money";
-
-
-            balance.textContent =
-                formatMoney(
-                    player.balance ??
-                    2900000
-                );
-
-
-            div.append(
-                name,
-                balance
-            );
-
-
-            list.appendChild(
-                div
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
+/* =========================
    돈 받기
-   ========================================================= */
+========================= */
 
 window.receiveMoney =
-async function () {
+async function(){
 
-    const total =
+    const amount =
         getSelectedMoney();
 
 
-    if (
-        total <= 0
-    ) {
+    if(amount <= 0){
 
         return;
 
@@ -3703,27 +2765,18 @@ async function () {
         );
 
 
-    try {
+    try{
 
         await runTransaction(
             playerRef,
-            balance => {
-
-                return (
-                    Number(
-                        balance ??
-                        2900000
-                    ) +
-                    total
-                );
-
-            }
+            balance =>
+                (balance || 0) + amount
         );
 
 
-        resetMoneySelection();
+        resetMoneyCounts();
 
-    } catch (error) {
+    }catch(error){
 
         console.error(error);
 
@@ -3732,20 +2785,18 @@ async function () {
 };
 
 
-/* =========================================================
+/* =========================
    돈 내기
-   ========================================================= */
+========================= */
 
 window.payMoney =
-async function () {
+async function(){
 
-    const total =
+    const amount =
         getSelectedMoney();
 
 
-    if (
-        total <= 0
-    ) {
+    if(amount <= 0){
 
         return;
 
@@ -3759,45 +2810,36 @@ async function () {
         );
 
 
-    try {
+    try{
 
         const result =
             await runTransaction(
                 playerRef,
                 balance => {
 
-                    const current =
-                        Number(
-                            balance ??
-                            2900000
-                        );
+                    balance =
+                        balance || 0;
 
 
-                    if (
-                        current <
-                        total
-                    ) {
+                    if(
+                        balance < amount
+                    ){
 
                         return;
 
                     }
 
 
-                    return (
-                        current -
-                        total
-                    );
+                    return balance - amount;
 
                 }
             );
 
 
-        if (
-            !result.committed
-        ) {
+        if(!result.committed){
 
             alert(
-                "잔고가 부족하다."
+                "잔액이 부족해"
             );
 
             return;
@@ -3805,9 +2847,10 @@ async function () {
         }
 
 
-        resetMoneySelection();
+        resetMoneyCounts();
 
-    } catch (error) {
+
+    }catch(error){
 
         console.error(error);
 
@@ -3816,197 +2859,75 @@ async function () {
 };
 
 
-/* =========================================================
-   사회복지기금 표시
-   ========================================================= */
-
-function renderWelfare() {
-
-    $("welfareFund")
-        .textContent =
-        formatMoney(
-            state.welfareFund
-        );
-
-}
-
-
-/* =========================================================
+/* =========================
    사회복지기금 내기
-   ========================================================= */
+========================= */
 
 window.payWelfareFund =
-async function () {
+async function(){
 
     const amount =
         150000;
 
 
-    const roomRef =
+    const playerRef =
         ref(
             db,
-            `rooms/${state.roomCode}`
+            `rooms/${state.roomCode}/players/${state.playerId}/balance`
         );
 
 
-    try {
+    try{
 
         const result =
             await runTransaction(
-                roomRef,
-                room => {
+                playerRef,
+                balance => {
 
-                    if (!room) {
-                        return;
-                    }
-
-
-                    const players =
-                        room.players ||
-                        {};
+                    balance =
+                        balance || 0;
 
 
-                    const player =
-                        players[
-                            state.playerId
-                        ];
-
-
-                    if (!player) {
-                        return;
-                    }
-
-
-                    const balance =
-                        Number(
-                            player.balance ??
-                            2900000
-                        );
-
-
-                    if (
-                        balance <
-                        amount
-                    ) {
+                    if(
+                        balance < amount
+                    ){
 
                         return;
 
                     }
 
 
-                    player.balance =
-                        balance -
-                        amount;
-
-
-                    room.welfareFund =
-                        Number(
-                            room.welfareFund ||
-                            0
-                        ) +
-                        amount;
-
-
-                    return room;
+                    return balance - amount;
 
                 }
             );
 
 
-        if (
-            !result.committed
-        ) {
+        if(!result.committed){
 
             alert(
-                "잔고가 부족하다."
+                "잔액이 부족해"
             );
+
+            return;
 
         }
 
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-};
-
-
-/* =========================================================
-   사회복지기금 받기
-   ========================================================= */
-
-window.receiveWelfareFund =
-async function () {
-
-    const roomRef =
-        ref(
-            db,
-            `rooms/${state.roomCode}`
-        );
-
-
-    try {
 
         await runTransaction(
-            roomRef,
-            room => {
 
-                if (!room) {
-                    return;
-                }
+            ref(
+                db,
+                `rooms/${state.roomCode}/welfareFund`
+            ),
 
+            fund =>
+                (fund || 0) + amount
 
-                const players =
-                    room.players ||
-                    {};
-
-
-                const player =
-                    players[
-                        state.playerId
-                    ];
-
-
-                if (!player) {
-                    return;
-                }
-
-
-                const fund =
-                    Number(
-                        room.welfareFund ||
-                        0
-                    );
-
-
-                if (
-                    fund <= 0
-                ) {
-
-                    return room;
-
-                }
-
-
-                player.balance =
-                    Number(
-                        player.balance ??
-                        2900000
-                    ) +
-                    fund;
-
-
-                room.welfareFund =
-                    0;
-
-
-                return room;
-
-            }
         );
 
-    } catch (error) {
+
+    }catch(error){
 
         console.error(error);
 
@@ -4015,9 +2936,88 @@ async function () {
 };
 
 
-/* =========================================================
+/* =========================
+   사회복지기금 받기
+========================= */
+
+window.receiveWelfareFund =
+async function(){
+
+    const fundRef =
+        ref(
+            db,
+            `rooms/${state.roomCode}/welfareFund`
+        );
+
+
+    const playerRef =
+        ref(
+            db,
+            `rooms/${state.roomCode}/players/${state.playerId}/balance`
+        );
+
+
+    try{
+
+        const result =
+            await runTransaction(
+                fundRef,
+                fund => {
+
+                    fund =
+                        fund || 0;
+
+
+                    if(fund <= 0){
+
+                        return;
+
+                    }
+
+
+                    return 0;
+
+                }
+            );
+
+
+        if(!result.committed){
+
+            return;
+
+        }
+
+
+        const amount =
+            result.snapshot.val();
+
+
+        await runTransaction(
+            playerRef,
+            balance =>
+                (balance || 0) + amount
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+};
+
+
+/* =========================
    버튼 이벤트
-   ========================================================= */
+========================= */
+
+$("createBtn")
+    .addEventListener(
+        "click",
+        createRoom
+    );
+
 
 $("showJoinBtn")
     .addEventListener(
@@ -4025,22 +3025,10 @@ $("showJoinBtn")
         () => {
 
             $("joinBox")
-                .classList.toggle(
-                    "hidden"
-                );
-
-
-            $("loginError")
-                .textContent = "";
+                .classList
+                .toggle("hidden");
 
         }
-    );
-
-
-$("createBtn")
-    .addEventListener(
-        "click",
-        createRoom
     );
 
 
@@ -4063,10 +3051,10 @@ $("roomInput")
         "keydown",
         event => {
 
-            if (
+            if(
                 event.key ===
                 "Enter"
-            ) {
+            ){
 
                 joinRoom();
 
@@ -4076,14 +3064,23 @@ $("roomInput")
     );
 
 
-/* =========================================================
-   초기화
-   ========================================================= */
+/* =========================
+   초기 인증
+========================= */
 
-loadPieces()
-    .catch(
-        console.error
-    );
+onAuthStateChanged(
+    auth,
+    user => {
+
+        if(user){
+
+            state.playerId =
+                user.uid;
+
+        }
+
+    }
+);
 
 </script>
 
