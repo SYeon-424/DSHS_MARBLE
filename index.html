@@ -2257,11 +2257,6 @@ function renderPieceSelection(){
             `P${piece}`;
 
 
-        /*
-          이미지가 깨졌을 때도
-          어떤 말인지 확인할 수 있게 한다.
-        */
-
         img.onerror =
             () => {
 
@@ -2356,11 +2351,6 @@ async function selectPiece(piece){
 
                     }
 
-
-                    /*
-                      동시에 다른 사람이
-                      같은 말을 골랐는지 확인한다.
-                    */
 
                     for(
                         const [
@@ -2581,11 +2571,6 @@ function renderGamePieces(){
     container.innerHTML = "";
 
 
-    /*
-      다른 플레이어 말을 먼저 그린다.
-      내 말을 마지막에 그려서 항상 위에 오게 한다.
-    */
-
     const others =
         state.players.filter(
             player =>
@@ -2672,11 +2657,6 @@ function createGamePiece(
     img.style.top =
         `${player.y ?? 50}%`;
 
-
-    /*
-      다른 플레이어 말은 이동 불가.
-      내 말만 드래그 가능.
-    */
 
     if(isMine){
 
@@ -3052,6 +3032,15 @@ async function(){
         randomDiceValue();
 
 
+    /*
+      두 주사위가 같은 숫자인지
+      미리 저장한다.
+    */
+
+    const isDouble =
+        final1 === final2;
+
+
     state.diceRolling =
         true;
 
@@ -3135,9 +3124,36 @@ async function(){
                             }
 
 
+                            /*
+                              주사위 굴리기가 끝났다는
+                              표시를 한다.
+                            */
+
                             room.diceRolling =
                                 false;
 
+
+                            /*
+                              더블이면
+                              currentTurnIndex를
+                              변경하지 않는다.
+
+                              따라서 현재 플레이어가
+                              한 번 더 굴릴 수 있다.
+                            */
+
+                            if(isDouble){
+
+                                return room;
+
+                            }
+
+
+                            /*
+                              더블이 아니면
+                              다음 플레이어에게
+                              턴을 넘긴다.
+                            */
 
                             room.currentTurnIndex =
                                 (
@@ -3305,10 +3321,6 @@ function renderMoneyPlayers(){
 
     container.innerHTML = "";
 
-
-    /*
-      내 금액을 무조건 가장 위에 둔다.
-    */
 
     const sorted =
         [...state.players]
@@ -3942,17 +3954,6 @@ state.playerId =
     getPlayerId();
 
 
-/*
-  네 현재 폴더 구조:
-  P/P1.png
-  P/P2.png
-  P/P3.png
-  P/P4.png
-  P/P5.png
-
-  파일을 명시적으로 확인한다.
-*/
-
 async function checkPieceImages(){
 
     const loaded = [];
@@ -4025,4 +4026,4 @@ updateSelectedMoney();
 </script>
 
 </body>
-</html>
+</html>#2424ㅂ
