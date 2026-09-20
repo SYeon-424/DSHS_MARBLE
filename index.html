@@ -248,6 +248,48 @@ button{
 }
 
 /* =========================
+   교무실 / 선생님 매수
+========================= */
+#staffRoomToggleButton{
+    position:fixed;
+    right:15px;
+    top:116px;
+    z-index:1100;
+    background:#6b8cff;
+    color:#fff;
+    padding:10px 15px;
+    border-radius:10px;
+    box-shadow:0 5px 20px #0008;
+    font-weight:900;
+}
+#staffRoomPanel{
+    position:fixed;
+    right:15px;
+    top:15px;
+    z-index:1110;
+    width:min(520px,calc(100vw - 30px));
+    max-height:calc(100vh - 30px);
+    overflow-y:auto;
+    background:#222;
+    border:1px solid #777;
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 8px 35px #000b;
+}
+.staff-room-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;}
+.staff-room-header h3{margin:0;}
+.staff-room-layout{display:flex;flex-wrap:wrap;gap:8px;}
+.staff-name-button{background:#3d4d72;color:#fff;border:2px solid #7188c9;border-radius:9px;padding:9px 12px;font-weight:900;cursor:pointer;}
+.staff-name-button:hover{filter:brightness(1.15);}
+.staff-room-status{color:#aaa;font-size:13px;margin:8px 0;}
+.staff-detail-card{background:#111;border-radius:12px;padding:16px;margin-top:14px;color:#fff;}
+.staff-detail-line{height:5px;border-radius:999px;margin:0 0 13px;background:var(--staff-color,#7188c9);}
+.staff-detail-name{font-size:22px;font-weight:1000;text-align:center;margin-bottom:12px;}
+.staff-detail-divider{border:0;border-top:2px dashed #777;margin:12px 0;}
+.staff-detail-row{line-height:1.7;font-size:14px;}
+.staff-buy-button{width:100%;margin-top:14px;background:#d9a441;color:#241600;font-weight:1000;}
+
+/* =========================
    황금열쇠 버튼 / 카드
 ========================= */
 
@@ -1211,6 +1253,24 @@ button{
     🔑 황금열쇠
 </button>
 
+<button
+    id="staffRoomToggleButton"
+    class="hidden"
+    onclick="toggleStaffRoomPanel()"
+>
+    🏫 교무실
+</button>
+
+<div id="staffRoomPanel" class="hidden">
+    <div class="staff-room-header">
+        <h3>🏫 교무실 배치표</h3>
+        <button onclick="toggleStaffRoomPanel()">닫기</button>
+    </div>
+    <div id="staffRoomStatus" class="staff-room-status">선생님 정보를 불러오는 중...</div>
+    <div id="staffRoomNames" class="staff-room-layout"></div>
+    <div id="staffDetailCard" class="staff-detail-card hidden"></div>
+</div>
+
 
 <!-- =========================
      황금열쇠 패널
@@ -1604,6 +1664,7 @@ const db =
 
 
 loadGoldenKeyCards();
+loadStaffList();
 
 
 /* =========================
@@ -1648,6 +1709,9 @@ const state = {
     lastKeyDraw: null,
     lastKeyDrawByPlayer: {},
 
+    staffList: [],
+    selectedStaff: null,
+
     dragging: false,
 
     /*
@@ -1679,6 +1743,112 @@ const moneyCounts = {
     10: 0,
     50: 0
 
+};
+
+
+/* =========================
+   교무실 / 선생님 데이터
+========================= */
+let staffList = [];
+
+async function loadStaffList(){
+    try{
+        const response = await fetch("list.json", {cache:"no-store"});
+        if(!response.ok) throw new Error(`list.json 불러오기 실패 (${response.status})`);
+        const data = await response.json();
+        const source = Array.isArray(data) ? data : (data.teachers || data.staff || data.list || []);
+        if(!Array.isArray(source)) throw new Error("list.json의 선생님 목록 형식이 올바르지 않아");
+        staffList = source.map((item, index) => {
+            const color = item.color || item.colour || item.colorCode || "#7188c9";
+            return {
+                ...item,
+                id: String(item.id ?? item.name ?? `staff_${index}`),
+                name: String(item.name ?? item.이름 ?? `선생님 ${index + 1}`),
+                color,
+                basic: item.basic ?? item.기본 ?? 0,
+                essay: item.essay ?? item.서술형 ?? 0,
+                short: item.short ?? item.단답형 ?? 0,
+                objective: item.objective ?? item.객관식 ?? 0,
+                takenBasic: item.takenBasic ?? item.응시기본 ?? item.응시_기본 ?? 0,
+                takenEssay: item.takenEssay ?? item.응시서술형 ?? item.응시_서술형 ?? 0,
+                takenShort: item.takenShort ?? item.응시단답형 ?? item.응시_단답형 ?? 0,
+                takenObjective: item.takenObjective ?? item.응시객관식 ?? item.응시_객관식 ?? 0
+            };
+        });
+        state.staffList = staffList;
+        renderStaffRoom();
+    }catch(error){
+        console.error("교무실 데이터 로드 오류:", error);
+        staffList = [];
+        state.staffList = [];
+        const status = $("staffRoomStatus");
+        if(status) status.textContent = "list.json을 불러오지 못했어. 파일을 확인해줘.";
+    }
+}
+
+function getStaffValue(staff, keys){
+    for(const key of keys){
+        if(staff[key] !== undefined && staff[key] !== null) return staff[key];
+    }
+    return 0;
+}
+
+function renderStaffRoom(){
+    const names = $("staffRoomNames");
+    const status = $("staffRoomStatus");
+    if(!names || !status) return;
+    names.innerHTML = "";
+    status.textContent = staffList.length ? `선생님 ${staffList.length}명` : "등록된 선생님이 없어";
+    staffList.forEach(staff => {
+        const button = document.createElement("button");
+        button.className = "staff-name-button";
+        button.textContent = staff.name;
+        button.style.borderColor = staff.color;
+        button.onclick = () => showStaffDetail(staff.id);
+        names.appendChild(button);
+    });
+}
+
+function showStaffDetail(staffId){
+    const staff = staffList.find(item => String(item.id) === String(staffId));
+    const card = $("staffDetailCard");
+    if(!staff || !card) return;
+    state.selectedStaff = staff.id;
+    const basic = getStaffValue(staff,["basic","출제기본","출제_기본"]);
+    const essay = getStaffValue(staff,["essay","서술형","출제서술형","출제_서술형"]);
+    const short = getStaffValue(staff,["short","단답형","출제단답형","출제_단답형"]);
+    const objective = getStaffValue(staff,["objective","객관식","출제객관식","출제_객관식"]);
+    const takenBasic = getStaffValue(staff,["takenBasic","응시기본","응시_기본"]);
+    const takenEssay = getStaffValue(staff,["takenEssay","응시서술형","응시_서술형"]);
+    const takenShort = getStaffValue(staff,["takenShort","응시단답형","응시_단답형"]);
+    const takenObjective = getStaffValue(staff,["takenObjective","응시객관식","응시_객관식"]);
+    card.style.setProperty("--staff-color", staff.color || "#7188c9");
+    card.innerHTML = `
+        <div class="staff-detail-line"></div>
+        <div class="staff-detail-name">${escapeHtml(staff.name)}</div>
+        <hr class="staff-detail-divider">
+        <div class="staff-detail-row"><b>출제</b> : 기본 ${basic}점, 서술형 ${essay}점, 단답형 ${short}점, 객관식 ${objective}점</div>
+        <div class="staff-detail-row"><b>응시</b> : 기본 ${takenBasic}점, 서술형 ${takenEssay}점, 단답형 ${takenShort}점, 객관식 ${takenObjective}점</div>
+        <hr class="staff-detail-divider">
+        <button class="staff-buy-button" onclick="buyStaff('${String(staff.id).replace(/'/g,"\\'")}')">매수</button>
+        <div class="staff-detail-line" style="margin-top:13px;margin-bottom:0"></div>
+    `;
+    card.classList.remove("hidden");
+}
+
+function escapeHtml(value){
+    return String(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+}
+
+function buyStaff(staffId){
+    const staff = staffList.find(item => String(item.id) === String(staffId));
+    if(!staff) return;
+    alert(`${staff.name} 매수 기능은 다음 단계에서 연결할 예정이야.`);
+}
+
+window.toggleStaffRoomPanel = function(){
+    const panel = $("staffRoomPanel");
+    if(panel) panel.classList.toggle("hidden");
 };
 
 
@@ -3673,6 +3843,7 @@ function renderTurnOrder(){
 ========================= */
 
 function renderGoldenKeyButton(){
+    $("staffRoomToggleButton")?.classList.remove("hidden");
 
     const button = $("goldenKeyButton");
     if(!button){
