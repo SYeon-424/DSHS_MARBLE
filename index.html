@@ -298,6 +298,12 @@ button{
 .staff-detail-row{line-height:1.7;font-size:14px;}
 .staff-buy-button{width:100%;margin-top:14px;background:#d9a441;color:#241600;font-weight:1000;}
 .staff-buy-owned{background:#111;color:#fff;border:1px solid #777;}
+.exam-paper-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.exam-paper-button{flex:1 1 30%;margin:0!important;padding:7px 5px;font-size:12px;background:#526b9d;color:#fff;}
+.exam-paper-button:disabled{opacity:.35;cursor:not-allowed;}
+.exam-paper{position:absolute;width:52px;height:52px;object-fit:contain;transform:translate(-50%,-50%);z-index:8;touch-action:none;user-select:none;cursor:grab;}
+.exam-paper.other-owner{cursor:default;opacity:.92;}
+
 
 /* =========================
    황금열쇠 버튼 / 카드
@@ -1995,7 +2001,28 @@ function renderOwnedStaffList(){
         const item = document.createElement("div");
         item.className = "staff-owned-item";
         item.style.borderColor = staff.color;
-        item.innerHTML = `<div class="staff-owned-name">${escapeHtml(staff.name)}</div><div class="staff-owned-meta">${escapeHtml(owner.nickname || "이름 없음")} · 말 ${escapeHtml(owner.piece ?? "미선택")}</div>`;
+        const basic = getStaffValue(staff,["basic","출제기본","출제_기본"]);
+        const essay = getStaffValue(staff,["essay","서술형","출제서술형","출제_서술형"]);
+        const short = getStaffValue(staff,["short","단답형","출제단답형","출제_단답형"]);
+        const objective = getStaffValue(staff,["objective","객관식","출제객관식","출제_객관식"]);
+        const papers = owner.examPapers || {};
+        item.innerHTML = `<div class="staff-owned-name">${escapeHtml(staff.name)}</div><div class="staff-owned-meta">${escapeHtml(owner.nickname || "이름 없음")} · 말 ${escapeHtml(owner.piece ?? "미선택")}</div><div class="staff-owned-meta">가격: 기본 ${basic}점 · 서술형 ${essay}점 · 단답형 ${short}점 · 객관식 ${objective}점</div>`;
+        const paperButtons = document.createElement("div");
+        paperButtons.className = "exam-paper-buttons";
+        [
+            ["objective","객관식"],
+            ["short","단답형"],
+            ["essay","서술형"]
+        ].forEach(([type,label]) => {
+            const paperButton = document.createElement("button");
+            paperButton.className = "exam-paper-button";
+            paperButton.textContent = label;
+            paperButton.disabled = !!papers[type];
+            paperButton.title = papers[type] ? "이미 그려진 시험지야." : `${label} 시험지 그리기`;
+            paperButton.onclick = () => createExamPaper(staff.id, type);
+            paperButtons.appendChild(paperButton);
+        });
+        item.appendChild(paperButtons);
         const button = document.createElement("button");
         button.className = "staff-buy-button";
         button.textContent = "팔기";
@@ -2066,7 +2093,8 @@ async function buyStaff(staffId){
             playerId: state.playerId,
             nickname: player?.nickname || state.nickname || "이름 없음",
             piece,
-            purchasedAt: Date.now()
+            purchasedAt: Date.now(),
+            examPapers: {}
         };
     });
     if(result.committed){
@@ -2166,15 +2194,6 @@ async function loadGoldenKeyCards(){
 /* =========================
    DOM
 ========================= */
-
-function escapeHtml(value){
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
 
 const $ =
     id => document.getElementById(id);
@@ -3734,8 +3753,95 @@ function renderGamePieces(){
 
     }
 
+    renderExamPapers();
+
 }
 
+
+function getExamPaperImage(type){
+    return type === "objective" ? "H/H1.png"
+        : type === "short" ? "H/H2.png"
+        : "H/H3.png";
+}
+
+function getExamPaperLabel(type){
+    return type === "objective" ? "객관식"
+        : type === "short" ? "단답형"
+        : "서술형";
+}
+
+function renderExamPapers(){
+    const container = $("gamePieces");
+    if(!container) return;
+    Object.entries(state.staffOwnership || {}).forEach(([staffId, owner]) => {
+        if(!owner || !owner.examPapers) return;
+        Object.entries(owner.examPapers).forEach(([type, paper]) => {
+            if(!paper) return;
+            const img = document.createElement("img");
+            img.className = "exam-paper" + (owner.playerId === state.playerId ? "" : " other-owner");
+            img.src = getExamPaperImage(type);
+            img.alt = `${getExamPaperLabel(type)} 시험지`;
+            img.title = `${getExamPaperLabel(type)} · ${owner.nickname || "이름 없음"}`;
+            img.style.left = `${paper.x ?? 50}%`;
+            img.style.top = `${paper.y ?? 50}%`;
+            if(owner.playerId === state.playerId){
+                enableExamPaperDrag(img, staffId, type);
+            }
+            container.appendChild(img);
+        });
+    });
+}
+
+function getExamPaperPosition(event){
+    const board = $("gameBoard") || $("gamePieces");
+    const rect = board.getBoundingClientRect();
+    return {
+        x: Math.max(2, Math.min(98, ((event.clientX - rect.left) / rect.width) * 100)),
+        y: Math.max(2, Math.min(98, ((event.clientY - rect.top) / rect.height) * 100))
+    };
+}
+
+function enableExamPaperDrag(img, staffId, type){
+    let dragging = false;
+    img.addEventListener("pointerdown", event => {
+        dragging = true;
+        img.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    });
+    img.addEventListener("pointermove", event => {
+        if(!dragging) return;
+        const {x,y} = getExamPaperPosition(event);
+        img.style.left = `${x}%`;
+        img.style.top = `${y}%`;
+    });
+    img.addEventListener("pointerup", async event => {
+        if(!dragging) return;
+        dragging = false;
+        const {x,y} = getExamPaperPosition(event);
+        img.style.left = `${x}%`;
+        img.style.top = `${y}%`;
+        try{
+            await update(ref(db, `rooms/${state.roomCode}/staffOwnership/${staffId}/examPapers/${type}`), {x,y});
+        }catch(error){
+            console.error("시험지 위치 저장 오류:", error);
+        }
+    });
+}
+
+async function createExamPaper(staffId, type){
+    const owner = getStaffOwnership(staffId);
+    if(!owner || owner.playerId !== state.playerId) return;
+    const paperRef = ref(db, `rooms/${state.roomCode}/staffOwnership/${staffId}/examPapers/${type}`);
+    const result = await runTransaction(paperRef, current => current || {
+        x: 50,
+        y: 50,
+        createdAt: Date.now()
+    });
+    if(result.committed){
+        renderStaffRoom();
+        renderGamePieces();
+    }
+}
 
 function createGamePiece(
     player,
