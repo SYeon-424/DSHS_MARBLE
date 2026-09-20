@@ -1074,6 +1074,22 @@ button{
     font-size:12px;
 }
 
+
+.score-action-divider{
+    border:0;
+    border-top:1px solid #777;
+    margin:16px 0 12px;
+}
+.score-action-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+.score-action-row button{
+    background:#444;
+    color:#fff;
+}
+
 </style>
 </head>
 
@@ -1351,9 +1367,6 @@ button{
         <div id="staffDetailCard" class="staff-detail-card hidden"></div>
     </div>
     <hr class="staff-owned-divider">
-    <div class="staff-owned-title">📝 내가 매수한 선생님</div>
-    <div id="staffOwnedList" class="staff-owned-list"></div>
-
     <div id="scoreTransferBox" class="score-transfer-box">
         <div class="score-transfer-title">🔁 성적 이전</div>
         <div class="score-transfer-description">
@@ -1367,6 +1380,11 @@ button{
         <button id="scoreTransferButton" type="button">점수 보내기</button>
         <div id="scoreTransferStatus" class="score-transfer-status"></div>
     </div>
+
+    <div class="staff-owned-title">📝 내가 매수한 선생님</div>
+    <div id="staffOwnedList" class="staff-owned-list"></div>
+
+    
 </div>
 
 
@@ -1746,10 +1764,7 @@ button{
                 <small>15점</small>
             </button>
 
-            <button onclick="receiveResignationScore()">
-                퇴사점수 받기<br>
-                <small>20점</small>
-            </button>
+            
 
             <button onclick="receiveWelfareFund()">
                 점수 받기
@@ -1761,6 +1776,20 @@ button{
 
 </div>
 
+
+
+    <hr class="score-action-divider">
+
+    <div class="score-action-row">
+        <button type="button" onclick="receiveResignationScore()">
+            퇴사점수 받기<br>
+            <small>20점</small>
+        </button>
+
+        <button type="button" onclick="failSelectedPlayerTurn()">
+            낙제
+        </button>
+    </div>
 
 <!-- =========================
      황금열쇠 카드 출력
@@ -4873,6 +4902,19 @@ function waitForDiceAnimationThenFinish(){
                             %
                             order.length;
 
+                        let skipCount = 0;
+                        while(
+                            skipCount < order.length &&
+                            room.players &&
+                            room.players[order[room.currentTurnIndex]] &&
+                            room.players[order[room.currentTurnIndex]].skipNextTurn
+                        ){
+                            room.players[order[room.currentTurnIndex]].skipNextTurn = false;
+                            room.currentTurnIndex =
+                                (room.currentTurnIndex + 1) % order.length;
+                            skipCount++;
+                        }
+
 
                         return room;
 
@@ -5827,6 +5869,42 @@ async function(){
 /* =========================
    퇴사점수 받기
 ========================= */
+
+window.failSelectedPlayerTurn = async function(){
+    const targetId =
+        $("scoreTargetPlayer")?.value ||
+        state.scoreTargetPlayerId ||
+        state.playerId;
+
+    if(!targetId){
+        alert("낙제시킬 플레이어를 선택해줘.");
+        return;
+    }
+
+    try{
+        const result = await runTransaction(
+            ref(db, `rooms/${state.roomCode}/players/${targetId}`),
+            player => {
+                if(!player){
+                    return;
+                }
+
+                player.skipNextTurn = true;
+                return player;
+            }
+        );
+
+        if(result.committed){
+            alert("선택한 플레이어의 다음 턴을 무시하도록 했어.");
+        }else{
+            alert("낙제 처리에 실패했어.");
+        }
+    }catch(error){
+        console.error("낙제 처리 오류:", error);
+        alert("낙제 처리 중 오류가 발생했어.");
+    }
+};
+
 window.receiveResignationScore = async function(){
     try{
         const result = await runTransaction(
