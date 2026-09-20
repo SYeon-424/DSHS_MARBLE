@@ -278,9 +278,18 @@ button{
 }
 .staff-room-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;}
 .staff-room-header h3{margin:0;}
+.staff-board-toggle{width:100%;margin:0 0 10px;background:#3b3b3b;color:#fff;font-weight:900;}
+.staff-board-section{padding-top:4px;}
 .staff-room-layout{display:flex;flex-wrap:wrap;gap:8px;}
-.staff-name-button{background:#3d4d72;color:#fff;border:2px solid #7188c9;border-radius:9px;padding:9px 12px;font-weight:900;cursor:pointer;}
+.staff-name-button{background:#3d4d72;color:#fff;border:2px solid #7188c9;border-radius:9px;padding:9px 12px;font-weight:900;cursor:pointer;transition:opacity .15s,filter .15s;}
 .staff-name-button:hover{filter:brightness(1.15);}
+.staff-name-button.owned{opacity:.38;filter:grayscale(.65);}
+.staff-owned-divider{border:0;border-top:3px solid #777;margin:18px 0 12px;}
+.staff-owned-title{font-weight:1000;margin-bottom:10px;}
+.staff-owned-list{display:flex;flex-direction:column;gap:8px;}
+.staff-owned-item{background:#171717;border:1px solid #555;border-radius:10px;padding:10px 12px;}
+.staff-owned-name{font-weight:1000;}
+.staff-owned-meta{color:#bbb;font-size:13px;margin-top:3px;}
 .staff-room-status{color:#aaa;font-size:13px;margin:8px 0;}
 .staff-detail-card{background:#111;border-radius:12px;padding:16px;margin-top:14px;color:#fff;}
 .staff-detail-line{height:5px;border-radius:999px;margin:0 0 13px;background:var(--staff-color,#7188c9);}
@@ -288,6 +297,7 @@ button{
 .staff-detail-divider{border:0;border-top:2px dashed #777;margin:12px 0;}
 .staff-detail-row{line-height:1.7;font-size:14px;}
 .staff-buy-button{width:100%;margin-top:14px;background:#d9a441;color:#241600;font-weight:1000;}
+.staff-buy-owned{background:#111;color:#fff;border:1px solid #777;}
 
 /* =========================
    황금열쇠 버튼 / 카드
@@ -1263,12 +1273,18 @@ button{
 
 <div id="staffRoomPanel" class="hidden">
     <div class="staff-room-header">
-        <h3>🏫 교무실 배치표</h3>
+        <h3>🏫 교무실</h3>
         <button onclick="toggleStaffRoomPanel()">닫기</button>
     </div>
-    <div id="staffRoomStatus" class="staff-room-status">선생님 정보를 불러오는 중...</div>
-    <div id="staffRoomNames" class="staff-room-layout"></div>
-    <div id="staffDetailCard" class="staff-detail-card hidden"></div>
+    <button class="staff-board-toggle" onclick="toggleStaffBoard()">📋 교무실 배치표 접기/펼치기</button>
+    <div id="staffBoardSection" class="staff-board-section">
+        <div id="staffRoomStatus" class="staff-room-status">선생님 정보를 불러오는 중...</div>
+        <div id="staffRoomNames" class="staff-room-layout"></div>
+        <div id="staffDetailCard" class="staff-detail-card hidden"></div>
+    </div>
+    <hr class="staff-owned-divider">
+    <div class="staff-owned-title">📝 내가 매수한 선생님</div>
+    <div id="staffOwnedList" class="staff-owned-list"></div>
 </div>
 
 
@@ -1784,6 +1800,8 @@ const state = {
     staffList: [],
     selectedStaff: null,
 
+    staffOwnership: {},
+
     dragging: false,
 
     /*
@@ -1867,6 +1885,14 @@ function getStaffValue(staff, keys){
     return 0;
 }
 
+function getStaffOwnership(staffId){
+    return state.staffOwnership?.[String(staffId)] || null;
+}
+
+function getCurrentPlayer(playerId){
+    return state.players.find(player => player.playerId === playerId) || null;
+}
+
 function renderStaffRoom(){
     const names = $("staffRoomNames");
     const status = $("staffRoomStatus");
@@ -1874,12 +1900,43 @@ function renderStaffRoom(){
     names.innerHTML = "";
     status.textContent = staffList.length ? `선생님 ${staffList.length}명` : "등록된 선생님이 없어";
     staffList.forEach(staff => {
+        const owner = getStaffOwnership(staff.id);
         const button = document.createElement("button");
-        button.className = "staff-name-button";
-        button.textContent = staff.name;
+        button.className = "staff-name-button" + (owner ? " owned" : "");
+        button.textContent = owner ? `${staff.name} · 매수됨` : staff.name;
         button.style.borderColor = staff.color;
         button.onclick = () => showStaffDetail(staff.id);
         names.appendChild(button);
+    });
+    renderOwnedStaffList();
+}
+
+function renderOwnedStaffList(){
+    const container = $("staffOwnedList");
+    if(!container) return;
+    container.innerHTML = "";
+    const owned = staffList.filter(staff => {
+        const owner = getStaffOwnership(staff.id);
+        return owner && owner.playerId === state.playerId;
+    });
+    if(!owned.length){
+        container.textContent = "아직 매수한 선생님이 없어.";
+        container.style.color = "#aaa";
+        return;
+    }
+    container.style.color = "";
+    owned.forEach(staff => {
+        const owner = getStaffOwnership(staff.id);
+        const item = document.createElement("div");
+        item.className = "staff-owned-item";
+        item.style.borderColor = staff.color;
+        item.innerHTML = `<div class="staff-owned-name">${escapeHtml(staff.name)}</div><div class="staff-owned-meta">${escapeHtml(owner.nickname || "이름 없음")} · 말 ${escapeHtml(owner.piece ?? "미선택")}</div>`;
+        const button = document.createElement("button");
+        button.className = "staff-buy-button";
+        button.textContent = "팔기";
+        button.onclick = () => sellStaff(staff.id);
+        item.appendChild(button);
+        container.appendChild(item);
     });
 }
 
@@ -1896,6 +1953,16 @@ function showStaffDetail(staffId){
     const takenEssay = getStaffValue(staff,["takenEssay","응시서술형","응시_서술형"]);
     const takenShort = getStaffValue(staff,["takenShort","응시단답형","응시_단답형"]);
     const takenObjective = getStaffValue(staff,["takenObjective","응시객관식","응시_객관식"]);
+    const owner = getStaffOwnership(staff.id);
+    const currentPlayer = getCurrentPlayer(state.playerId);
+    const requiredScore = Number(basic || 0) * 10000;
+    const enoughScore = Number(currentPlayer?.balance || 0) >= requiredScore;
+    const ownedByMe = owner?.playerId === state.playerId;
+    const ownedByOther = !!owner && !ownedByMe;
+    const buttonText = ownedByMe ? "내가 매수함" : ownedByOther ? `매수됨 · ${owner.nickname || "다른 플레이어"}` : "매수";
+    const buttonClass = ownedByOther || ownedByMe ? "staff-buy-button staff-buy-owned" : "staff-buy-button";
+    const disabled = ownedByOther || ownedByMe || !enoughScore;
+    const ownerText = owner ? `<div class="staff-owned-meta">매수자: ${escapeHtml(owner.nickname || "이름 없음")} · 말: ${escapeHtml(owner.piece ?? "미선택")}</div>` : `<div class="staff-owned-meta">매수 조건: 기본 ${basic}점 · 현재 성적 ${formatMoney(currentPlayer?.balance || 0)}</div>`;
     card.style.setProperty("--staff-color", staff.color || "#7188c9");
     card.innerHTML = `
         <div class="staff-detail-line"></div>
@@ -1904,21 +1971,59 @@ function showStaffDetail(staffId){
         <div class="staff-detail-row"><b>출제</b> : 기본 ${basic}점, 서술형 ${essay}점, 단답형 ${short}점, 객관식 ${objective}점</div>
         <div class="staff-detail-row"><b>응시</b> : 기본 ${takenBasic}점, 서술형 ${takenEssay}점, 단답형 ${takenShort}점, 객관식 ${takenObjective}점</div>
         <hr class="staff-detail-divider">
-        <button class="staff-buy-button" onclick="buyStaff('${String(staff.id).replace(/'/g,"\\'")}')">매수</button>
+        ${ownerText}
+        <button class="${buttonClass}" ${disabled ? "disabled" : ""} onclick="buyStaff('${String(staff.id).replace(/'/g,"\\'")}')">${buttonText}</button>
+        ${!owner && !enoughScore ? `<div class="staff-owned-meta">성적이 부족해서 매수할 수 없어.</div>` : ""}
         <div class="staff-detail-line" style="margin-top:13px;margin-bottom:0"></div>
     `;
     card.classList.remove("hidden");
 }
 
-function escapeHtml(value){
-    return String(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+async function buyStaff(staffId){
+    const staff = staffList.find(item => String(item.id) === String(staffId));
+    if(!staff || !state.roomCode || !state.playerId) return;
+    const existing = getStaffOwnership(staff.id);
+    if(existing){
+        alert(existing.playerId === state.playerId ? "이미 내가 매수한 선생님이야." : "이미 다른 플레이어가 매수한 선생님이야.");
+        return;
+    }
+    const player = getCurrentPlayer(state.playerId);
+    const requiredScore = Number(getStaffValue(staff,["basic","출제기본","출제_기본"]) || 0) * 10000;
+    if(Number(player?.balance || 0) < requiredScore){
+        alert("기본 점수가 부족해서 매수할 수 없어.");
+        return;
+    }
+    const piece = player?.piece ?? "미선택";
+    const ownershipRef = ref(db, `rooms/${state.roomCode}/staffOwnership/${staff.id}`);
+    const result = await runTransaction(ownershipRef, current => {
+        if(current) return;
+        return {
+            playerId: state.playerId,
+            nickname: player?.nickname || state.nickname || "이름 없음",
+            piece,
+            purchasedAt: Date.now()
+        };
+    });
+    if(result.committed){
+        renderStaffRoom();
+        showStaffDetail(staff.id);
+    }else{
+        alert("이미 다른 플레이어가 먼저 매수했어.");
+    }
 }
 
-function buyStaff(staffId){
-    const staff = staffList.find(item => String(item.id) === String(staffId));
-    if(!staff) return;
-    alert(`${staff.name} 매수 기능은 다음 단계에서 연결할 예정이야.`);
+async function sellStaff(staffId){
+    const owner = getStaffOwnership(staffId);
+    if(!owner || owner.playerId !== state.playerId) return;
+    await set(ref(db, `rooms/${state.roomCode}/staffOwnership/${staffId}`), null);
+    renderStaffRoom();
+    if(state.selectedStaff === staffId) showStaffDetail(staffId);
 }
+
+window.toggleStaffBoard = function(){
+    const section = $("staffBoardSection");
+    if(section) section.classList.toggle("hidden");
+};
 
 window.toggleStaffRoomPanel = function(){
     const panel = $("staffRoomPanel");
@@ -1969,6 +2074,7 @@ async function loadGoldenKeyCards(){
 
         if(typeof renderGoldenKeyPlayers === "function"){
             renderGoldenKeyPlayers();
+            renderStaffRoom();
         }
 
     }catch(error){
@@ -2232,6 +2338,9 @@ async function createRoom(){
                     null,
 
                 lastKeyDrawByPlayer:
+                    {},
+
+                staffOwnership:
                     {},
 
                 players:{
@@ -2574,6 +2683,9 @@ function watchRoom(){
 
             state.lastKeyDrawByPlayer =
                 data.lastKeyDrawByPlayer || {};
+
+            state.staffOwnership =
+                data.staffOwnership || {};
 
 
             if(state.gameStarted){
