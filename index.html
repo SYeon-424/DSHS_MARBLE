@@ -2020,6 +2020,10 @@ async function sellStaff(staffId){
     if(state.selectedStaff === staffId) showStaffDetail(staffId);
 }
 
+window.showStaffDetail = showStaffDetail;
+window.buyStaff = buyStaff;
+window.sellStaff = sellStaff;
+
 window.toggleStaffBoard = function(){
     const section = $("staffBoardSection");
     if(section) section.classList.toggle("hidden");
