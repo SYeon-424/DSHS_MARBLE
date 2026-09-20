@@ -24,5 +24,64 @@
     "takenEssay": 45,
     "takenShort": 18,
     "takenObjective": 4
+  },
+  {
+    "id": "teacher_003",
+    "name": "CDC - ㅊㄷㅊ",
+    "color": "#FF5656",
+    "basic": 8,
+    "essay": 25,
+    "short": 15,
+    "objective": 5,
+    "takenBasic": 0.4,
+    "takenEssay": 45,
+    "takenShort": 18,
+    "takenObjective": 4
+  },
+  {
+    "id": "teacher_004",
+    "name": "KENTECH",
+    "color": "#000000",
+    "basic": 20,
+    "takenBasic": 30
+  },
+  {
+    "id": "teacher_005",
+    "name": "김동우 - ㄱㄷㅇ",
+    "color": "#FF5656",
+    "basic": 10,
+    "essay": 25,
+    "short": 15,
+    "objective": 5,
+    "takenBasic": 0.6,
+    "takenEssay": 55,
+    "takenShort": 27,
+    "takenObjective": 6
+  },
+  {
+    "id": "teacher_006",
+    "name": "승은서 - ㅅㅅㅇ",
+    "color": "#FF5656",
+    "basic": 10,
+    "essay": 25,
+    "short": 15,
+    "objective": 5,
+    "takenBasic": 0.6,
+    "takenEssay": 55,
+    "takenShort": 27,
+    "takenObjective": 6
+  },
+  {
+    "id": "teacher_007",
+    "name": "ㅎ - ㅂㅈㅎ",
+    "color": "#FF5656",
+    "basic": 12,
+    "essay": 25,
+    "short": 15,
+    "objective": 5,
+    "takenBasic": 0.8,
+    "takenEssay": 60,
+    "takenShort": 30,
+    "takenObjective": 7
   }
 ]
