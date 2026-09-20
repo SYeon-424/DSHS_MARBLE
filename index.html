@@ -1353,6 +1353,20 @@ button{
     <hr class="staff-owned-divider">
     <div class="staff-owned-title">📝 내가 매수한 선생님</div>
     <div id="staffOwnedList" class="staff-owned-list"></div>
+
+    <div id="scoreTransferBox" class="score-transfer-box">
+        <div class="score-transfer-title">🔁 성적 이전</div>
+        <div class="score-transfer-description">
+            입학사정관 여부와 관계없이 누구나 다른 플레이어에게 자신의 점수를 보낼 수 있어.
+            보내는 즉시 내 점수에서 차감되고 상대방 점수에 추가돼.
+        </div>
+        <div class="score-transfer-row">
+            <select id="scoreTransferTarget" aria-label="점수를 받을 플레이어"></select>
+            <input id="scoreTransferAmount" type="number" min="0.1" step="0.1" placeholder="점수">
+        </div>
+        <button id="scoreTransferButton" type="button">점수 보내기</button>
+        <div id="scoreTransferStatus" class="score-transfer-status"></div>
+    </div>
 </div>
 
 
@@ -1414,22 +1428,7 @@ button{
         class="money-players"
     ></div>
 
-    <div id="scoreTransferBox" class="score-transfer-box">
-        <div class="score-transfer-title">🔁 성적 이전</div>
-        <div class="score-transfer-description">
-            입학사정관 여부와 관계없이 누구나 다른 플레이어에게 자신의 점수를 보낼 수 있어.
-            보내는 즉시 내 점수에서 차감되고 상대방 점수에 추가돼.
-        </div>
-        <div class="score-transfer-row">
-            <select id="scoreTransferTarget" aria-label="점수를 받을 플레이어"></select>
-            <input id="scoreTransferAmount" type="number" min="0.1" step="0.1" placeholder="점수">
-        </div>
-        <button id="scoreTransferButton" type="button">점수 보내기</button>
-        <div id="scoreTransferStatus" class="score-transfer-status"></div>
-    </div>
-
-
-    <div id="scoreManagerBox" class="score-manager-box hidden">
+<div id="scoreManagerBox" class="score-manager-box hidden">
         <span class="score-manager-label">성적 관리 대상</span>
         <select id="scoreTargetPlayer"></select>
     </div>
@@ -1747,6 +1746,11 @@ button{
                 <small>15점</small>
             </button>
 
+            <button onclick="receiveResignationScore()">
+                퇴사점수 받기<br>
+                <small>20점</small>
+            </button>
+
             <button onclick="receiveWelfareFund()">
                 점수 받기
             </button>
@@ -1991,7 +1995,7 @@ function renderStaffRoom(){
         const owner = getStaffOwnership(staff.id);
         const button = document.createElement("button");
         button.className = "staff-name-button" + (owner ? " owned" : "");
-        button.textContent = owner ? `${staff.name} · 매수됨` : staff.name;
+        button.textContent = owner ? `${staff.name} · 매수됨 - ${owner.nickname || "이름 없음"}` : staff.name;
         button.style.borderColor = staff.color;
         button.addEventListener("click", function(event){
         event.preventDefault();
@@ -5818,6 +5822,44 @@ async function(){
 
 };
 
+
+
+/* =========================
+   퇴사점수 받기
+========================= */
+window.receiveResignationScore = async function(){
+    try{
+        const result = await runTransaction(
+            ref(db, `rooms/${state.roomCode}`),
+            room => {
+                if(!room || !room.players || !room.players[state.playerId]){
+                    return;
+                }
+
+                const player = room.players[state.playerId];
+
+                if(player.resignationScoreReceived){
+                    return;
+                }
+
+                player.balance = Number(player.balance || 0) + 20000;
+                player.resignationScoreReceived = true;
+
+                return room;
+            }
+        );
+
+        if(!result.committed){
+            alert("퇴사점수는 이미 받았거나 받을 수 없어.");
+            return;
+        }
+
+        alert("퇴사점수 20점을 받았어!");
+    }catch(error){
+        console.error("퇴사점수 받기 오류:", error);
+        alert("퇴사점수를 받는 중 오류가 발생했어.");
+    }
+};
 
 /* =========================
    버튼 이벤트
