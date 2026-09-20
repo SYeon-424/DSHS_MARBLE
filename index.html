@@ -253,7 +253,7 @@ button{
 
 #goldenKeyButton{
     position:absolute;
-    left:34%;
+    left:25.5%;
     top:71%;
     transform:translate(-50%,-50%);
     z-index:60;
@@ -1278,7 +1278,7 @@ button{
 
     <!-- 점수 선택 -->
 
-    <div class="money-grid">
+    <div id="moneyControls" class="money-grid">
 
 
         <div class="money-row">
@@ -1463,7 +1463,7 @@ button{
     </div>
 
 
-    <div class="selected-money">
+    <div id="selectedMoneyBox" class="selected-money">
 
         <span>
             선택 점수
@@ -1479,7 +1479,7 @@ button{
     </div>
 
 
-    <div class="money-buttons">
+    <div id="moneyActionButtons" class="money-buttons">
 
         <button onclick="receiveMoney()">
             받기
@@ -3684,7 +3684,6 @@ function renderGoldenKeyButton(){
 
     button.disabled =
         !state.gameStarted ||
-        currentPlayerId !== state.playerId ||
         !goldenKeyCards.length;
 
 }
@@ -4562,10 +4561,8 @@ function renderMoneyPlayers(){
     const officerMode = !!state.admissionOfficerId;
     const canManageScores = !officerMode || state.admissionOfficerId === state.playerId;
 
-    let visiblePlayers = [...state.players];
-    if(officerMode && !canManageScores){
-        visiblePlayers = visiblePlayers.filter(player => player.playerId === state.playerId);
-    }
+    // 입학사정관이 아니어도 전체 플레이어의 성적 목록은 볼 수 있어.
+    const visiblePlayers = [...state.players];
 
     const sorted = visiblePlayers.sort((a,b) => {
         if(a.playerId === state.playerId) return -1;
@@ -4618,14 +4615,21 @@ function renderMoneyPlayers(){
         container.appendChild(row);
     }
 
-    const buttons = document.querySelector(".money-buttons");
-    if(buttons){
-        buttons.classList.toggle("hidden", !canManageScores);
+    // 입학사정관이 아닌 플레이어는 점수 조작 UI를 숨기고 목록만 볼 수 있어.
+    // 입학사정관 직책을 선택하지 않은 경우에는 각자 자신의 성적을 관리할 수 있어.
+    const controlIds = ["moneyControls", "selectedMoneyBox", "moneyActionButtons"];
+    for(const id of controlIds){
+        const element = $(id);
+        if(element){
+            element.classList.toggle("hidden", officerMode && !canManageScores);
+        }
     }
 
     const label = document.querySelector("#moneyPanel .money-header h3");
     if(label){
-        label.textContent = officerMode ? (canManageScores ? "📋 성적 관리" : "📋 내 성적") : "📋 성적 관리";
+        label.textContent = officerMode
+            ? (canManageScores ? "📋 성적 관리" : "📋 전체 성적")
+            : "📋 성적 관리";
     }
 }
 
