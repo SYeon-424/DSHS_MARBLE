@@ -253,20 +253,20 @@ button{
 
 #goldenKeyButton{
     position:absolute;
-    left:22.8%;
-    top:57.5%;
+    left:34%;
+    top:71%;
     transform:translate(-50%,-50%);
     z-index:60;
-    width:86px;
-    min-height:48px;
-    padding:8px 10px;
-    border:3px solid #f4c400;
-    border-radius:14px;
+    width:43px;
+    min-height:24px;
+    padding:4px 5px;
+    border:2px solid #f4c400;
+    border-radius:8px;
     background:#ffd92e;
     color:#3b2a00;
     font-weight:900;
-    font-size:14px;
-    line-height:1.15;
+    font-size:7px;
+    line-height:1.05;
     box-shadow:0 4px 10px #0006;
     cursor:pointer;
 }
@@ -454,14 +454,14 @@ button{
 
 @media(max-width:600px){
     #goldenKeyButton{
-        width:72px;
-        min-height:42px;
-        font-size:12px;
-        padding:5px;
+        width:36px;
+        min-height:21px;
+        font-size:6px;
+        padding:3px;
     }
 
     #goldenKeyButton .key-icon{
-        font-size:18px;
+        font-size:11px;
     }
 
     #goldenKeyToggleButton{
@@ -827,7 +827,7 @@ button{
 
 
 /* =========================
-   사회복지기금
+   봉사시간
 ========================= */
 
 .welfare-box{
@@ -1132,7 +1132,7 @@ button{
     class="hidden"
     onclick="toggleMoneyPanel()"
 >
-    💰 금액
+    🏆 점수
 </button>
 
 
@@ -1184,7 +1184,7 @@ button{
 
     <div class="money-header">
 
-        <h3>💰 금액 관리</h3>
+        <h3>🏆 점수 관리</h3>
 
         <button
             id="moneyCloseButton"
@@ -1214,7 +1214,7 @@ button{
             <img
                 class="money-image"
                 src="money/1.png"
-                alt="1만원"
+                alt="1점"
             >
 
             <div class="money-label">
@@ -1250,7 +1250,7 @@ button{
             <img
                 class="money-image"
                 src="money/2.png"
-                alt="2만원"
+                alt="2점"
             >
 
             <div class="money-label">
@@ -1286,7 +1286,7 @@ button{
             <img
                 class="money-image"
                 src="money/5.png"
-                alt="5만원"
+                alt="5점"
             >
 
             <div class="money-label">
@@ -1322,11 +1322,11 @@ button{
             <img
                 class="money-image"
                 src="money/10.png"
-                alt="10만원"
+                alt="10점"
             >
 
             <div class="money-label">
-                10만원
+                10점
             </div>
 
             <button
@@ -1358,11 +1358,11 @@ button{
             <img
                 class="money-image"
                 src="money/50.png"
-                alt="50만원"
+                alt="50점"
             >
 
             <div class="money-label">
-                50만원
+                50점
             </div>
 
             <button
@@ -1394,14 +1394,14 @@ button{
     <div class="selected-money">
 
         <span>
-            선택 금액
+            선택 점수
         </span>
 
         <span
             id="selectedMoney"
             class="selected-money-value"
         >
-            0만원
+            0점
         </span>
 
     </div>
@@ -1420,19 +1420,19 @@ button{
     </div>
 
 
-    <!-- 사회복지기금 -->
+    <!-- 봉사시간 -->
 
     <div class="welfare-box">
 
         <div class="welfare-title">
-            사회복지기금
+            봉사시간
         </div>
 
         <div class="welfare-fund">
 
-            현재 기금:
+            현재 봉사시간:
             <strong id="welfareFund">
-                0만원
+                0점
             </strong>
 
         </div>
@@ -1718,13 +1718,13 @@ function getPlayerId(){
 
 function formatMoney(value){
 
-    const manwon =
+    const score =
         Number(value || 0) / 10000;
 
 
     return (
-        manwon.toLocaleString("ko-KR") +
-        "만원"
+        score.toLocaleString("ko-KR") +
+        "점"
     );
 
 }
@@ -4616,7 +4616,7 @@ function updateMoneyCountDisplays(){
 
 
 /* =========================
-   선택 금액 계산
+   선택 점수 계산
 ========================= */
 
 function getSelectedMoney(){
@@ -4810,7 +4810,7 @@ async function(){
 
 
 /* =========================
-   사회복지기금 내기
+   봉사시간 내기
 ========================= */
 
 window.payWelfareFund =
@@ -4908,7 +4908,7 @@ async function(){
 
 
 /* =========================
-   사회복지기금 받기
+   봉사시간 받기
 ========================= */
 
 window.receiveWelfareFund =
