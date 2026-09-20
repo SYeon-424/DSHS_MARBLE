@@ -1345,6 +1345,78 @@ button{
 
             <img
                 class="money-image"
+                src="money/0_1.png"
+                alt="0.1점"
+            >
+
+            <div class="money-label">
+                0.1점
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(0.1,-1)"
+            >
+                −
+            </button>
+
+            <div
+                id="moneyCount0_1"
+                class="money-count"
+            >
+                0
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(0.1,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
+                src="money/0_5.png"
+                alt="0.5점"
+            >
+
+            <div class="money-label">
+                0.5점
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(0.5,-1)"
+            >
+                −
+            </button>
+
+            <div
+                id="moneyCount0_5"
+                class="money-count"
+            >
+                0
+            </div>
+
+            <button
+                class="money-small-button"
+                onclick="changeMoneyCount(0.5,1)"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <div class="money-row">
+
+            <img
+                class="money-image"
                 src="money/1.png"
                 alt="1점"
             >
@@ -1737,6 +1809,8 @@ const state = {
 
 const moneyCounts = {
 
+    0.1: 0,
+    0.5: 0,
     1: 0,
     2: 0,
     5: 0,
@@ -2180,7 +2254,7 @@ async function createRoom(){
                             50,
 
                         balance:
-                            2900000,
+                            2930000,
 
                         joinedAt:
                             Date.now()
@@ -2355,7 +2429,7 @@ async function joinRoom(){
                     50,
 
                 balance:
-                    2900000,
+                    2930000,
 
                 joinedAt:
                     Date.now()
@@ -3843,7 +3917,10 @@ function renderTurnOrder(){
 ========================= */
 
 function renderGoldenKeyButton(){
-    $("staffRoomToggleButton")?.classList.remove("hidden");
+    const staffButton = $("staffRoomToggleButton");
+    if(staffButton){
+        staffButton.classList.toggle("hidden", !state.gameStarted);
+    }
 
     const button = $("goldenKeyButton");
     if(!button){
@@ -4834,11 +4911,11 @@ function updateMoneyCountDisplays(){
 
     for(
         const value
-        of [1,2,5,10,50]
+        of [0.1,0.5,1,2,5,10,50]
     ){
 
         const element =
-            $(`moneyCount${value}`);
+            $(`moneyCount${String(value).replace(".", "_")}`);
 
 
         if(element){
@@ -4860,6 +4937,10 @@ function updateMoneyCountDisplays(){
 function getSelectedMoney(){
 
     return (
+
+        moneyCounts[0.1] * 1000 +
+
+        moneyCounts[0.5] * 5000 +
 
         moneyCounts[1] * 10000 +
 
@@ -4898,7 +4979,7 @@ function resetMoneyCounts(){
 
     for(
         const value
-        of [1,2,5,10,50]
+        of [0.1,0.5,1,2,5,10,50]
     ){
 
         moneyCounts[value] =
