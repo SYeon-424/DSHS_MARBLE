@@ -1,0 +1,28 @@
+[
+  {
+    "id": "teacher_001",
+    "name": "와도 - ㅂㅌㅇ",
+    "color": "#4F7CAC",
+    "basic": 5,
+    "essay": 25,
+    "short": 18,
+    "objective": 5,
+    "takenBasic": 0.2,
+    "takenEssay": 25,
+    "takenShort": 9,
+    "takenObjective": 2
+  },
+  {
+    "id": "teacher_002",
+    "name": "이윤아 - ㅇㅇㅇ",
+    "color": "#C06C84",
+    "basic": 8,
+    "essay": 25,
+    "short": 15,
+    "objective": 5,
+    "takenBasic": 0.4,
+    "takenEssay": 45,
+    "takenShort": 18,
+    "takenObjective": 4
+  }
+]
