@@ -220,9 +220,17 @@ button{
 #gameScreen{
     display:none;
     min-height:100vh;
-    padding:15px;
+    padding:25px 15px 40px;
     justify-content:center;
     align-items:flex-start;
+}
+
+.game-layout{
+    width:min(100%,1000px);
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:14px;
 }
 
 .board-wrap{
@@ -310,30 +318,38 @@ button{
 ========================= */
 
 #turnOrder{
-    position:fixed;
-    top:15px;
-    left:15px;
-    z-index:1000;
-
+    position:static;
+    width:100%;
     background:#151515ee;
     border:1px solid #555;
-    border-radius:12px;
-    padding:10px 13px;
-    min-width:160px;
-
+    border-radius:14px;
+    padding:12px 16px;
     box-shadow:0 5px 20px #0008;
 }
 
 .turn-title{
     font-weight:800;
-    margin-bottom:7px;
+    margin-bottom:9px;
+    font-size:16px;
+}
+
+#turnList{
+    display:flex;
+    gap:10px;
+    align-items:stretch;
+    flex-wrap:wrap;
 }
 
 .turn-player{
-    padding:4px 7px;
-    border-radius:6px;
+    padding:8px 12px;
+    border-radius:9px;
+    background:#222;
     color:#bbb;
     font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-height:55px;
 }
 
 .turn-player.current{
@@ -342,28 +358,45 @@ button{
     font-weight:900;
 }
 
+.turn-player-image{
+    width:40px;
+    height:40px;
+    object-fit:contain;
+    flex-shrink:0;
+}
+
+.turn-player-info{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.turn-player-number{
+    font-size:11px;
+    opacity:.65;
+}
+
+.turn-player-name{
+    font-size:14px;
+}
+
 
 /* =========================
    주사위 컨트롤
 ========================= */
 
 #turnControls{
-    position:fixed;
-    left:50%;
-    bottom:20px;
-    transform:translateX(-50%);
-    z-index:1000;
-
+    position:static;
+    width:100%;
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     align-items:center;
-    gap:8px;
-
+    justify-content:center;
+    gap:14px;
     background:#151515ee;
     border:1px solid #555;
     border-radius:14px;
     padding:10px 14px;
-
     box-shadow:0 5px 20px #0008;
 }
 
@@ -599,15 +632,12 @@ button{
     }
 
     #turnOrder{
-        top:auto;
-        bottom:80px;
-        left:10px;
-        min-width:135px;
-        padding:8px;
+        padding:10px;
     }
 
     #turnControls{
-        bottom:10px;
+        flex-direction:column;
+        gap:8px;
     }
 
     #moneyToggleButton{
@@ -761,78 +791,86 @@ button{
 
 <div id="gameScreen">
 
-    <div class="board-wrap">
+    <div class="game-layout">
 
-        <img
-            class="board-image"
-            src="board.png"
-            alt="대곽마블 게임판"
+        <!-- =========================
+             턴 순서
+        ========================= -->
+
+        <div
+            id="turnOrder"
+            class="hidden"
         >
 
+            <div class="turn-title">
+                턴 순서
+            </div>
 
-        <div id="diceArea">
-
-            <img
-                id="dice1"
-                class="dice"
-                src="dice/dice1.png"
-                alt="주사위 1"
-            >
-
-            <img
-                id="dice2"
-                class="dice"
-                src="dice/dice1.png"
-                alt="주사위 2"
-            >
+            <div id="turnList"></div>
 
         </div>
 
 
-        <div id="gamePieces"></div>
+        <!-- =========================
+             주사위 컨트롤
+        ========================= -->
+
+        <div
+            id="turnControls"
+            class="hidden"
+        >
+
+            <div id="turnStatus">
+                게임을 시작해
+            </div>
+
+            <button
+                id="rollDiceButton"
+                onclick="rollDice()"
+            >
+                주사위 굴리기
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             보드판
+        ========================= -->
+
+        <div class="board-wrap">
+
+            <img
+                class="board-image"
+                src="board.png"
+                alt="대곽마블 게임판"
+            >
+
+
+            <div id="diceArea">
+
+                <img
+                    id="dice1"
+                    class="dice"
+                    src="dice/dice1.png"
+                    alt="주사위 1"
+                >
+
+                <img
+                    id="dice2"
+                    class="dice"
+                    src="dice/dice1.png"
+                    alt="주사위 2"
+                >
+
+            </div>
+
+
+            <div id="gamePieces"></div>
+
+        </div>
 
     </div>
-
-</div>
-
-
-<!-- =========================
-     턴 순서
-========================= -->
-
-<div
-    id="turnOrder"
-    class="hidden"
->
-
-    <div class="turn-title">
-        턴 순서
-    </div>
-
-    <div id="turnList"></div>
-
-</div>
-
-
-<!-- =========================
-     주사위 컨트롤
-========================= -->
-
-<div
-    id="turnControls"
-    class="hidden"
->
-
-    <div id="turnStatus">
-        게임을 시작해
-    </div>
-
-    <button
-        id="rollDiceButton"
-        onclick="rollDice()"
-    >
-        주사위 굴리기
-    </button>
 
 </div>
 
@@ -2957,9 +2995,64 @@ function renderTurnOrder(){
             }
 
 
-            div.textContent =
-                `${index + 1}. ${player.nickname}`;
+            const img =
+                document.createElement(
+                    "img"
+                );
 
+            img.className =
+                "turn-player-image";
+
+            img.src =
+                `P/P${player.piece}.png`;
+
+            img.alt =
+                player.nickname ||
+                `P${player.piece}`;
+
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+            info.className =
+                "turn-player-info";
+
+
+            const number =
+                document.createElement(
+                    "span"
+                );
+
+            number.className =
+                "turn-player-number";
+
+            number.textContent =
+                `${index + 1}번째`;
+
+
+            const name =
+                document.createElement(
+                    "span"
+                );
+
+            name.className =
+                "turn-player-name";
+
+            name.textContent =
+                player.nickname;
+
+
+            info.append(
+                number,
+                name
+            );
+
+            div.append(
+                img,
+                info
+            );
 
             container.appendChild(div);
 
