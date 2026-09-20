@@ -301,7 +301,7 @@ button{
 .exam-paper-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
 .exam-paper-button{flex:1 1 30%;margin:0!important;padding:7px 5px;font-size:12px;background:#526b9d;color:#fff;}
 .exam-paper-button:disabled{opacity:.35;cursor:not-allowed;}
-.exam-paper{position:absolute;width:34px;height:34px;object-fit:contain;transform:translate(-50%,-50%);z-index:8;touch-action:none;user-select:none;cursor:grab;}
+.exam-paper{position:absolute;width:34px;height:34px;object-fit:contain;transform:translate(-50%,-50%);z-index:1000;touch-action:none;user-select:none;-webkit-user-drag:none;pointer-events:auto;cursor:grab;}
 .exam-paper.other-owner{cursor:default;opacity:.92;}
 
 
@@ -3826,6 +3826,7 @@ function enableExamPaperDrag(img, staffId, type){
 
     img.addEventListener("pointerdown", event => {
         dragging = true;
+        state.dragging = true;
         img.style.cursor = "grabbing";
         img.setPointerCapture(event.pointerId);
         event.preventDefault();
@@ -3840,6 +3841,7 @@ function enableExamPaperDrag(img, staffId, type){
     img.addEventListener("pointerup", async event => {
         if(!dragging) return;
         dragging = false;
+        state.dragging = false;
         img.style.cursor = "grab";
         const {x,y} = getExamPaperPosition(event);
         img.style.left = `${x}%`;
