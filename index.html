@@ -278,6 +278,16 @@ button{
 }
 .staff-room-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;}
 .staff-room-header h3{margin:0;}
+.staff-current-score{
+    margin-bottom:8px;
+    padding:8px 10px;
+    border:1px solid #d8b36a;
+    border-radius:10px;
+    background:#fff7df;
+    color:#8a5412;
+    font-weight:800;
+    text-align:center;
+}
 .staff-board-toggle{width:100%;margin:0 0 10px;background:#3b3b3b;color:#fff;font-weight:900;}
 .staff-board-section{padding-top:4px;}
 .staff-room-layout{display:flex;flex-wrap:wrap;gap:8px;}
@@ -1328,6 +1338,7 @@ button{
     🏫 교무실
 </button>
 
+<div id="staffCurrentScore" class="staff-current-score">현재 내 점수: -</div>
 <div id="staffRoomPanel" class="hidden">
     <div class="staff-room-header">
         <h3>🏫 교무실</h3>
@@ -1965,6 +1976,12 @@ function getCurrentPlayer(playerId){
 }
 
 function renderStaffRoom(){
+    const currentScore = $("staffCurrentScore");
+    const me = getCurrentPlayer(state.playerId);
+    if(currentScore){
+        currentScore.textContent = `현재 내 점수: ${formatMoney(me?.balance || 0)}`;
+    }
+
     const names = $("staffRoomNames");
     const status = $("staffRoomStatus");
     if(!names || !status) return;
@@ -2009,8 +2026,12 @@ function renderOwnedStaffList(){
         const essay = getStaffValue(staff,["essay","서술형","출제서술형","출제_서술형"]);
         const short = getStaffValue(staff,["short","단답형","출제단답형","출제_단답형"]);
         const objective = getStaffValue(staff,["objective","객관식","출제객관식","출제_객관식"]);
+        const takenBasic = getStaffValue(staff,["takenBasic","응시기본","응시_기본"]);
+        const takenEssay = getStaffValue(staff,["takenEssay","응시서술형","응시_서술형"]);
+        const takenShort = getStaffValue(staff,["takenShort","응시단답형","응시_단답형"]);
+        const takenObjective = getStaffValue(staff,["takenObjective","응시객관식","응시_객관식"]);
         const papers = owner.examPapers || {};
-        item.innerHTML = `<div class="staff-owned-name">${escapeHtml(staff.name)}</div><div class="staff-owned-meta">${escapeHtml(owner.nickname || "이름 없음")} · 말 ${escapeHtml(owner.piece ?? "미선택")}</div><div class="staff-owned-meta">가격: 기본 ${basic}점 · 서술형 ${essay}점 · 단답형 ${short}점 · 객관식 ${objective}점</div>`;
+        item.innerHTML = `<div class="staff-owned-name">${escapeHtml(staff.name)}</div><div class="staff-owned-meta">${escapeHtml(owner.nickname || "이름 없음")} · 말 ${escapeHtml(owner.piece ?? "미선택")}</div><div class="staff-owned-meta">출제점수: 기본 ${basic}점 · 서술형 ${essay}점 · 단답형 ${short}점 · 객관식 ${objective}점</div><div class="staff-owned-meta">응시점수: 기본 ${takenBasic}점 · 서술형 ${takenEssay}점 · 단답형 ${takenShort}점 · 객관식 ${takenObjective}점</div>`;
         const paperButtons = document.createElement("div");
         paperButtons.className = "exam-paper-buttons";
         [
@@ -2080,37 +2101,57 @@ function showStaffDetail(staffId){
 async function buyStaff(staffId){
     const staff = staffList.find(item => String(item.id) === String(staffId));
     if(!staff || !state.roomCode || !state.playerId) return;
+
     const existing = getStaffOwnership(staff.id);
     if(existing){
         alert(existing.playerId === state.playerId ? "이미 내가 매수한 선생님이야." : "이미 다른 플레이어가 매수한 선생님이야.");
         return;
     }
+
     const player = getCurrentPlayer(state.playerId);
-    const requiredScore = Number(getStaffValue(staff,["basic","출제기본","출제_기본"]) || 0) * 10000;
+    const basicValue = Number(getStaffValue(staff,["basic","출제기본","출제_기본"]) || 0);
+    const requiredScore = basicValue * 10000;
+
     if(Number(player?.balance || 0) < requiredScore){
         alert("기본 점수가 부족해서 매수할 수 없어.");
         return;
     }
-    const piece = player?.piece ?? "미선택";
+
+    const playerBalanceRef = ref(db, `rooms/${state.roomCode}/players/${state.playerId}/balance`);
+    const balanceResult = await runTransaction(playerBalanceRef, balance => {
+        const currentBalance = Number(balance || 0);
+        if(currentBalance < requiredScore) return;
+        return currentBalance - requiredScore;
+    });
+
+    if(!balanceResult.committed){
+        alert("점수가 부족하거나 매수에 실패했어.");
+        return;
+    }
+
     const ownershipRef = ref(db, `rooms/${state.roomCode}/staffOwnership/${staff.id}`);
-    const result = await runTransaction(ownershipRef, current => {
+    const ownershipResult = await runTransaction(ownershipRef, current => {
         if(current) return;
         return {
             playerId: state.playerId,
             nickname: player?.nickname || state.nickname || "이름 없음",
-            piece,
+            piece: player?.piece ?? "미선택",
             purchasedAt: Date.now(),
+            purchasePrice: requiredScore,
             examPapers: {}
         };
     });
-    if(result.committed){
-        renderStaffRoom();
-        showStaffDetail(staff.id);
-    }else{
-        alert("이미 다른 플레이어가 먼저 매수했어.");
-    }
-}
 
+    if(!ownershipResult.committed){
+        await runTransaction(playerBalanceRef, balance => Number(balance || 0) + requiredScore);
+        alert("이미 다른 플레이어가 먼저 매수했어. 차감된 점수는 복구했어.");
+        return;
+    }
+
+    renderMoneyPlayers();
+    renderStaffRoom();
+    showStaffDetail(staff.id);
+}
 async function sellStaff(staffId){
     const owner = getStaffOwnership(staffId);
     if(!owner || owner.playerId !== state.playerId) return;
@@ -2491,17 +2532,7 @@ async function createRoom(){
             }
 
         );
-
-
-        await onDisconnect(
-            ref(
-                db,
-                `rooms/${code}/players/${state.playerId}`
-            )
-        ).remove();
-
-
-        enterRoom();
+enterRoom();
 
 
     }catch(error){
@@ -2629,50 +2660,20 @@ async function joinRoom(){
             state.playerId;
 
 
+        const existingPlayer = players[state.playerId] || {};
         await update(
-
-            ref(
-                db,
-                `rooms/${code}/players/${state.playerId}`
-            ),
-
+            ref(db, `rooms/${code}/players/${state.playerId}`),
             {
-
-                playerId:
-                    state.playerId,
-
-                nickname:
-                    nickname,
-
-                piece:
-                    null,
-
-                x:
-                    50,
-
-                y:
-                    50,
-
-                balance:
-                    2930000,
-
-                joinedAt:
-                    Date.now()
-
+                playerId: state.playerId,
+                nickname,
+                piece: existingPlayer.piece ?? null,
+                x: existingPlayer.x ?? 50,
+                y: existingPlayer.y ?? 50,
+                balance: existingPlayer.balance ?? 2930000,
+                joinedAt: existingPlayer.joinedAt ?? Date.now()
             }
-
         );
-
-
-        await onDisconnect(
-            ref(
-                db,
-                `rooms/${code}/players/${state.playerId}`
-            )
-        ).remove();
-
-
-        enterRoom();
+enterRoom();
 
 
     }catch(error){
