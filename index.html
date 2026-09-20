@@ -4092,6 +4092,12 @@ async function createExamPaper(staffId, type){
         return;
     }
 
+    await recordScoreHistory(
+        state.playerId,
+        `${staff.name} ${labelMap[type] || "시험지"} 출제`,
+        -requiredScore
+    );
+
     renderMoneyPlayers();
     renderStaffRoom();
     renderGamePieces();
@@ -5746,6 +5752,13 @@ async function(){
 
         if(result.committed){
 
+            await recordScoreHistory(
+                getScoreTargetId(),
+                "교무실 데스크탑",
+                amount,
+                getAdmissionOfficerHistoryDetail()
+            );
+
             resetMoneyCounts();
 
         }
@@ -5924,6 +5937,12 @@ async function(){
                         ) +
                         amount;
 
+                    addScoreHistory(
+                        room,
+                        state.playerId,
+                        "봉사점수 내기",
+                        -amount
+                    );
 
                     return room;
 
