@@ -1417,7 +1417,7 @@ button{
     
 </div>
 
-<div id="sangsaengbuSection" class="hidden" style="position:fixed;left:15px;top:15px;z-index:1110;width:min(520px,calc(100vw - 30px));max-height:calc(100vh - 230px);overflow-y:auto;background:#222;border:1px solid #777;border-radius:16px;padding:18px;box-shadow:0 8px 35px #000b;">
+<div id="sangsaengbuSection" class="hidden" style="position:fixed;right:15px;top:15px;z-index:1110;width:min(520px,calc(100vw - 30px));max-height:calc(100vh - 230px);overflow-y:auto;background:#222;border:1px solid #777;border-radius:16px;padding:18px;box-shadow:0 8px 35px #000b;">
     <div class="staff-room-header">
         <h3>📚 생기부</h3>
         <button onclick="toggleSangsaengbu()">닫기</button>
@@ -2094,7 +2094,7 @@ function renderSangsaengbu(){
 
         const amount = document.createElement("span");
         amount.className = "history-amount " + (Number(entry.amount || 0) >= 0 ? "positive" : "negative");
-        amount.textContent = `--- ${formatHistoryAmount(entry.amount)}`;
+        amount.textContent = formatHistoryAmount(entry.amount);
 
         row.append(label, amount);
         container.appendChild(row);
