@@ -1976,7 +1976,11 @@ function renderStaffRoom(){
         button.className = "staff-name-button" + (owner ? " owned" : "");
         button.textContent = owner ? `${staff.name} · 매수됨` : staff.name;
         button.style.borderColor = staff.color;
-        button.onclick = () => showStaffDetail(staff.id);
+        button.addEventListener("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        showStaffDetail(staff.id);
+    });
         names.appendChild(button);
     });
     renderOwnedStaffList();
@@ -2069,6 +2073,8 @@ function showStaffDetail(staffId){
         <div class="staff-detail-line" style="margin-top:13px;margin-bottom:0"></div>
     `;
     card.classList.remove("hidden");
+    card.style.display = "block";
+    card.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
 async function buyStaff(staffId){
