@@ -4903,13 +4903,17 @@ function waitForDiceAnimationThenFinish(){
                             order.length;
 
                         let skipCount = 0;
-                        while(
-                            skipCount < order.length &&
-                            room.players &&
-                            room.players[order[room.currentTurnIndex]] &&
-                            room.players[order[room.currentTurnIndex]].skipNextTurn
-                        ){
-                            room.players[order[room.currentTurnIndex]].skipNextTurn = false;
+                        while(skipCount < order.length){
+                            const nextPlayerId =
+                                order[room.currentTurnIndex];
+                            const nextPlayer =
+                                room.players?.[nextPlayerId];
+
+                            if(!nextPlayer?.skipNextTurn){
+                                break;
+                            }
+
+                            // 낙제된 플레이어는 게임이 끝날 때까지 계속 턴을 무시한다.
                             room.currentTurnIndex =
                                 (room.currentTurnIndex + 1) % order.length;
                             skipCount++;
@@ -5877,12 +5881,11 @@ window.failSelectedPlayerTurn = async function(){
         state.playerId;
 
     if(!targetId){
-        alert("낙제시킬 플레이어를 선택해줘.");
         return;
     }
 
     try{
-        const result = await runTransaction(
+        await runTransaction(
             ref(db, `rooms/${state.roomCode}/players/${targetId}`),
             player => {
                 if(!player){
@@ -5893,15 +5896,8 @@ window.failSelectedPlayerTurn = async function(){
                 return player;
             }
         );
-
-        if(result.committed){
-            alert("선택한 플레이어의 다음 턴을 무시하도록 했어.");
-        }else{
-            alert("낙제 처리에 실패했어.");
-        }
     }catch(error){
         console.error("낙제 처리 오류:", error);
-        alert("낙제 처리 중 오류가 발생했어.");
     }
 };
 
@@ -5928,14 +5924,10 @@ window.receiveResignationScore = async function(){
         );
 
         if(!result.committed){
-            alert("퇴사점수는 이미 받았거나 받을 수 없어.");
             return;
         }
-
-        alert("퇴사점수 20점을 받았어!");
     }catch(error){
         console.error("퇴사점수 받기 오류:", error);
-        alert("퇴사점수를 받는 중 오류가 발생했어.");
     }
 };
 
