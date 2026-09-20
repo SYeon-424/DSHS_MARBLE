@@ -1338,10 +1338,10 @@ button{
     🏫 교무실
 </button>
 
-<div id="staffCurrentScore" class="staff-current-score">현재 내 점수: -</div>
 <div id="staffRoomPanel" class="hidden">
     <div class="staff-room-header">
         <h3>🏫 교무실</h3>
+        <div id="staffCurrentScore" class="staff-current-score">현재 내 점수: -</div>
         <button onclick="toggleStaffRoomPanel()">닫기</button>
     </div>
     <button class="staff-board-toggle" onclick="toggleStaffBoard()">📋 교무실 배치표 접기/펼치기</button>
@@ -2098,7 +2098,7 @@ function showStaffDetail(staffId){
     card.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
-async function buyStaff(staffId){
+async async function buyStaff(staffId){
     const staff = staffList.find(item => String(item.id) === String(staffId));
     if(!staff || !state.roomCode || !state.playerId) return;
 
@@ -3858,18 +3858,65 @@ function enableExamPaperDrag(img, staffId, type){
 async function createExamPaper(staffId, type){
     const owner = getStaffOwnership(staffId);
     if(!owner || owner.playerId !== state.playerId) return;
+
+    const staff = staffList.find(item => String(item.id) === String(staffId));
+    if(!staff) return;
+
+    const scoreKeys = {
+        objective: ["objective","객관식","출제객관식","출제_객관식"],
+        short: ["short","단답형","출제단답형","출제_단답형"],
+        essay: ["essay","서술형","출제서술형","출제_서술형"]
+    };
+
+    const labelMap = {
+        objective: "객관식",
+        short: "단답형",
+        essay: "서술형"
+    };
+
+    const rawScore = Number(getStaffValue(staff, scoreKeys[type] || []) || 0);
+    const requiredScore = rawScore * 10000;
+
+    if(!Number.isFinite(requiredScore) || requiredScore < 0){
+        alert("시험지 출제점수가 올바르지 않아.");
+        return;
+    }
+
+    const currentPlayer = getCurrentPlayer(state.playerId);
+    if(Number(currentPlayer?.balance || 0) < requiredScore){
+        alert(`${labelMap[type] || "시험지"} 출제에 필요한 점수가 부족해.`);
+        return;
+    }
+
     const paperRef = ref(db, `rooms/${state.roomCode}/staffOwnership/${staffId}/examPapers/${type}`);
-    const result = await runTransaction(paperRef, current => current || {
+    const paperResult = await runTransaction(paperRef, current => current || {
         x: 50,
         y: 50,
         createdAt: Date.now()
     });
-    if(result.committed){
-        renderStaffRoom();
-        renderGamePieces();
-    }
-}
 
+    if(!paperResult.committed){
+        alert("이미 해당 종류의 시험지가 있어.");
+        return;
+    }
+
+    const balanceRef = ref(db, `rooms/${state.roomCode}/players/${state.playerId}/balance`);
+    const balanceResult = await runTransaction(balanceRef, balance => {
+        const balanceNumber = Number(balance || 0);
+        if(balanceNumber < requiredScore) return;
+        return balanceNumber - requiredScore;
+    });
+
+    if(!balanceResult.committed){
+        await set(paperRef, null);
+        alert("점수가 부족해서 시험지를 출제할 수 없어.");
+        return;
+    }
+
+    renderMoneyPlayers();
+    renderStaffRoom();
+    renderGamePieces();
+}
 function createGamePiece(
     player,
     isMine
