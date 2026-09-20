@@ -83,5 +83,18 @@
     "takenEssay": 60,
     "takenShort": 30,
     "takenObjective": 7
+  },
+  {
+    "id": "teacher_008",
+    "name": "제미나이 - ㄱㅈ",
+    "color": "#FFA556",
+    "basic": 14,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1,
+    "takenEssay": 75,
+    "takenShort": 45,
+    "takenObjective": 10
   }
 ]
