@@ -262,6 +262,18 @@ button{
     box-shadow:0 5px 20px #0008;
     font-weight:900;
 }
+#sangsaengbuToggleButton{
+    position:fixed;
+    right:15px;
+    top:166px;
+    z-index:1100;
+    background:#8b6bd6;
+    color:#fff;
+    padding:10px 15px;
+    border-radius:10px;
+    box-shadow:0 5px 20px #0008;
+    font-weight:900;
+}
 #staffRoomPanel{
     position:fixed;
     right:15px;
@@ -289,6 +301,16 @@ button{
     text-align:center;
 }
 .staff-board-toggle{width:100%;margin:0 0 10px;background:#3b3b3b;color:#fff;font-weight:900;}
+.sangsaengbu-toggle{width:100%;margin:10px 0;background:#3b3b3b;color:#fff;font-weight:900;}
+.sangsaengbu-section{padding:10px 0 0;}
+.sangsaengbu-list{display:flex;flex-direction:column;gap:7px;max-height:300px;overflow-y:auto;}
+.sangsaengbu-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#171717;border:1px solid #555;border-radius:9px;padding:9px 10px;font-size:13px;}
+.sangsaengbu-item .history-label{color:#ddd;overflow-wrap:anywhere;}
+.sangsaengbu-item .history-amount{font-weight:1000;white-space:nowrap;}
+.sangsaengbu-item .history-amount.positive{color:#8dffad;}
+.sangsaengbu-item .history-amount.negative{color:#ff9696;}
+.sangsaengbu-empty{color:#aaa;font-size:13px;padding:8px 0;}
+
 .staff-board-section{padding-top:4px;}
 .staff-room-layout{display:flex;flex-wrap:wrap;gap:8px;}
 .staff-name-button{background:#3d4d72;color:#fff;border:2px solid #7188c9;border-radius:9px;padding:9px 12px;font-weight:900;cursor:pointer;transition:opacity .15s,filter .15s;}
@@ -1354,6 +1376,14 @@ button{
     🏫 교무실
 </button>
 
+<button
+    id="sangsaengbuToggleButton"
+    class="hidden"
+    onclick="toggleSangsaengbu()"
+>
+    📚 생기부
+</button>
+
 <div id="staffRoomPanel" class="hidden">
     <div class="staff-room-header">
         <h3>🏫 교무실</h3>
@@ -1385,6 +1415,15 @@ button{
     <div id="staffOwnedList" class="staff-owned-list"></div>
 
     
+</div>
+
+<div id="sangsaengbuSection" class="hidden" style="position:fixed;right:15px;top:215px;z-index:1110;width:min(520px,calc(100vw - 30px));max-height:calc(100vh - 230px);overflow-y:auto;background:#222;border:1px solid #777;border-radius:16px;padding:18px;box-shadow:0 8px 35px #000b;">
+    <div class="staff-room-header">
+        <h3>📚 생기부</h3>
+        <button onclick="toggleSangsaengbu()">닫기</button>
+    </div>
+    <div class="staff-owned-title">📄 내 성적표</div>
+    <div id="sangsaengbuList" class="sangsaengbu-list"></div>
 </div>
 
 
@@ -1911,6 +1950,7 @@ const state = {
 
     lastKeyDraw: null,
     lastKeyDrawByPlayer: {},
+    scoreHistory: [],
 
     staffList: [],
     selectedStaff: null,
@@ -2006,6 +2046,85 @@ function getStaffOwnership(staffId){
 
 function getCurrentPlayer(playerId){
     return state.players.find(player => player.playerId === playerId) || null;
+}
+
+
+function addScoreHistory(room, playerId, label, amount, detail = ""){
+    if(!room || !playerId) return;
+    if(!room.scoreHistory) room.scoreHistory = {};
+    if(!Array.isArray(room.scoreHistory[playerId])){
+        room.scoreHistory[playerId] = [];
+    }
+    room.scoreHistory[playerId].push({
+        label: String(label || "알 수 없음"),
+        amount: Number(amount || 0),
+        detail: String(detail || ""),
+        timestamp: Date.now()
+    });
+    if(room.scoreHistory[playerId].length > 200){
+        room.scoreHistory[playerId] = room.scoreHistory[playerId].slice(-200);
+    }
+}
+
+function formatHistoryAmount(amount){
+    const points = Number(amount || 0) / 10000;
+    const sign = points > 0 ? "+" : "";
+    return `${sign}${Number.isInteger(points) ? points : points.toFixed(1)}점`;
+}
+
+function renderSangsaengbu(){
+    const container = $("sangsaengbuList");
+    if(!container) return;
+    container.innerHTML = "";
+    const history = Array.isArray(state.scoreHistory) ? [...state.scoreHistory].reverse() : [];
+    if(!history.length){
+        const empty = document.createElement("div");
+        empty.className = "sangsaengbu-empty";
+        empty.textContent = "아직 기록된 성적 내역이 없어.";
+        container.appendChild(empty);
+        return;
+    }
+    history.forEach(entry => {
+        const row = document.createElement("div");
+        row.className = "sangsaengbu-item";
+
+        const label = document.createElement("span");
+        label.className = "history-label";
+        label.textContent = entry.detail ? `${entry.label} (${entry.detail})` : entry.label;
+
+        const amount = document.createElement("span");
+        amount.className = "history-amount " + (Number(entry.amount || 0) >= 0 ? "positive" : "negative");
+        amount.textContent = `--- ${formatHistoryAmount(entry.amount)}`;
+
+        row.append(label, amount);
+        container.appendChild(row);
+    });
+}
+
+async function recordScoreHistory(playerId, label, amount, detail = ""){
+    if(!state.roomCode || !playerId || !amount) return;
+    try{
+        await runTransaction(
+            ref(db, `rooms/${state.roomCode}/scoreHistory/${playerId}`),
+            history => {
+                const next = Array.isArray(history) ? history : [];
+                next.push({
+                    label: String(label || "알 수 없음"),
+                    amount: Number(amount || 0),
+                    detail: String(detail || ""),
+                    timestamp: Date.now()
+                });
+                return next.slice(-200);
+            }
+        );
+    }catch(error){
+        console.error("성적표 기록 오류:", error);
+    }
+}
+
+function getAdmissionOfficerHistoryDetail(){
+    const officer = getCurrentPlayer(state.admissionOfficerId);
+    return officer ? `입학사정관: ${officer.nickname || "이름 없음"}` : "";
 }
 
 function renderStaffRoom(){
@@ -2180,6 +2299,12 @@ async function buyStaff(staffId){
         alert("이미 다른 플레이어가 먼저 매수했어. 차감된 점수는 복구했어.");
         return;
     }
+
+    await recordScoreHistory(
+        state.playerId,
+        `${staff.name} 매수`,
+        -requiredScore
+    );
 
     renderMoneyPlayers();
     renderStaffRoom();
@@ -2833,6 +2958,9 @@ function watchRoom(){
 
             state.lastKeyDrawByPlayer =
                 data.lastKeyDrawByPlayer || {};
+
+            state.scoreHistory =
+                data.scoreHistory?.[state.playerId] || [];
 
             state.staffOwnership =
                 data.staffOwnership || {};
@@ -5306,6 +5434,19 @@ async function transferScore(){
                 sender.balance = senderBalance - amount;
                 receiver.balance = Number(receiver.balance || 0) + amount;
 
+                addScoreHistory(
+                    room,
+                    state.playerId,
+                    `${receiver.nickname || "이름 없음"}에게`,
+                    -amount
+                );
+                addScoreHistory(
+                    room,
+                    targetId,
+                    `${sender.nickname || "이름 없음"}에게`,
+                    amount
+                );
+
                 return room;
             }
         );
@@ -5669,6 +5810,19 @@ async function(){
         }
 
 
+        const targetId = getScoreTargetId();
+        await recordScoreHistory(
+            targetId,
+            "교무실 데스크탑",
+            -amount,
+            getAdmissionOfficerHistoryDetail()
+        );
+        await recordScoreHistory(
+            getScoreTargetId(),
+            "교무실 데스크탑",
+            -amount,
+            getAdmissionOfficerHistoryDetail()
+        );
         resetMoneyCounts();
 
     }catch(error){
@@ -5843,6 +5997,12 @@ async function(){
                     room.welfareFund =
                         0;
 
+                    addScoreHistory(
+                        room,
+                        state.playerId,
+                        "봉사점수",
+                        fund
+                    );
 
                     return room;
 
@@ -5914,6 +6074,7 @@ window.receiveResignationScore = async function(){
 
                 // 버튼을 누를 때마다 퇴사점수 20점을 추가한다.
                 player.balance = Number(player.balance || 0) + 200000;
+                addScoreHistory(room, state.playerId, "퇴사점수", 200000);
 
                 return room;
             }
@@ -6066,4 +6227,4 @@ updateSelectedMoney();
 </script>
 
 </body>
-</html/>
+</html>
