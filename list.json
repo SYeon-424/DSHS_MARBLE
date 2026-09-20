@@ -279,7 +279,8 @@
     "name": "KAIST",
     "color": "#4C4C4C",
     "basic": 45,
-    "takenBasic": 40
+    "takenBasic": 40,
+    "takenObjective": 20
   },
   {
     "id": "teacher_025",
