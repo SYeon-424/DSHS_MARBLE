@@ -1817,9 +1817,9 @@ button{
 
 
 
-    <hr class="score-action-divider">
+    <hr id="scoreActionDivider" class="score-action-divider hidden">
 
-    <div class="score-action-row">
+    <div id="scoreActionRow" class="score-action-row hidden">
         <button type="button" onclick="receiveResignationScore()">
             퇴사점수 받기<br>
             <small>20점</small>
@@ -3218,6 +3218,14 @@ function showGame(){
 
     $("goldenKeyToggleButton")
         .classList
+        .remove("hidden");
+
+    $("scoreActionDivider")
+        ?.classList
+        .remove("hidden");
+
+    $("scoreActionRow")
+        ?.classList
         .remove("hidden");
 
 }
