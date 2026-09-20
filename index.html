@@ -827,7 +827,7 @@ button{
 
 
 /* =========================
-   봉사시간
+   봉사점수
 ========================= */
 
 .welfare-box{
@@ -1218,7 +1218,7 @@ button{
             >
 
             <div class="money-label">
-                1만원
+                1점
             </div>
 
             <button
@@ -1254,7 +1254,7 @@ button{
             >
 
             <div class="money-label">
-                2만원
+                2점
             </div>
 
             <button
@@ -1290,7 +1290,7 @@ button{
             >
 
             <div class="money-label">
-                5만원
+                5점
             </div>
 
             <button
@@ -1420,17 +1420,17 @@ button{
     </div>
 
 
-    <!-- 봉사시간 -->
+    <!-- 봉사점수 -->
 
     <div class="welfare-box">
 
         <div class="welfare-title">
-            봉사시간
+            봉사점수
         </div>
 
         <div class="welfare-fund">
 
-            현재 봉사시간:
+            현재 봉사점수:
             <strong id="welfareFund">
                 0점
             </strong>
@@ -1441,12 +1441,12 @@ button{
         <div class="welfare-buttons">
 
             <button onclick="payWelfareFund()">
-                기금 내기<br>
-                <small>15만원</small>
+                점수 내기<br>
+                <small>15점</small>
             </button>
 
             <button onclick="receiveWelfareFund()">
-                기금 받기
+                점수 받기
             </button>
 
         </div>
@@ -4810,7 +4810,7 @@ async function(){
 
 
 /* =========================
-   봉사시간 내기
+   봉사점수 내기
 ========================= */
 
 window.payWelfareFund =
@@ -4898,7 +4898,7 @@ async function(){
     }catch(error){
 
         console.error(
-            "기금 내기 오류:",
+            "점수 내기 오류:",
             error
         );
 
@@ -4908,7 +4908,7 @@ async function(){
 
 
 /* =========================
-   봉사시간 받기
+   봉사점수 받기
 ========================= */
 
 window.receiveWelfareFund =
@@ -4986,7 +4986,7 @@ async function(){
     }catch(error){
 
         console.error(
-            "기금 받기 오류:",
+            "점수 받기 오류:",
             error
         );
 
