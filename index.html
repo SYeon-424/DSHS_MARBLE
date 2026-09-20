@@ -239,12 +239,251 @@ button{
     z-index:1;
 }
 
-.board-image{
+''.board-image{
     display:block;
     width:100%;
     height:auto;
     user-select:none;
     -webkit-user-drag:none;
+}
+
+/* =========================
+   황금열쇠 버튼 / 카드
+========================= */
+
+#goldenKeyButton{
+    position:absolute;
+    left:22.8%;
+    top:57.5%;
+    transform:translate(-50%,-50%);
+    z-index:60;
+    width:86px;
+    min-height:48px;
+    padding:8px 10px;
+    border:3px solid #f4c400;
+    border-radius:14px;
+    background:#ffd92e;
+    color:#3b2a00;
+    font-weight:900;
+    font-size:14px;
+    line-height:1.15;
+    box-shadow:0 4px 10px #0006;
+    cursor:pointer;
+}
+
+#goldenKeyButton:hover{
+    filter:brightness(1.05);
+}
+
+#goldenKeyButton:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+#goldenKeyButton .key-icon{
+    display:block;
+    font-size:22px;
+    line-height:20px;
+}
+
+#goldenKeyButton .key-label{
+    display:block;
+}
+
+#goldenKeyToggleButton{
+    position:fixed;
+    right:15px;
+    top:67px;
+    z-index:1100;
+    background:#ffd92e;
+    color:#3b2a00;
+    padding:10px 15px;
+    border-radius:10px;
+    box-shadow:0 5px 20px #0008;
+    font-weight:900;
+}
+
+#goldenKeyPanel{
+    position:fixed;
+    right:15px;
+    top:15px;
+    z-index:1110;
+    width:min(430px,calc(100vw - 30px));
+    max-height:calc(100vh - 30px);
+    overflow-y:auto;
+    background:#222;
+    border:1px solid #777;
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 8px 35px #000b;
+}
+
+.golden-key-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.golden-key-header h3{
+    margin:0;
+}
+
+#goldenKeyCloseButton{
+    background:#444;
+    color:#fff;
+    padding:7px 10px;
+}
+
+#goldenKeyStatus{
+    color:#aaa;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+.golden-key-player{
+    background:#111;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:9px;
+}
+
+.golden-key-player.me{
+    border:1px solid #ffd92e;
+}
+
+.golden-key-player-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    font-weight:900;
+    margin-bottom:7px;
+}
+
+.golden-key-count{
+    color:#ffd92e;
+    font-size:12px;
+}
+
+.golden-key-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.golden-key-item{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+    background:#1d1d1d;
+    border-radius:8px;
+    padding:8px;
+}
+
+.golden-key-text{
+    flex:1;
+    white-space:pre-wrap;
+    line-height:1.4;
+    font-size:13px;
+}
+
+.golden-key-return{
+    flex-shrink:0;
+    padding:5px 8px;
+    background:#444;
+    color:#fff;
+    font-size:12px;
+}
+
+#goldenKeyCardOverlay{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:#0008;
+}
+
+#goldenKeyCard{
+    width:min(520px,100%);
+    min-height:240px;
+    background:#fff4a8;
+    color:#222;
+    border:5px solid #d9aa00;
+    border-radius:18px;
+    box-shadow:0 15px 50px #000c;
+    padding:30px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+#goldenKeyCardTitle{
+    font-size:24px;
+    font-weight:1000;
+    margin-bottom:22px;
+    color:#7b5b00;
+}
+
+#goldenKeyCardText{
+    width:100%;
+    white-space:pre-wrap;
+    font-size:20px;
+    line-height:1.6;
+    font-weight:800;
+}
+
+#goldenKeyCardButtons{
+    display:flex;
+    gap:8px;
+    margin-top:25px;
+}
+
+#goldenKeyCardButtons button{
+    min-width:110px;
+    background:#7b5b00;
+    color:#fff;
+}
+
+@media(max-width:600px){
+    #goldenKeyButton{
+        width:72px;
+        min-height:42px;
+        font-size:12px;
+        padding:5px;
+    }
+
+    #goldenKeyButton .key-icon{
+        font-size:18px;
+    }
+
+    #goldenKeyToggleButton{
+        top:61px;
+        right:10px;
+        padding:8px 11px;
+    }
+
+    #goldenKeyPanel{
+        top:10px;
+        right:10px;
+        max-height:calc(100vh - 20px);
+    }
+
+    #goldenKeyCard{
+        padding:22px 16px;
+        min-height:210px;
+    }
+
+    #goldenKeyCardText{
+        font-size:17px;
+    }
 }
 
 
@@ -846,6 +1085,15 @@ button{
                 alt="대곽마블 게임판"
             >
 
+            <button
+                id="goldenKeyButton"
+                onclick="drawGoldenKey()"
+                title="황금열쇠를 뽑아"
+            >
+                <span class="key-icon">🔑</span>
+                <span class="key-label">황금열쇠</span>
+            </button>
+
 
             <div id="diceArea">
 
@@ -886,6 +1134,43 @@ button{
 >
     💰 금액
 </button>
+
+
+<button
+    id="goldenKeyToggleButton"
+    class="hidden"
+    onclick="toggleGoldenKeyPanel()"
+>
+    🔑 황금열쇠
+</button>
+
+
+<!-- =========================
+     황금열쇠 패널
+========================= -->
+
+<div
+    id="goldenKeyPanel"
+    class="hidden"
+>
+
+    <div class="golden-key-header">
+        <h3>🔑 황금열쇠</h3>
+        <button
+            id="goldenKeyCloseButton"
+            onclick="toggleGoldenKeyPanel()"
+        >
+            닫기
+        </button>
+    </div>
+
+    <div id="goldenKeyStatus">
+        저장된 황금열쇠가 없어
+    </div>
+
+    <div id="goldenKeyPlayers"></div>
+
+</div>
 
 
 <!-- =========================
@@ -1171,6 +1456,26 @@ button{
 </div>
 
 
+<!-- =========================
+     황금열쇠 카드 출력
+========================= -->
+
+<div
+    id="goldenKeyCardOverlay"
+    class="hidden"
+>
+    <div id="goldenKeyCard">
+        <div id="goldenKeyCardTitle">🔑 황금열쇠</div>
+        <div id="goldenKeyCardText"></div>
+        <div id="goldenKeyCardButtons">
+            <button onclick="closeGoldenKeyCard()">
+                저장하고 닫기
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <script type="module">
 
 import {
@@ -1226,6 +1531,9 @@ const db =
     getDatabase(app);
 
 
+loadGoldenKeyCards();
+
+
 /* =========================
    상태
 ========================= */
@@ -1260,6 +1568,10 @@ const state = {
 
     welfareFund: 0,
 
+    keyCards: {},
+
+    lastKeyDraw: null,
+
     dragging: false,
 
     /*
@@ -1292,6 +1604,68 @@ const moneyCounts = {
     50: 0
 
 };
+
+
+/* =========================
+   황금열쇠 데이터
+========================= */
+
+let goldenKeyCards = [];
+let renderedGoldenKeyDrawId = null;
+let initializedGoldenKeyDrawState = false;
+
+async function loadGoldenKeyCards(){
+
+    try{
+
+        const response = await fetch("key.json", {
+            cache: "no-store"
+        });
+
+        if(!response.ok){
+            throw new Error(`key.json 불러오기 실패 (${response.status})`);
+        }
+
+        const data = await response.json();
+
+        if(!Array.isArray(data)){
+            throw new Error("key.json 형식이 올바르지 않아");
+        }
+
+        goldenKeyCards = data
+            .filter(card => card && card.id != null && typeof card.text === "string")
+            .map(card => ({
+                id: String(card.id),
+                text: card.text
+            }));
+
+        if(goldenKeyCards.length === 0){
+            throw new Error("key.json에 황금열쇠가 없어");
+        }
+
+        if(typeof renderGoldenKeyButton === "function"){
+            renderGoldenKeyButton();
+        }
+
+        if(typeof renderGoldenKeyPlayers === "function"){
+            renderGoldenKeyPlayers();
+        }
+
+    }catch(error){
+
+        console.error("황금열쇠 데이터 로드 오류:", error);
+
+        goldenKeyCards = [];
+
+        const status = $("goldenKeyStatus");
+        if(status){
+            status.textContent =
+                "황금열쇠 데이터를 불러오지 못했어. key.json을 확인해줘.";
+        }
+
+    }
+
+}
 
 
 /* =========================
@@ -1517,6 +1891,12 @@ async function createRoom(){
 
                 welfareFund:
                     0,
+
+                keyCards:
+                    {},
+
+                lastKeyDraw:
+                    null,
 
                 players:{
 
@@ -1845,6 +2225,14 @@ function watchRoom(){
                 data.welfareFund || 0;
 
 
+            state.keyCards =
+                data.keyCards || {};
+
+
+            state.lastKeyDraw =
+                data.lastKeyDraw || null;
+
+
             if(state.gameStarted){
 
                 showGame();
@@ -1862,9 +2250,32 @@ function watchRoom(){
 
             renderMoneyPlayers();
 
+            renderGoldenKeyPlayers();
+
+            if(!initializedGoldenKeyDrawState){
+
+                renderedGoldenKeyDrawId =
+                    state.lastKeyDraw?.timestamp || null;
+
+                initializedGoldenKeyDrawState = true;
+
+            }else if(
+                state.lastKeyDraw &&
+                state.lastKeyDraw.timestamp !== renderedGoldenKeyDrawId
+            ){
+
+                renderedGoldenKeyDrawId =
+                    state.lastKeyDraw.timestamp;
+
+                renderGoldenKeyCard();
+
+            }
+
             renderTurnOrder();
 
             renderTurnControls();
+
+            renderGoldenKeyButton();
 
             renderGamePieces();
 
@@ -1999,6 +2410,21 @@ function showRoom(){
         .add("hidden");
 
 
+    $("goldenKeyToggleButton")
+        .classList
+        .add("hidden");
+
+
+    $("goldenKeyPanel")
+        .classList
+        .add("hidden");
+
+
+    $("goldenKeyCardOverlay")
+        .classList
+        .add("hidden");
+
+
     $("moneyPanel")
         .classList
         .add("hidden");
@@ -2039,6 +2465,11 @@ function showGame(){
 
 
     $("moneyToggleButton")
+        .classList
+        .remove("hidden");
+
+
+    $("goldenKeyToggleButton")
         .classList
         .remove("hidden");
 
@@ -3066,6 +3497,24 @@ function renderTurnOrder(){
    턴 컨트롤
 ========================= */
 
+function renderGoldenKeyButton(){
+
+    const button = $("goldenKeyButton");
+    if(!button){
+        return;
+    }
+
+    const currentPlayerId =
+        state.turnOrder[state.currentTurnIndex];
+
+    button.disabled =
+        !state.gameStarted ||
+        currentPlayerId !== state.playerId ||
+        !goldenKeyCards.length;
+
+}
+
+
 function renderTurnControls(){
 
     if(!state.gameStarted){
@@ -3646,6 +4095,282 @@ function waitForDiceAnimationThenFinish(){
     );
 
 }
+
+
+/* =========================
+   황금열쇠 뽑기
+========================= */
+
+window.drawGoldenKey = async function(){
+
+    if(!state.gameStarted){
+        return;
+    }
+
+    if(!goldenKeyCards.length){
+        alert("황금열쇠 데이터를 아직 불러오지 못했어.");
+        return;
+    }
+
+    const currentPlayerId =
+        state.turnOrder[state.currentTurnIndex];
+
+    if(currentPlayerId !== state.playerId){
+        alert("현재 턴인 사람만 황금열쇠를 뽑을 수 있어.");
+        return;
+    }
+
+    const button = $("goldenKeyButton");
+    button.disabled = true;
+
+    try{
+
+        const result = await runTransaction(
+            ref(db, `rooms/${state.roomCode}`),
+            room => {
+
+                if(!room || !room.gameStarted){
+                    return;
+                }
+
+                const turnPlayerId =
+                    room.turnOrder?.[room.currentTurnIndex || 0];
+
+                if(turnPlayerId !== state.playerId){
+                    return;
+                }
+
+                const keyCards = room.keyCards || {};
+
+                const available =
+                    goldenKeyCards.filter(card => !keyCards[card.id]);
+
+                if(available.length === 0){
+                    return;
+                }
+
+                const selected =
+                    available[Math.floor(Math.random() * available.length)];
+
+                keyCards[selected.id] = state.playerId;
+
+                room.keyCards = keyCards;
+                room.lastKeyDraw = {
+                    id: selected.id,
+                    text: selected.text,
+                    playerId: state.playerId,
+                    timestamp: Date.now()
+                };
+
+                return room;
+
+            }
+        );
+
+        if(!result.committed){
+            const ownedCount = Object.keys(state.keyCards || {}).length;
+
+            if(ownedCount >= goldenKeyCards.length){
+                alert("남아 있는 황금열쇠가 없어. 반납하면 다시 뽑을 수 있어.");
+            }else{
+                alert("지금은 황금열쇠를 뽑을 수 없어.");
+            }
+        }
+
+    }catch(error){
+
+        console.error("황금열쇠 뽑기 오류:", error);
+        alert("황금열쇠를 뽑는 중 오류가 발생했어.");
+
+    }finally{
+
+        button.disabled = false;
+
+    }
+
+};
+
+
+/* =========================
+   황금열쇠 카드 표시
+========================= */
+
+function renderGoldenKeyCard(){
+
+    const draw = state.lastKeyDraw;
+
+    if(!draw || !draw.text){
+        return;
+    }
+
+    $("goldenKeyCardText").textContent = draw.text;
+
+    $("goldenKeyCardOverlay").classList.remove("hidden");
+
+}
+
+window.closeGoldenKeyCard = function(){
+
+    $("goldenKeyCardOverlay").classList.add("hidden");
+
+};
+
+
+/* =========================
+   황금열쇠 토글
+========================= */
+
+window.toggleGoldenKeyPanel = function(){
+
+    const panel = $("goldenKeyPanel");
+    const button = $("goldenKeyToggleButton");
+
+    const isHidden =
+        panel.classList.contains("hidden");
+
+    if(isHidden){
+        panel.classList.remove("hidden");
+        button.classList.add("hidden");
+        renderGoldenKeyPlayers();
+    }else{
+        panel.classList.add("hidden");
+        button.classList.remove("hidden");
+    }
+
+};
+
+
+/* =========================
+   황금열쇠 목록
+========================= */
+
+function renderGoldenKeyPlayers(){
+
+    const container = $("goldenKeyPlayers");
+    if(!container){
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const owners = state.keyCards || {};
+    const ownedIds = Object.keys(owners);
+
+    $("goldenKeyStatus").textContent =
+        goldenKeyCards.length
+            ? `남은 황금열쇠 ${Math.max(0, goldenKeyCards.length - ownedIds.length)}개 / 전체 ${goldenKeyCards.length}개`
+            : "황금열쇠 데이터를 불러오는 중이야.";
+
+    if(!state.players.length){
+        return;
+    }
+
+    for(const player of state.players){
+
+        const ids = ownedIds.filter(
+            id => owners[id] === player.playerId
+        );
+
+        const row = document.createElement("div");
+        row.className = "golden-key-player";
+
+        if(player.playerId === state.playerId){
+            row.classList.add("me");
+        }
+
+        const title = document.createElement("div");
+        title.className = "golden-key-player-title";
+
+        const name = document.createElement("span");
+        name.textContent =
+            player.nickname || "이름 없음";
+
+        const count = document.createElement("span");
+        count.className = "golden-key-count";
+        count.textContent = `${ids.length}개`;
+
+        title.append(name, count);
+        row.appendChild(title);
+
+        const list = document.createElement("div");
+        list.className = "golden-key-list";
+
+        for(const id of ids){
+
+            const card = goldenKeyCards.find(
+                item => item.id === String(id)
+            );
+
+            if(!card){
+                continue;
+            }
+
+            const item = document.createElement("div");
+            item.className = "golden-key-item";
+
+            const text = document.createElement("div");
+            text.className = "golden-key-text";
+            text.textContent = card.text;
+
+            item.appendChild(text);
+
+            if(player.playerId === state.playerId){
+                const returnButton = document.createElement("button");
+                returnButton.className = "golden-key-return";
+                returnButton.textContent = "반납";
+                returnButton.onclick = () => returnGoldenKey(card.id);
+                item.appendChild(returnButton);
+            }
+
+            list.appendChild(item);
+
+        }
+
+        if(ids.length === 0){
+            const empty = document.createElement("div");
+            empty.className = "golden-key-text";
+            empty.style.color = "#777";
+            empty.textContent = "보유한 황금열쇠 없음";
+            list.appendChild(empty);
+        }
+
+        row.appendChild(list);
+        container.appendChild(row);
+
+    }
+
+}
+
+
+/* =========================
+   황금열쇠 반납
+========================= */
+
+window.returnGoldenKey = async function(keyId){
+
+    try{
+
+        const result = await runTransaction(
+            ref(db, `rooms/${state.roomCode}/keyCards/${keyId}`),
+            ownerId => {
+                if(ownerId !== state.playerId){
+                    return;
+                }
+                return null;
+            }
+        );
+
+        if(!result.committed){
+            return;
+        }
+
+    }catch(error){
+
+        console.error("황금열쇠 반납 오류:", error);
+
+    }
+
+};
 
 
 /* =========================
