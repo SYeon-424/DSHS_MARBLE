@@ -4457,6 +4457,11 @@ function renderGoldenKeyButton(){
         staffButton.classList.toggle("hidden", !state.gameStarted);
     }
 
+    const sangsaengbuButton = $("sangsaengbuToggleButton");
+    if(sangsaengbuButton){
+        sangsaengbuButton.classList.toggle("hidden", !state.gameStarted);
+    }
+
     const button = $("goldenKeyButton");
     if(!button){
         return;
