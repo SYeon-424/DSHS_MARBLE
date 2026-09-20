@@ -2098,7 +2098,7 @@ function showStaffDetail(staffId){
     card.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
-async async function buyStaff(staffId){
+async function buyStaff(staffId){
     const staff = staffList.find(item => String(item.id) === String(staffId));
     if(!staff || !state.roomCode || !state.playerId) return;
 
