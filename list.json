@@ -41,7 +41,7 @@
   {
     "id": "teacher_004",
     "name": "KENTECH",
-    "color": "#7F7F7F",
+    "color": "#4C4C4C",
     "basic": 20,
     "takenBasic": 30
   },
@@ -126,7 +126,7 @@
   {
     "id": "teacher_011",
     "name": "POSTECH",
-    "color": "#7F7F7F",
+    "color": "#4C4C4C",
     "basic": 20,
     "takenBasic": 30
   },
@@ -168,5 +168,176 @@
     "takenEssay": 100,
     "takenShort": 60,
     "takenObjective": 15
+  },
+  {
+    "id": "teacher_015",
+    "name": "AI - ㅇㅈㄱ",
+    "color": "#6CBE6E",
+    "basic": 22,
+    "essay": 75,
+    "short": 40,
+    "objective": 15,
+    "takenBasic": 1.8,
+    "takenEssay": 105,
+    "takenShort": 70,
+    "takenObjective": 17
+  },
+  {
+    "id": "teacher_016",
+    "name": "두동도동 - ㄷㄷㅎ",
+    "color": "#6CBE6E",
+    "basic": 24,
+    "essay": 75,
+    "short": 45,
+    "objective": 15,
+    "takenBasic": 2,
+    "takenEssay": 110,
+    "takenShort": 75,
+    "takenObjective": 20
+  },
+  {
+    "id": "teacher_017",
+    "name": "민정 안녕! - ㄱㅁㅈ",
+    "color": "#6CBE6E",
+    "basic": 24,
+    "essay": 75,
+    "short": 45,
+    "objective": 15,
+    "takenBasic": 2,
+    "takenEssay": 110,
+    "takenShort": 75,
+    "takenObjective": 20
+  },
+  {
+    "id": "teacher_018",
+    "name": "DGIST",
+    "color": "#4C4C4C",
+    "basic": 50,
+    "takenBasic": 60
+  },
+  {
+    "id": "teacher_019",
+    "name": "진실의 방 - ㅈㅈㅅ",
+    "color": "#6CBE6E",
+    "basic": 26,
+    "essay": 75,
+    "short": 45,
+    "objective": 15,
+    "takenBasic": 2.2,
+    "takenEssay": 115,
+    "takenShort": 80,
+    "takenObjective": 22
+  },
+  {
+    "id": "teacher_020",
+    "name": "자퇴해 - ㄱㅂㄱ",
+    "color": "#6CBE6E",
+    "basic": 26,
+    "essay": 75,
+    "short": 45,
+    "objective": 15,
+    "takenBasic": 2.2,
+    "takenEssay": 115,
+    "takenShort": 80,
+    "takenObjective": 22
+  },
+  {
+    "id": "teacher_021",
+    "name": "UNIST",
+    "color": "#4C4C4C",
+    "basic": 30,
+    "takenBasic": 25
+  },
+  {
+    "id": "teacher_022",
+    "name": "파콩 - ㅂㅎ",
+    "color": "#6CBE6E",
+    "basic": 28,
+    "essay": 75,
+    "short": 45,
+    "objective": 15,
+    "takenBasic": 2.4,
+    "takenEssay": 120,
+    "takenShort": 85,
+    "takenObjective": 24
+  },
+  {
+    "id": "teacher_023",
+    "name": "강윤석 - ㄱㅇㅅ",
+    "color": "#829BFF",
+    "basic": 30,
+    "essay": 100,
+    "short": 60,
+    "objective": 20,
+    "takenBasic": 2.6,
+    "takenEssay": 127,
+    "takenShort": 90,
+    "takenObjective": 26
+  },
+  {
+    "id": "teacher_024",
+    "name": "KAIST",
+    "color": "#4C4C4C",
+    "basic": 45,
+    "takenBasic": 40
+  },
+  {
+    "id": "teacher_025",
+    "name": "우태성 - ㅇㅌㅅ",
+    "color": "#829BFF",
+    "basic": 32,
+    "essay": 100,
+    "short": 60,
+    "objective": 20,
+    "takenBasic": 2.8,
+    "takenEssay": 140,
+    "takenShort": 100,
+    "takenObjective": 30
+  },
+  {
+    "id": "teacher_026",
+    "name": "솔개 - ㅇㅊㅎ",
+    "color": "#829BFF",
+    "basic": 32,
+    "essay": 100,
+    "short": 60,
+    "objective": 20,
+    "takenBasic": 2.8,
+    "takenEssay": 140,
+    "takenShort": 100,
+    "takenObjective": 30
+  },
+  {
+    "id": "teacher_027",
+    "name": "드래곤타이거 - ㅇㅇㅎ",
+    "color": "#829BFF",
+    "basic": 35,
+    "essay": 100,
+    "short": 60,
+    "objective": 20,
+    "takenBasic": 3.5,
+    "takenEssay": 150,
+    "takenShort": 110,
+    "takenObjective": 34
+  },
+  {
+    "id": "teacher_028",
+    "name": "카르노 킴 - ㄱㅈㅅ",
+    "color": "#829BFF",
+    "basic": 35,
+    "essay": 100,
+    "short": 60,
+    "objective": 20,
+    "takenBasic": 3.5,
+    "takenEssay": 150,
+    "takenShort": 110,
+    "takenObjective": 34
+  },
+  {
+    "id": "teacher_029",
+    "name": "서울대",
+    "color": "#4C4C4C",
+    "basic": 100,
+    "takenBasic": 200
   }
 ]
