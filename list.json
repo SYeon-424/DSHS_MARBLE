@@ -41,13 +41,13 @@
   {
     "id": "teacher_004",
     "name": "KENTECH",
-    "color": "#000000",
+    "color": "#7F7F7F",
     "basic": 20,
     "takenBasic": 30
   },
   {
     "id": "teacher_005",
-    "name": "김동우 - ㄱㄷㅇ",
+    "name": "지학 올라운더 - ㄱㄷㅇ",
     "color": "#FF5656",
     "basic": 10,
     "essay": 25,
@@ -86,7 +86,7 @@
   },
   {
     "id": "teacher_008",
-    "name": "제미나이 - ㄱㅈ",
+    "name": "제미나이 - ㄱㅈㅁ",
     "color": "#FFA556",
     "basic": 14,
     "essay": 50,
@@ -96,5 +96,77 @@
     "takenEssay": 75,
     "takenShort": 45,
     "takenObjective": 10
+  },
+  {
+    "id": "teacher_009",
+    "name": "이승재 - ㅇㅅㅈ",
+    "color": "#FFA556",
+    "basic": 16,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1.2,
+    "takenEssay": 90,
+    "takenShort": 50,
+    "takenObjective": 12
+  },
+  {
+    "id": "teacher_010",
+    "name": "전경희 - ㅈㄱㅎ",
+    "color": "#FFA556",
+    "basic": 16,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1.2,
+    "takenEssay": 90,
+    "takenShort": 50,
+    "takenObjective": 12
+  },
+  {
+    "id": "teacher_011",
+    "name": "POSTECH",
+    "color": "#7F7F7F",
+    "basic": 20,
+    "takenBasic": 30
+  },
+  {
+    "id": "teacher_012",
+    "name": "박순연 - ㅂㅅㅇ",
+    "color": "#FFA556",
+    "basic": 18,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1.4,
+    "takenEssay": 95,
+    "takenShort": 55,
+    "takenObjective": 14
+  },
+  {
+    "id": "teacher_013",
+    "name": "경헌씨 - ㅂㅈㅅ",
+    "color": "#FFA556",
+    "basic": 18,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1.4,
+    "takenEssay": 95,
+    "takenShort": 55,
+    "takenObjective": 14
+  },
+  {
+    "id": "teacher_014",
+    "name": "선미씨 - ㅁㅇㅎ",
+    "color": "#FFA556",
+    "basic": 20,
+    "essay": 50,
+    "short": 30,
+    "objective": 10,
+    "takenBasic": 1.6,
+    "takenEssay": 100,
+    "takenShort": 60,
+    "takenObjective": 15
   }
 ]
