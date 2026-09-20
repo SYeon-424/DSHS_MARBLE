@@ -1007,6 +1007,57 @@ button{
         gap:8px;
     }
 }
+
+/* =========================
+   성적 이전
+========================= */
+.score-transfer-box{
+    margin-top:14px;
+    padding:12px;
+    border:1px solid #4f6f91;
+    border-radius:10px;
+    background:#101923;
+}
+.score-transfer-title{
+    font-weight:900;
+    margin-bottom:5px;
+}
+.score-transfer-description{
+    color:#b9c7d6;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:10px;
+}
+.score-transfer-row{
+    display:grid;
+    grid-template-columns:1fr 110px;
+    gap:8px;
+    margin-bottom:8px;
+}
+.score-transfer-box select,
+.score-transfer-box input{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #526477;
+    border-radius:8px;
+    background:#080d13;
+    color:#fff;
+}
+.score-transfer-box button{
+    width:100%;
+    background:#4f7cac;
+    color:#fff;
+    font-weight:900;
+}
+.score-transfer-status{
+    min-height:18px;
+    margin-top:8px;
+    color:#b9c7d6;
+    font-size:12px;
+}
+
 </style>
 </head>
 
@@ -1345,6 +1396,20 @@ button{
         id="moneyPlayers"
         class="money-players"
     ></div>
+
+    <div id="scoreTransferBox" class="score-transfer-box">
+        <div class="score-transfer-title">🔁 성적 이전</div>
+        <div class="score-transfer-description">
+            입학사정관 여부와 관계없이 누구나 다른 플레이어에게 자신의 점수를 보낼 수 있어.
+            보내는 즉시 내 점수에서 차감되고 상대방 점수에 추가돼.
+        </div>
+        <div class="score-transfer-row">
+            <select id="scoreTransferTarget" aria-label="점수를 받을 플레이어"></select>
+            <input id="scoreTransferAmount" type="number" min="0.1" step="0.1" placeholder="점수">
+        </div>
+        <button id="scoreTransferButton" type="button">점수 보내기</button>
+        <div id="scoreTransferStatus" class="score-transfer-status"></div>
+    </div>
 
 
     <div id="scoreManagerBox" class="score-manager-box hidden">
@@ -2102,15 +2167,6 @@ async function loadGoldenKeyCards(){
    DOM
 ========================= */
 
-function escapeHtml(value){
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
 const $ =
     id => document.getElementById(id);
 
@@ -2123,6 +2179,10 @@ $("scoreTargetPlayer")?.addEventListener("change", () => {
     state.scoreTargetPlayerId = $("scoreTargetPlayer").value || state.playerId;
     renderMoneyPlayers();
 });
+
+
+$("scoreTransferButton")?.addEventListener("click", transferScore);
+
 
 
 /* =========================
@@ -4922,6 +4982,111 @@ function(){
    모든 플레이어 금액
 ========================= */
 
+function setScoreTransferStatus(message, isError = false){
+    const status = $("scoreTransferStatus");
+    if(!status) return;
+    status.textContent = message;
+    status.style.color = isError ? "#ff9b9b" : "#b9c7d6";
+}
+
+function renderScoreTransferTargets(){
+    const select = $("scoreTransferTarget");
+    if(!select) return;
+
+    const previousValue = select.value;
+    select.innerHTML = "";
+
+    for(const player of state.players){
+        if(player.playerId === state.playerId) continue;
+
+        const option = document.createElement("option");
+        option.value = player.playerId;
+        option.textContent = player.nickname || "이름 없음";
+        select.appendChild(option);
+    }
+
+    if(previousValue && state.players.some(player =>
+        player.playerId === previousValue && player.playerId !== state.playerId
+    )){
+        select.value = previousValue;
+    }
+
+    const hasTarget = [...select.options].length > 0;
+    select.disabled = !hasTarget;
+    $("scoreTransferButton")?.toggleAttribute("disabled", !hasTarget);
+}
+
+async function transferScore(){
+    const targetId = $("scoreTransferTarget")?.value || "";
+    const amountText = $("scoreTransferAmount")?.value || "";
+    const amountPoints = Number(amountText);
+    const amount = Math.round(amountPoints * 10000);
+
+    if(!state.roomCode || !state.playerId){
+        setScoreTransferStatus("방에 참가한 뒤 이용할 수 있어.", true);
+        return;
+    }
+
+    if(!targetId || targetId === state.playerId){
+        setScoreTransferStatus("점수를 받을 다른 플레이어를 선택해줘.", true);
+        return;
+    }
+
+    if(!Number.isFinite(amountPoints) || amountPoints <= 0 || !Number.isFinite(amount) || amount <= 0){
+        setScoreTransferStatus("보낼 점수는 0보다 큰 숫자로 입력해줘.", true);
+        return;
+    }
+
+    if(amount % 1000 !== 0){
+        setScoreTransferStatus("점수는 0.1점 단위로 보낼 수 있어.", true);
+        return;
+    }
+
+    const button = $("scoreTransferButton");
+    if(button) button.disabled = true;
+    setScoreTransferStatus("점수를 이전하는 중이야...");
+
+    try{
+        const result = await runTransaction(
+            ref(db, `rooms/${state.roomCode}`),
+            room => {
+                if(!room || !room.players) return;
+
+                const sender = room.players[state.playerId];
+                const receiver = room.players[targetId];
+
+                if(!sender || !receiver || state.playerId === targetId){
+                    return;
+                }
+
+                const senderBalance = Number(sender.balance || 0);
+                if(senderBalance < amount){
+                    return;
+                }
+
+                sender.balance = senderBalance - amount;
+                receiver.balance = Number(receiver.balance || 0) + amount;
+
+                return room;
+            }
+        );
+
+        if(!result.committed){
+            setScoreTransferStatus("점수 이전에 실패했어. 내 점수가 부족하거나 대상이 없어.", true);
+            return;
+        }
+
+        $("scoreTransferAmount").value = "";
+        setScoreTransferStatus(`${formatMoney(amount)} 이전 완료!`);
+    }catch(error){
+        console.error("성적 이전 오류:", error);
+        setScoreTransferStatus("성적 이전 중 오류가 발생했어. 다시 시도해줘.", true);
+    }finally{
+        if(button) button.disabled = false;
+    }
+}
+
+
 function renderMoneyPlayers(){
 
     const container = $("moneyPlayers");
@@ -4963,6 +5128,8 @@ function renderMoneyPlayers(){
     }else{
         $("scoreManagerBox")?.classList.add("hidden");
     }
+
+    renderScoreTransferTargets();
 
     for(const player of sorted){
         const row = document.createElement("div");
